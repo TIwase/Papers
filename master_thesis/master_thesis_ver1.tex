@@ -330,7 +330,7 @@ x_{i,j}^{t+1} & {\rm if}(rand(0,1) > C_r) \ and \ j \neq D
 \begin{algorithmic}[3]
 \REQUIRE Objective Function $F(x), x=(x_1,x_2,...,x_d)$
 \STATE Initialize Population $x_i (i=1,2,...,N)$ and Velocity $v_i$
-\STATE Initialize $C_r, F$
+\STATE Define crossover probability $C_r,$ and random value $F$
 
 \WHILE{t $<$ Max Iteration}
 \FOR{i=1 to N}
@@ -412,7 +412,7 @@ A_i^{t+1}= \alpha A_i^t
 r_i^{t+1}=r_i^t[1-exp(- \gamma t)]
 \end{equation}
 解を更新する度にラウドネス$A_i$は徐々に減少し，それに比例して評価頻度を下げていく．対してパルスレート$r_i$は増加していき，探索が進むにつれて局所探索頻度が減少する．\\ \
-従来のBAの疑似コードは以下のAlgorithm 1に記す．
+従来のBAの疑似コードは以下のAlgorithm \ref{code:ba}に記す．
 
 \begin{algorithm}[H]
 \caption{Bat Algorithm}
@@ -601,7 +601,7 @@ f_i'=\frac{f_i}{m_i}
 d(C_1,C_2) = \min_{x_i \in C_i, x_j \in C_j}(d(x_i,x_j))
 \end{equation}
 \item {\bf 最長距離法(furthest neighbor method)} \\
-最も遠いクラスタ同士を併合する手法．クラスタ間の距離$d(C_i,C_j)$は次の式で定義される．
+最も遠いクラスタ同士を併合する手法 \cite{FN-Clustering} である．クラスタ間の距離$d(C_i,C_j)$は次の式で定義される．
 \begin{equation}
 d(C_1,C_2) = \max_{x_i \in C_1, x_j \in C_2}(d(x_i,x_j))
 \end{equation}
