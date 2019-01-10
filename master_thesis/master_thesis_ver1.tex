@@ -1,0 +1,1293 @@
+\documentclass[a4j,11pt]{jarticle}
+\bibliographystyle{jplain}
+
+\def\proposed{DNRBA}
+\def\proposedJ{適応的個体間距離に基づく複数解探索型Bat Algorithm}
+
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{graphicx}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{./ref/placeins}
+\usepackage{here}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{fancyhdr}
+\usepackage{comment}
+
+\renewcommand\thefootnote{\arabic{footnote}}
+\renewcommand{\algorithmicforall}{\textbf{for each}}
+\newcommand{\argmax}{\mathop{\rm arg~max}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min}\limits}
+
+\makeatletter
+\def\maketitle{%
+\null
+\begin{center}\leavevmode
+\normalfont
+{\LARGE \@title\par}%
+\vfill
+{\Large \@author\par}%
+\vskip 1cm
+{\Large \@date\par}%
+\end{center} %
+\cleardoublepage
+}
+\makeatother
+
+
+\title{{\Large 平成30年度 電気通信大学大学院情報理工学研究科 修士論文\\\ \\}適応的個体間距離に基づく複数解探索型Bat Algorithm}
+\author{
+\begin{tabular}{cc}
+所属&情報学専攻メディア情報学プログラム\\
+学籍番号&1730022 \\
+氏名&岩瀬拓哉 \\
+主任指導教員&高玉圭樹教授\\
+指導教員&佐藤寛之准教授\\
+提出日&平成30年1月29日
+\end{tabular}
+}
+
+\date{}
+% 提出時はこれをコメントアウトする
+%\date{更新日: \today}
+\begin{document}
+\thispagestyle{empty}
+\maketitle
+
+\newpage
+\pagenumbering{roman}
+\pagestyle{plain}
+\setcounter{page}{1}
+\section*{概要}
+
+本論文では,大域探索と局所探索を調節可能なBat Algorithmと個体間距離に基づく動的変化を考慮したNiche Radiusを組み合わせることによる多峰性最適化問題における，複数解探索アルゴリズムを構築し，その手法の有効性を検証する．
+従来の多点探索アルゴリズムは一つの最適解に収束する傾向にあるが，実問題への適用を考慮した時に複数の最適解及び局所解を探索する必要がある．多点探索アルゴリズムの中でも大域と局所の探索バランスに優れたBat Algortihm は探索する上で全個体の最良解を参照して移動するため，最終的
+に最適解に収束することから複数解を同時に探索することは困難である．本研究では各個体の探索領域を分割させるNiche Radius を用いることで最適解だけでなく，局所解も同時に探索可能なBat Algorithm の構築をする．
+従来手法と提案手法の性能を比較するため，最適解と局所解の数が異なるパターンの多峰性関数を用いてシミュレーション実験を行った結果，全ての関数に対して従来手法は一つの最適解に収束していたが，提案手法では全最適解及び局所解を探索することができ，従来に対する変更点が有効であることを示した．
+
+% LCSは, 解釈性に優れた知識を生成可能な知識獲得技術であり, 状態-行動のif-thenルール(分類子)を学習する遺伝的アルゴリズムと強化学習を組み合わせたルールベースの進化的機械学習手法である.
+% LCSの特徴は,複数の入力状態にする一般的なルールを獲得(分類子の一般化)することである.
+% この結果, 一般化されたルールは, データセットに存在する共通の規則を表現するため, 解釈性に優れた知識となる.
+% しかしながら, 高次元のデータセットにおいては状態空間の過大化により, LCSは適切に一般化されたルールの獲得が困難となり, 学習性能が著しく低下する問題がある.
+
+% 本研究では, 入力次元の圧縮復号器であるDeep Classification Autoencoder (DCA)をLCSに導入することで, 上記の問題の解決を図った\proposed を提案する.
+% ここでDCAは入出力の特徴を区別するための分類用ディープニューラルネットワークと入力の圧縮・復元を行うディープオートエンコーダーを組み合わせることによって圧縮・復元性能を向上させたDLに基づくニューラルネットワークである.
+
+% \proposed は, DCAを用いて圧縮された低次元入力からLCSの学習を行うことで, 高次元データを有する問題においても学習を可能にする.
+% \proposed は 1) DCAのエンコーダーを用いて入力の次元圧縮を行った後，2) 実数値表現を扱うLCS(XCSR)で学習後, 3) XCSRの出力をDCAのデコーダーを用いて圧縮されたXCSR内のif-thenルールを復号化する. この時, 復元したルールが不完全であった場合, 4) このルールをXCSRの初期値として元の次元でXCSRの学習をし直す.
+% 以上のプロセスによって, \proposed は様々な種類の高次元問題において, 人間が学習内容を明確に理解できるような手法を実現する.
+
+% \proposed の有効性を検証するため, MNISTデータセット及びマルチプレクサ問題を用いた検証実験を行った.
+% MNISTデータセットは784次元の高次元な手書き画像を分類する問題であり, マルチプレクサ問題は高次元ではないが, 画像のように均一なデータの圧縮できない難しいベンチマーク問題である.
+% 実験の結果, 1) MNISTデータセットにおいて従来のXCSRが全く学習できなかったのに対して\proposed は圧縮された入力を用いて学習が可能であり, 解釈性の高いルールが獲得できたこと, 2) マルチプレクサ問題において従来のXCSRが十分に学習が出来ていないのに対して\proposed は圧縮されたルールを利用することで学習が可能であり, 一般的なルールが獲得できたことが明らかになった.
+% これにより, \proposed は従来のXCSRが不可能だった様々な高次元な入力からの学習が可能であり, またニューラルネットワークが不可能だった解釈性の高いルールを獲得することが可能であることを示され, \proposed の有効性が実証された.
+
+\begin{comment}
+本論文では, 解釈性に優れた知識を獲得可能な学習分類子システム(Learning Classifier System: LCS)と高次元入力の学習が可能な深層学習(Deep Learning: DL)を統合し, 高い解釈性と高次元入力への対応性を併せ持った``\proposedJ(\proposed)''を構築するとともに, その有効性を検証することを目的とする.
+
+特に, 複数の入力状態に適用可能な汎用的なif-thenルール(分類子)を獲得できるLCSは, 解釈性に優れた知識を獲得できるものの, 高次元入力のデータに対しては状態空間の過大化により学習困難となる.
+そのため, DLによる圧縮復号器であるDeep Classification Autoencoder (DCA)をLCSに導入することで, 上記の問題を解決することを試みる.
+具体的には, DCAXCSRは次の２つのアプローチをとる. 一つ目は, DCAにより圧縮された低次元入力をLCSで学習することで, 高次元な問題においても学習を可能にし, 圧縮入力から得られたルールをDCAで復号化する.
+2つ目は, DCAで復号化するところまでは１つ目と同じだが, 復号化したルールが不完全であった場合, このルールをLCSの初期値として元の次元で直接学習をする.
+
+DCAXCSRの有効性を検証するため, 784次元の画像を分類するMNISTデータセット分類問題及びデータを圧縮できない11-マルチプレクサ問題へ適用したところ, 次の知見を得た.
+まず, (1) DCAXCSRは従来のLCSが学習不能な高次元の問題を学習が可能であり, (2) DLよりも高精度な学習が可能であることを明らかにした. また, (3) DCAXCSRは解釈性の高い一般的なルールを獲得可能であることが示された.
+これにより, \proposed は従来のXCSRが不可能だった様々な高次元な入力からの学習が可能であり, またニューラルネットワークが不可能だった解釈性の高いルールを獲得することが可能であることを示され, \proposed の有効性が実証された.
+\end{comment}
+\newpage
+\tableofcontents
+
+\newpage
+\setcounter{page}{1}
+\pagenumbering{arabic}
+\pagestyle{fancy}
+\cfoot{\thepage}
+\chead{}
+\lhead{}
+\rhead{{\small \leftmark\ \ \ \ $-$\ \ \ \ \rightmark}}
+
+\section{はじめに}
+\subsection{背景と目的}
+近年，多点探索アルゴリズムは最適化問題において，一般的なメタヒューリスティック手法として用いられるようになった．多点探索アルゴリズムは特に非線形な問題に対しても適用することが可能であり，魚や鳥の群れをモデルにしたParticle Swarm Optimization(PSO)\cite{PSO}や，ホタルの光強度により互いのホタルが引き寄せられるFirefly Algorithm(FA)\cite{FA}は高次元な最適化問題に対して有効であることを示している．中でもBat Algorithm(BA)は大域探索と局所探索の性能を自動で切り替えるという点で優れたアルゴリズムである\cite{BA}．しかし多峰性最適化問題における，従来の多点探索アルゴリズムは全個体の中の最良解を参照して一点へ移動するため，探索終了時に一つの最適解に収束する傾向にあるが，実環境への適用を考慮した時に最適解だけでなく局所解を探索し，保持しておくことは非常に重要な意味を持つ．応用先の一例として，災害時における被災者を解，救助ロボットを個体と見立てた時に，不特定多数の被災者を探索することは人間にとって困難であり，複数の解を同時に探索しなければならない．\\ \
+そこで本研究では，探索範囲の自動調整可能なBAを用い，各個体の探索領域を分割させることで個体の分散化を図る．探索空間のスケールと解の数から算出されるNiche Radius\cite{niche}を用いることで，予め各個体の探索領域を決定し，その探索領域内の最良個体から遠ざかる方向へ移動することで，個体同士が同じ解に留まらず，散らばるように改良する．従来手法の探索アルゴリズムに対して3つの変更をした．(i)大域探索: 分割探索領域内の最良解を参照;(ii)局所探索: 分割探索領域内の最良解付近に解候補を生成; (iii)ランダム探索: 選択した個体の分割領域内にランダムで解候補を生成．これらの変更により，従来手法と提案手法の探索性能を比較するため，発見した最適解及び局所解の数を評価尺度として，複数の異なる峰を持つ多峰性関数を用いてシミュレーション上で実験を行う．\\ \
+% 本論文の構成はまず，2章で従来手法であるBAの概要とそのアルゴリズムについて説明し，3章にて提案手法の詳細と従来手法との変更点について述べる．4章では扱うベンチマーク関数とシミュレーション実験の内容及び，実験結果について記述し，5章で得られた結果に対して考察する．最後に6章にて，本論文の結論を述べる．
+% 現代の情報化社会において，情報システムは大規模化・複雑化し多種多様なデータが取り扱われている.
+% 今後, 人間とコンピューターの関わりがますます強くなっていくことを考えると, 人間との親和性の高いシステムの構築が重要である.
+
+% 人間との親和性が高く環境から汎用的な知識を獲得できる機械学習法の1つに\textbf{学習分類子システム}(Learning Classifier System: \textbf{LCS}\cite{LCS})がある.
+% LCSは\textbf{遺伝的アルゴリズム}(Genetic Algorithm: \textbf{GA})\cite{GA}と\textbf{強化学習}(Reinforcement Learning: \textbf{RL})\cite{RL}を組み合わせた機械学習である.
+% その特徴として, 知識を状態-行動のif-thenルールで表現し, それを生成・削除・更新することで学習する.
+% LCSはデータセットに存在する共通の規則を発見し, ルールの一般化を通して複数の入力状態に照合する汎用的なルールを獲得することができるため, 人間が学習結果を解釈しやすいという特徴がある. 
+
+% しかし, LCSは学習のために全状態空間を網羅するようにルールを生成する必要があるため, 高次元な入力に対しては適切に一般化されたルールの獲得が困難となり, 学習性能が著しく低下する問題がある.
+ 
+% 一方で, 様々な高次元データの学習に対応している機械学習法に, \textbf{深層学習(ディープラーニング, Deep Learning: DL)}{\cite{DL}がある.
+% DLの技術によって, Deep Mindが提案したDeep Q-Network\cite{DQN}が様々なテレビゲームの試行錯誤を通してプロ顔負けのプレイが出来るようになったり, GoogleのAlphaGo\cite{AlphaGo}が戦略が難しいと言われる碁において世界一のプロ棋士を打ち破るなど, 近年複雑な状況に対して正しい選択を精度高く出来るようになってきた.
+% このようにDLは様々な高次元情報を扱う問題に対して高いパフォーマンスを得ることが出来るが, 得られた結果の理由付けが難しく, 人間が理解することは困難である.
+% 多くの場合, 得られた出力を解釈するために主成分分析\cite{PCA}などを行ってラベル付けを行う必要がある上, それらの分析法は必ずしもうまくいくとは限らない.
+% またそれらのラベル付けは, 分析する人間の主観に依存してしまう問題があるなど, DLには人間との親和性が低いという問題点がある.
+
+% 上記の問題解決のために, 本研究では解釈性と多様な入力への高次元対応性を併せ持った\textbf{\proposedJ(\proposed)}を構築するとともに, その有効性の検証を目的とする.
+% 具体的には, DLの技術によって高次元入力を圧縮し, 低次元環境においてLCSがルールを学習する.
+% 学習されたルールを元の次元に復元することで解釈性が高いルールが獲得できる.
+% ここで獲得されたルールが, DLによる次元圧縮によって必要な情報の損失によって不完全なものになってしまった場合, この不完全なルールを状態空間の絞り込みに利用し, 修正することで完全なルールを獲得可能になる.
+% これによりLCSの問題点である高次元入力の学習が困難である点とDLの問題点である出力の解釈性が乏しい点の解決を目指す.
+
+% 本論文では, 評価問題としてMNISTデータセット\cite{mnist}及びマルチプレクサ問題\cite{XCS}によって\proposed の有効性を検証する.
+
+\newpage
+\subsection{関連研究}
+% LCSを高次元問題に対応させるという, 我々と同様の課題に取り組んでいる研究例がある.
+
+% Iqbalらは高次元問題を直接学習するのではなく, その問題と同性質を持った低次元な問題を学習し, そこで得られた高次元と低次元での共通して使える知識を利用して徐々に問題の次元を増やしていくことで, 高次元問題に対応する方法を提案した\cite{iqbal2014reusing}.
+% このフラグメントと呼ばれるスケールアップして使える知識によって彼らはこれまでのLCSが解けなかった高次元な問題を解くことに成功しているが, 一方で解きたい高次元問題と同様の性質を持つ低次元問題を解く必要があり, 実際はどのような性質を持っているかが未知の問題を解かなければならないケースや同問題の低次元問題を用意出来ない場合も多い.
+% その為, 上記手法は適用できる問題は限られてしまう.
+
+% より多くの問題に対応できるように, Abediniらは``Guided Rule''と呼ばれる方針に従ってルールを進化させることでLCSの学習の効率化を図った\cite{Abedini2011}.
+% Guided Ruleは入力されるデータセットを前処理し, 統計的な属性の出現頻度などから, 属性に優先順位を付けをしたもので, LCSはGuided Ruleの優先順位の低い属性を一般化しやすいようにルールを進化させることで, 重要と思われる要素を絞って学習することができる.
+% これによって学習が効率化されるので高次元な問題に対応しやすいというのが同手法の特徴である.
+% しかし特徴量が問題ごとに異なるような統計的なデータの前処理では優先順位をつけられない問題に対応することは難しく, また高次元な入力を直接LCSで扱っているという枠組みである以上, スケーラビリティーの影響を受けやすいと考えられる.
+
+% 一方で, 元々高次元入力に対応しているDLの出力の理由付けを行って解釈性を高める研究例もある.
+% Ramprasaathらが提案するGrad-CAM\cite{Grad-CAM}は画像の分類問題において, 画像のどの部分が出力に影響を与えたかをヒートマップで可視化することで, 入力に対してその出力がされた理由付けを支援する.
+% ただし現時点で同手法は画像にのみにしか対応しておらず, また入力に1対1対応したヒートマップを出力するため, データセット全体を通しての特徴の抽出などにはできず, 特徴を把握するために1つ1つの結果を見ていくことしかできない.
+
+% このように高次元入力において入出力の関係を明確にして人間との親和性を高める需要はあり, 様々な研究例がある.
+% 本研究ではここで挙げた手法の様々な問題点を克服した\proposed を提案する.
+
+\newpage
+\subsection{論文構成}
+本論文の構成は次の通りである.
+\ref{sec:EAs}章で最適化問題において一般的に用いられるEAsについて説明し，\ref{sec:ns}章で実問題を模擬的に表した多峰性最適化問題における複数解探索手法の機構であるNiching Schemeについて説明する．\ref{sec:nm}章では，EAsとNiching Schemeを組み合わせた複数解探索手法を説明し，\ref{sec:NSBA}章から\ref{sec:DNRBA}章までは提案手法であるNSBA, NRBA及びDNRBAの説明をする．
+% \ref{sec:LCS}章ではLCSとその拡張システムについて説明し, \ref{sec:NN}章ではニューラルネットワークとその機械学習であるDLの説明を行う.
+% \ref{sec:DCA}章では提案システムである\proposed の圧縮器として使われるニューラルネットワークの機構であるDCAの説明をし, \ref{sec:proposed}章では学習分類子システムとDCAを組み合わせた提案システムである\proposedJ(\proposed)を説明する.
+% \ref{sec:PROBLEM}章では問題の種類と検証で用いるベンチマーク問題あるMNISTデータセットとマルチプレクサ問題を説明する.
+% \ref{sec:EXP}章では検証実験における結果と考察を示す.
+% 最後に\ref{sec:END}章では, 本論文のまとめを行う.
+% 論文の末尾には参考文献と付録として詳細の実験結果などを載せている.
+
+
+
+\newpage
+\section{Metaheuristic Algorithms}
+
+% \subsection{Evolutionary Algorithms (EAs)}
+% \label{ss:EAs}
+
+現実問題は非常に複雑であり，その複雑さを多峰性関数として表現した問題をを最適化するためにEvolutionary Algorithms (EAs)が用いられるようになった．EAsのメカニズムとして単一の最適解を探索することを目的として設計されており，生物の生殖や突然変異，交叉，適者生存といった過程をモデルとしている．その代表的なアルゴリズムを\ref{ss:GA}節から\ref{ss:cma-es}節で紹介する．
+
+\subsection{Genetic Algorithm (GA)}
+\label{ss:GA}
+遺伝的アルゴリズム(Genetic Algorithm:GA) \cite{GA} は生物の進化の過程を模擬したアルゴリズムであり，最適化問題において最も基本的なヒューリスティック手法である．生物は次の世代により良い遺伝子を持った個体を残すため，まずは親集合の中から個体を選択し，選択した個体同士を交叉させる．この時，ある一定の確率で突然変異させる．次に，交叉させて新たに生成された個体を子集合の解候補とし，親と子の個体を評価して，評価値の高い個体は次世代の個体として保存され，評価値の低い個体は淘汰される．各個体に対し，この「選択」，「交叉」，「突然変異」，「評価(淘汰)」を繰り返すことで，環境に対する適合度が高くなっていく(評価値の高い遺伝子が残る)．アルゴリズムの疑似コードは，以下のAlgorithm\ref{code:ga}に記す．
+
+\begin{itemize}
+\item {\bf STEP1: 個体の初期化} \\
+$N$個の個体$x_i$を初期集合として生成し，ランダムな評価値を割り当てる．また交叉率と突然変異率を定義する．(1-2行目)
+\item {\bf STEP2: 選択と交叉} \\
+選択した親同士$x_i$を交叉率$P_c$により交叉させ，子(解候補) $x_i^{new}$を生成する．(5-7行目)
+\item {\bf STEP4: 突然変異} \\
+突然変異率$P_m$により，子(解候補)の評価値を変化させる．(8-10行目)
+\item {\bf STEP5: 評価} \\
+親個体$x_i$と子個体$x_i^{new}$の評価値を比較し，評価値の高い個体を次世代に残す．(11-13行目)
+\end{itemize}
+
+\begin{algorithm}[H]
+\caption{Genetic Algorithm}
+\label{code:ga}
+\begin{algorithmic}[1]
+\REQUIRE Objective Function $F(x), x=(x_1,x_2,...,x_d)$
+\STATE Initialize Population $x_i (i=1,2,...,N)$
+\STATE Initialize $P_m, P_c$
+\WHILE{t $<$ Max Generation}
+\FOR{i=1 to N}
+\IF{$rand(0,1) < P_c$}
+\STATE Generate an offspring $x_i^{new}$ 
+\ENDIF
+\IF{$rand(0,1) < P_m$}
+\STATE Replace mutated offspring $x_i^{new}$
+\ENDIF
+\IF{$F(x_i)<F(x_i^{new})$}
+\STATE Replace $x_i$ with $x_i^{new}$
+\ENDIF
+\ENDFOR
+\STATE t=t+1
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsection{Particle Swarm Optimization (PSO)}
+\label{ss:PSO}
+% 数式番号に章番号を追加
+  \makeatletter
+  \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
+  \@addtoreset{equation}{subsection}
+  \makeatother
+
+最適化手法の一つとして粒子群最適化(Particle Swarm Optimization:PSO)がある．PSOは，ランダムに個体を初期化するという点において，遺伝的アルゴリズム(GA)に似た性質を持つ．魚や鳥の群れの動きをモデルにしたアルゴリズムであり，個体間のユークリッド距離を速度として新たに解候補を生成する．個体の速度及び生成式は以下の通りである．
+\begin{equation}
+\label{eq:pso-vi}
+\mbox{\boldmath $v_i^{t+1}$}=w\mbox{\boldmath $v_i^t$}+c_1r_1 \cdot (\mbox{\boldmath $x_{pbest}^t$}-\mbox{\boldmath $x_j^t$})+c_2r_2 \cdot (\mbox{\boldmath $x_{gbest}^t$}-\mbox{\boldmath $x_i^t$})
+\end{equation}
+\begin{equation}
+\label{eq:pso-xi}
+\mbox{\boldmath $x_i^{t+1}$}=\mbox{\boldmath $x_i^t$}+\mbox{\boldmath $v_i^{t+1}$}
+\end{equation}
+$\mbox{\boldmath $x_i$}$，$\mbox{\boldmath $v_i$}$は時刻$t$における各個体の現在位置と速度を表し，$w,c_1,c_2$は係数，$r_1, r_2$は一様乱数を表す．これらの係数が速度を制限するパラメータとなっており，$w$が時刻$t$での速度を調整し，$c_1,c_2$は値が1より小さいほど局所探索を行い，1より大きくなると最良個体を含む広い範囲を大域探索するようになる．
+PSOのアルゴリズムの疑似コードであるAlgorithm\ref{code:pso}を以下に記す．
+
+\begin{algorithm}[H]
+\caption{Particle Swarm Optimization}
+\label{code:pso}
+\begin{algorithmic}[2]
+\REQUIRE Objective Function $F(x), x=(x_1,x_2,...,x_d)$
+\STATE Initialize Population $x_i (i=1,2,...,N)$ and Velocity $v_i$
+\STATE $F(x_{gbest})=\max{F(x_i)}$
+\STATE Initialize $c_1,c_2,w$
+\WHILE{t $<$ Max Iteration}
+\FOR{i=1 to N}
+\STATE Generate a new solution $x_i^{t+1}$ and update $v_i$ [Eqs.(\ref{eq:pso-vi}),(\ref{eq:pso-xi})]
+\IF{$F(x_i^{t+1})>F(x_{pbest})$}
+\STATE Replace the individual $x_i^{t+1}$ as $x_{pbest}$
+\ENDIF
+\IF{$F(x_{gbest})<F(x_{pbest})$}
+\STATE $x_{gbest}=x_{pbest}$
+\ENDIF
+\ENDFOR
+\STATE t=t+1
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Differential Evolution (DE)}
+\label{ss:DE}
+
+% 数式番号に章番号を追加
+  \makeatletter
+  \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
+  \@addtoreset{equation}{subsection}
+  \makeatother
+
+差分進化(Differential Evolution:DE) \cite{DE} は進化的計算手法の一つであり，問題に応じて個体間同士の相対距離に基づいた探索戦略を用いることのできる，他のアルゴリズムとは異なる特徴を持つ．DEは以下の手順により探索を繰り返す．
+\begin{itemize}
+\item {\bf STEP1: 個体の初期化} \\
+探索領域内にランダムで個体を生成する．
+\item {\bf STEP2: 突然変異による解候補の生成} \\
+DEは以下，いずれかの探索戦略を用いて解候補を生成する．
+\begin{enumerate}
+\item{DE/rand/1}
+\begin{equation}
+\label{eq:rand1}
+\mbox{\boldmath $v_{i,j}^{t+1}$}=\mbox{\boldmath $x_{r1,j}^t$}+F \cdot (\mbox{\boldmath $x_{r2,j}^t$}-\mbox{\boldmath $x_{r3,j}^t$})
+\end{equation}
+\item{DE/best/1}
+\begin{equation}
+\label{eq:best1}
+\mbox{\boldmath $v_{i,j}^{t+1}$}=\mbox{\boldmath $x_{gbest,j}^t$}+F \cdot (\mbox{\boldmath $x_{r1,j}^t$}-\mbox{\boldmath $x_{r2,j}^t$})
+\end{equation}
+\item{DE/current-to-best/1}
+\begin{equation}
+\label{eq:cur2best1}
+\mbox{\boldmath $v_{i,j}^{t+1}$}=\mbox{\boldmath $x_{i,j}^t$}+F \cdot (\mbox{\boldmath $x_{gbest,j}^t$}-\mbox{\boldmath $x_{i,j}^t$})+F \cdot (\mbox{\boldmath $x_{r1,j}^t$}-\mbox{\boldmath $x_{r2,j}^t$})
+\end{equation}
+\item{DE/rand/2}
+\begin{equation}
+\label{eq:rand2}
+\mbox{\boldmath $v_{i,j}^{t+1}$}=\mbox{\boldmath $x_{r1,j}^t$}+F \cdot (\mbox{\boldmath $x_{r2,j}^t$}-\mbox{\boldmath $x_{r3,j}^t$})+F\cdot (\mbox{\boldmath $x_{r4,j}^t$}-\mbox{\boldmath $x_{r5,j}^t$})
+\end{equation}
+\item{DE/best/2}
+\begin{equation}
+\label{eq:best2}
+\mbox{\boldmath $v_{i,j}^{t+1}$}=\mbox{\boldmath $x_{gbest,j}^t$}+F \cdot (\mbox{\boldmath $x_{r1,j}^t$}-\mbox{\boldmath $x_{r2,j}^t$})+F \cdot (\mbox{\boldmath $x_{r3,j}^t$}-\mbox{\boldmath $x_{r4,j}^t$})
+\end{equation}
+\end{enumerate}
+この時，$i,j$は個体番号と次元数を表し，$r_1,...,r_4$は1から$N$までの一様乱数の整数を表す．
+「DE/rand/1」は，個体の親集団の中から3つの個体をランダムに選択し，その相対距離を用いて新たに解候補$v_{i,j}^{t+1}$を生成する．「DE/best/1」は，個体の親集団の中の最良個体と個体を2つランダムに選択し，その最良個体付近に新しい解候補$v_{i,j}^{t+1}$を生成する．「DE/current-to-best/1」は，ランダムに選択した2つの個体と，最良個体と個体自身の相対距離と用い，最良個体方向へ新たに解候補$v_{i,j}^{t+1}$を生成する．「DE/rand/2」では，親集合から5つの個体をランダムに選択し，式(\ref{eq:rand1})よりも広い探索領域内に新しく解候補$v_{i,j}^{t+1}$を生成する．「DE/best/2」も同様，式(\ref{eq:best1})よりも広い探索領域内に新しく解候補$v_{i,j}^{t+1}$を生成する．
+
+\item {\bf STEP3: 交叉} \\
+解に多様性を持たせるため，ここではSTEP2で生成した解候補$v_{i,j}^{t+1}$と個体$x_i$を確率的に交叉させ，新たに解$u_{i,j}^{t+1}$を生成する．生成式は次式の通りである．
+\begin{equation}
+u_{i,j}^{t+1}=\begin{cases}
+v_{i,j}^{t+1} & {\rm if}(rand(0,1) \leq C_r) \ or \ j=D \\
+x_{i,j}^{t+1} & {\rm if}(rand(0,1) > C_r) \ and \ j \neq D
+\end{cases}
+\end{equation}
+ここで$C_r$は$[0,1]$の範囲内での交叉係数を表す．この交叉係数$C_r$が一様乱数以上であればSTEP2で生成した解候補$v_{i,j}^{t+1}$が採用され，一様乱数未満であれば個体$x_{i,j}$が採用される．
+
+\item {\bf STEP4: 評価} \\
+最良個体と生成した解$u_{i,j}^{t+1}$を比較し，評価値の高い方を次世代に引き継ぐ．
+\item {\bf STEP5: 終了条件を満たすまでSTEP2へ戻る}
+\end{itemize}
+
+ここでは，一般的に用いられるDE/rand/1のアルゴリズムの疑似コードを以下のAlgorithm\ref{code:de}に記す．
+
+\begin{algorithm}[H]
+\caption{Differential Evolution (DE/rand/1)}
+\label{code:de}
+\begin{algorithmic}[3]
+\REQUIRE Objective Function $F(x), x=(x_1,x_2,...,x_d)$
+\STATE Initialize Population $x_i (i=1,2,...,N)$ and Velocity $v_i$
+\STATE Initialize $C_r, F$
+
+\WHILE{t $<$ Max Iteration}
+\FOR{i=1 to N}
+\STATE Select random integer $r_1, r_2 \in \{ 1,2,..., N| r_1 \neq r_2 \neq i\}$
+\STATE Generate a candidate $v_{i,j}$  [Eq. (\ref{eq:rand1})]
+\FOR{$j=1$ to $D$}
+\IF{$rand(0, 1) \leq C_r \ or \ j=D$}
+\STATE offspring $u_{i,j} = v_{i,j}^{t+1}$
+\ELSE[$rand(0,1) > C_r \ and \ j \neq D$]
+\STATE offspring $u_{i,j} = x_{i,j}^t$
+\ENDIF
+\ENDFOR
+\IF{$F(u_{i,j}^{t+1})>F(x_{pbest})$}
+\STATE Replace the offspring $u_{i,j}^{t+1}$ as $x_{pbest}$
+\ENDIF
+\ENDFOR
+\STATE t=t+1
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsection{Bat Algorithm (BA)}
+\label{ss:BA}
+
+% 数式番号に章番号を追加
+  \makeatletter
+  \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
+  \@addtoreset{equation}{subsection}
+  \makeatother
+
+Bat Algorithm(BA) \cite{BA}は群知能アルゴリズムの一つで，対象物までの方向や距離を知るコウモリの特性（エコロケーション）を利用して周囲の状況を認知し，大域探索と局所探索が進むにつれて探索速度を徐々に落とし，探索性能を自動調節することが可能なアルゴリズムである．
+% ．BAにおいて，コウモリは自らの発する超音波の周波数を持ち，その周波数を調整するためのパラメータとしてラウドネス${A}$を用いる．
+各個体の周波数${f_i}$，速度${v_i}$，位置${x_i}$は以下の式で定義し，更新される．
+ラウドネス${A}$は，コウモリが対象物に近づくと値が減少し，移動距離も比例して短くなる．
+コウモリの行動は以下３つで構成される．
+\begin{itemize}
+\item 大域探索: 各コウモリは位置${x_i}$において，自身が発する周波数${f_i}$の反響によって対象物との距離を測り，対象物に向かって速度${v_i}$で移動する．
+\item 局所探索: 対象物近辺にコウモリを移動させる．
+\item ランダム探索: 探索領域内にコウモリをランダムで移動させる．
+\end{itemize}
+
+BAで扱う各個体の周波数$f_i$，速度$v_i$，位置$x_i$は以下の式で定義される．
+\begin{equation}
+f_{i} =f_{min}+(f_{max}-f_{min}) \beta
+\label{eq:freq} 
+\end{equation}
+% \begin{equation}
+% d_i^{t-1}=x_*-x_i^{t-1}
+% \label{eq:d}
+% \end{equation}
+\begin{equation}
+\mbox{\boldmath $v_i^{t+1}$}=\mbox{\boldmath $v_i^{t}$}+\mbox{\boldmath $(x_*-x_i^t)$}* f_i
+\label{eq:vi}
+\end{equation}
+\begin{equation}
+\mbox{\boldmath $x_i^{t+1}$}=\mbox{\boldmath $x_i^{t}$}+\mbox{\boldmath $v_i^{t+1}$}
+\label{eq:xi}
+\end{equation}
+個体番号を$i$とし，各個体の周波数${f_i}$は個体の速度を制限するパラメータであり，$[0, \ 1]$の区間で表される．ここでは${f_{min}=0}$，${f_{max}=1}$として設定し，$\beta$は0から1の乱数が割り当てられる．
+局所探索では，全個体の最良解（グローバルベスト）$x_*$の周辺に新しい解候${x_{loc}}$を生成する．生成式は次の通りである．
+\begin{equation}
+\label{eq:loc}
+\mbox{\boldmath $x_{loc}$}=\mbox{\boldmath $x_*$} + \epsilon A_i^t
+\end{equation}
+パラメータ$\epsilon$は1 $\times$ $D$次元の配列で$[-1, \ 1]$区間のランダムな値が割り当てられる． ランダム探索では解探索空間にランダムで新たに解候補を生成する．生成式は以下の通りである．
+\begin{equation}
+\label{eq:rnd}
+\mbox{\boldmath $x_{rnd}$}=\mbox{\boldmath $x_{lb}$} + \mbox{\boldmath $(x_{ub}$} - \mbox{\boldmath $x_{lb})$}*rand(1,D)
+\end{equation}
+解探索空間の上限と下限をそれぞれ$\mbox{\boldmath $x_{ub}, x_{lb}$}$とし，$rand$は0から1までの乱数が入る．
+以上より各個体の解候補${x_i^{t+1}}$，${x_{loc}}$，あるいは$x_{rnd}$の評価値が各個体の最良解（パーソナルベスト）$x_{i*}$より良ければ更新され，同時にラウドネス$A$とその反射波であるパルスレート$r$も以下の式に基づいて更新される．
+\begin{equation}
+\label{eq:loud}
+A_i^{t+1}= \alpha A_i^t
+\end{equation}
+\begin{equation}
+\label{eq:pulse}
+r_i^{t+1}=r_i^t[1-exp(- \gamma t)]
+\end{equation}
+解を更新する度にラウドネス$A_i$は徐々に減少し，それに比例して評価頻度を下げていく．対してパルスレート$r_i$は増加していき，探索が進むにつれて局所探索頻度が減少する．\\ \
+従来のBAの疑似コードは以下のAlgorithm 1に記す．
+
+\begin{algorithm}[H]
+\caption{Bat Algorithm}
+\label{code:ba}
+\begin{algorithmic}[1]
+\REQUIRE 評価関数 $F(x)$の設定
+\STATE 各個体$x_i(i=1,2,...,N)$と速度$v_i$の初期化
+% \STATE Niche Radiusの算出 [eqs.(\ref{eq:lambda}), (\ref{eq:NR})]
+\STATE 周波数$f_i$の定義　[eq.(\ref{eq:freq})]
+\STATE パルスレート$r_i$とラウドネス$A_i$の初期化
+\WHILE{t $<$ Max Iteration}
+\FOR{i=1 to N}
+\STATE 大域探索: 新しい解候補$x_i^{t+1}$の生成と速度$v_i$の更新 [eqs.(\ref{eq:vi}),(\ref{eq:xi})]
+% \ELSE
+% \STATE Continue
+% \ENDIF
+\IF{$rand>r_i$}
+\STATE 局所探索: グローバルベスト$x_*$近辺に新しい解候補$x_{loc}$を生成 [eq.(\ref{eq:loc})]
+\ENDIF
+\STATE ランダム探索: 解空間に解候補の生成 [eq.(\ref{eq:rnd})]
+\IF{($rand<A_i \ \& \ F(x_i),F(x_{loc}),F(x_{rnd})<F(x_{i*})$}
+\STATE 新しい解の評価と更新
+\STATE パルスレート$r_i$の増加とラウドネス$A_i$の減少 [eqs.(\ref{eq:loud}),(\ref{eq:pulse})]
+\ENDIF
+\ENDFOR
+\STATE t=t+1
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Evolution Strategies with Covariance Matrix Adaptation (CMA-ES)}
+\label{ss:cma-es}
+% 数式番号に章番号を追加
+  \makeatletter
+  \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
+  \@addtoreset{equation}{subsection}
+  \makeatother
+
+Evolution Strategy with Covariance Matrix Adaptation (CMA-ES)　\cite{mu-CMA-ES}\cite{CMA-ES} は多変量正規分布を用いて解候補を生成し，それらの評価値を基に算出する共分散行列から探索範囲を決定する．CMA-ESの大きな特徴として，変数間の依存度を考慮している(パラメータチューニングを必要としない)という点と，単調に増減する線形的な問題に依存しないという点が挙げられる．CMA-ESには様々な手法がある中で，ここでは一般的な$(\mu|\mu_w,\lambda)$-CMA-ES \cite{CMA-ES} を紹介する．具体的なアルゴリズムについては以下のAlgorithm \ref{code:cma-es}に示し，終了条件を満たすまで以下の手順を繰り返す．
+\begin{itemize}
+\item {\bf STEP1: 個体の生成} 　\\
+まず，正規分布$N(0,I)$の範囲で解候補$z_i (i=1,2,...,\lambda)$を独立に生成し，それを基に設計変数$x_i (i=1,2,...,\lambda)$を生成する．生成式は以下の通りである．
+\begin{equation}
+\label{eq:cmaes-yi}
+\mbox{\boldmath $y_i^t$}=\mbox{\boldmath $\sqrt{C^t}z_i$}
+\end{equation}
+\begin{equation}
+\label{eq:cmaes-xi}
+\mbox{\boldmath $x_i^{t+1}$}=\mbox{\boldmath $m^t$}+ \sigma ^t \mbox{\boldmath $y_i$}
+\end{equation}
+
+設計変数$x_i$は共分散行列$N(0,(\sigma^t)^2 C^t)$の範囲から生成される．生成後，$x_i$を評価値で降順(評価値の高い順)にソートして順位付けし，$y_i$及び$z_i$も同様に順位付けする．$C^t$は，その共分散行列の範囲の広がり度合いを$d \times d$次元で表し，$\sigma^t$はステップサイズを，$m^t$は平均値ベクトル(探索範囲の中心)を表す．初期個体生成時，$C^0=I, \sigma^0=0$とする．また，$\lambda=4+[3In(n)]$, $\mu=[\frac{\lambda}{2}]$とする．
+
+\item {\bf STEP2: $\mu$個体の荷重和を算出し，平均ベクトル$\mbox{\boldmath $m_i^t$}$を更新} \\
+評価値で降順ソートした設計変数$\mbox{\boldmath $x_i$}$のうち，上位$\mu$個の荷重和を算出し，次式に従って平均値ベクトル$m$を更新する．
+\begin{equation}
+\label{eq:cmaes-mi}
+\mbox{\boldmath $m^{t+1}$}=\mbox{\boldmath $m^t$}+ \sum_{i=1}^{\mu}w_i(\mbox{\boldmath $x_i^t$}-\mbox{\boldmath $m^t$})
+\end{equation}
+この時，重み$w$は次式で表される．
+\begin{equation}
+\label{eq:cmaes-w}
+w_i=In(\frac{\lambda+1}{2})-In(i)
+\end{equation}
+重み$w$は$w_1 \geq w_2 \geq ... \geq w_\mu > 0$であり，$\sum_{i=1}^{\mu}w_i=1$を満たす．
+
+\item {\bf STEP3: ステップサイズ$\sigma$の更新} \\
+次式に従って進化パス$p_{\sigma}$及びステップサイズ$\sigma$を更新する．
+\begin{equation}
+\label{eq:cmaes-ps}
+p_{\sigma}^{t+1}=(1-c_{\sigma})p_{\sigma}^t+\sqrt{c_{\sigma}(2-c_{\sigma})}\sqrt{\mu_{eff}}\sum_{i=1}^{\mu}w_i \mbox{\boldmath $z_i$}
+\end{equation}
+\begin{equation}
+\label{eq:cmaes-s}
+\sigma^{t+1}=\sigma^t exp(\frac{c_{\sigma}}{d_{\sigma}}(\frac{||p_{\sigma}^{t+1}||}{\hat{\chi_n}}-1))
+\end{equation}
+この時，$c_{\sigma}$は進化パス$p_{\sigma}$の前世代との重みを表し，$\mu_{eff}$は設計変数の上位$\mu$個の加重平均の補正値，$d_{\sigma}$はステップサイズの減衰係数，$\hat{\chi_n}$は$n$変量正規分布のノルムの期待値を表す．これらのパラメータは次式で表される．
+\begin{equation}
+\label{eq:cmaes-csig}
+c_{\sigma}=\frac{4}{n+4}
+\end{equation}
+\begin{equation}
+\label{eq:cmaes-mu-eff}
+\mu_{eff}=\frac{1}{\sum_{i=1}^{\mu}w_i^2}
+\end{equation}
+\begin{equation}
+\label{eq:cmaes-d}
+d_{\sigma}=\frac{1}{c_{\sigma}}+1
+\end{equation}
+\begin{equation}
+\label{eq:cmaes-chi}
+\hat{\chi_n}=E[||N(0,1)||] \approx \sqrt{n}(1-\frac{1}{4n}+\frac{1}{21n^2})
+\end{equation}
+ここで$n$は最適化する数を表す．
+
+\item {\bf STEP4: 共分散行列$C$の更新} \\
+共分散行列$C$及びその進化パス$p_c$は次式で更新される．
+\begin{equation}
+\label{eq:cmaes-pc}
+p_c^{t+1}=(1-c_c)p_c^t+\sqrt{c_c(2-c_c)} \sum_{i=1}^{\mu}w_i \mbox{\boldmath $y_i^t$}
+\end{equation}
+\begin{equation}
+\label{eq:cmaes-c}
+\mbox{\boldmath $C^{t+1}$}=\mbox{\boldmath $C^t$}+c_1[p_c^{t+1}(p_c^{t+1})^T+(1-c_c(2-c_c))\mbox{\boldmath $C^t$}]+c_{\mu}\sum_{i=1}^{\mu}w_i(\mbox{\boldmath $y_i(y_i)$}^T-\mbox{\boldmath $C^t$})
+\end{equation}
+
+
+$c_{\sigma}$は共分散行列$C$の進化パス$p_c$の前世代との重みであり，$c_1$及び$c_{\mu}$は共分散行列$C$の更新に用いられる学習率を表す．これらのパラメータは次式で表される．
+\begin{equation}
+\label{eq:cmaes-c1}
+c_{1}=\frac{2}{(n+\sqrt{2})^2}
+\end{equation}
+\begin{equation}
+\label{eq:cmaes-cmu}
+c_{\mu}=1-c_1
+\end{equation}
+\begin{equation}
+\label{eq:cmaes-cc}
+c_c=\frac{4}{n+4}
+\end{equation}
+
+\end{itemize}
+
+\begin{algorithm}[H]
+\caption{CMA-ES}
+\label{code:cma-es}
+\begin{algorithmic}[5]
+\REQUIRE Objective Function $F(x), x=(x_1,x_2,...,x_d)$
+\STATE Calculate parameters [Eqs. (\ref{eq:cmaes-csig}) to (\ref{eq:cmaes-chi}), (\ref{eq:cmaes-c1}) to (\ref{eq:cmaes-cc})]
+\WHILE{t $<$ Max Iteration}
+\FOR{i=1 to N}
+\STATE Generate solution $x_i (i=1,2,...,\lambda)$ within $N(0, \sigma^2 C)$ [Eqs. (\ref{eq:cmaes-yi}),(\ref{eq:cmaes-xi})]
+\ENDFOR
+\STATE Evaluate and sort solution $x_i$
+\FOR{i=1 to N}
+\STATE Update $m_i$ by $w_i$ [Eqs. (\ref{eq:cmaes-w}),(\ref{eq:cmaes-mi})]
+\STATE Update step size $\sigma$ and covariance matrix $C$ by the evolution path $p_{\sigma}$ and $p_c$ [Eqs. (\ref{eq:cmaes-ps}),(\ref{eq:cmaes-s}),(\ref{eq:cmaes-pc}),(\ref{eq:cmaes-c})]
+\ENDFOR
+\STATE t=t+1
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+\newpage
+\section{Niching Scheme}
+\label{sec:ns}
+この章では，多峰性最適化問題において，EAsを拡張させて複数の最適解及び局所解探索を行うための機構であるNiching Schemeについて説明する．EAsは一つの最適解を探索することを目的とした設計であるため，複数の局所解を探索し，保持するには限界がある．この問題を解決するために導入したNiching Schemeについて\ref{ss:Crowding}節から\ref{ss:dnr}節で紹介する．
+
+\subsection{Crowding}
+\label{ss:Crowding}
+Crowding \cite{Crowding} は評価値が類似する個体が同じ場所付近に位置しているとき，その最近傍個体同士を比較し，評価値の高い方を残す．この時，比較する個体は親集合と子集合を含めた全個体における最近傍個体同士が比較対象となる．この動作を毎世代繰り返すことによって同じ局所解に個体が陥らないことを目的とした機構である．
+
+\subsection{Fitness Sharing}
+\label{ss:fs}
+Fitness Sharing \cite{FS} はCrowdingと同様，類似個体の評価値が低い方を淘汰させるための機構として用いられる．ここでは，その類似度を定義することで，同じ類似度を持つ個体同士が評価値を比較する．一般的に，類似度の算出方法は次式で表される．
+\begin{equation}
+\label{eq:sfunc}
+sh(d_{ij})= \begin{cases}
+1-(\frac{d_{ij}}{\sigma})^\alpha & ({\rm if} \ d_{ij} < \sigma)\\
+0 & ({\rm otherwise})
+\end{cases}
+\end{equation}
+ここで$d_{ij}$は個体$i,j$の間の距離を表し，$\alpha$は係数で$\sigma$はある恣意的な閾値(あるいはNiche radius\footnote{次節で説明する．})を表す．個体間距離が近いほどSharing function $sh(d_{ij})$の値は大きくなり，この数値を基にNiche count $m_i$を算出する．
+\begin{equation}
+\label{eq:nc}
+m_i=\sum_{j=1}^N sh(d_{ij})
+\end{equation}
+Niche count $m_i$は$i$番目の個体に対する全個体の密度を表している．このNiche countより，Shared function $f_i'$が次式のように算出される．
+\begin{equation}
+\label{eq:sfit}
+f_i'=\frac{f_i}{m_i}
+\end{equation}
+ここで，$f_i$は$i$番目の個体の評価値を表す．Shared function $f_i'$は，その個体密度であるNiche count $m_i$によって値が大きく変動する．$f_i'$の値が小さいほど$i$番目の個体密度は高く，値が大きければ個体密度は低いということになる．
+
+\subsection{クラスタリング}
+\label{ss:clustering}
+クラスタリングは対象となる集合の全個体に対して部分集合に分割する手法である．クラスタリングは，{\bf 階層的クラスタリング}と{\bf 非階層的クラスタリング}の２つに分類される．
+
+\subsubsection{階層的クラスタリング}
+\label{sss.hc}
+階層的クラスタリング(Hierarchical Clustering)は，一般的に$N$個のデータ(個体)が与えられたときに初期状態として$N$個のクラスタを生成する．次にクラスタ間の距離に基づいてクラスタ同士を併合させる．一つのクラスタになるまでこの併合を繰り返す．代表的なクラスタ分類に関して以下の手法がある．
+\begin{itemize}
+\item {\bf 最短距離法(Nearest neighbor method)} \\
+最近傍クラスタ同士を併合していく手法 \cite{NN-Clustering} である．クラスタ間の距離$d(C_i,C_j)$は次の式で定義される．
+\begin{equation}
+d(C_1,C_2) = \min_{x_i \in C_i, x_j \in C_j}(d(x_i,x_j))
+\end{equation}
+\item {\bf 最長距離法(furthest neighbor method)} \\
+最も遠いクラスタ同士を併合する手法．クラスタ間の距離$d(C_i,C_j)$は次の式で定義される．
+\begin{equation}
+d(C_1,C_2) = \max_{x_i \in C_1, x_j \in C_2}(d(x_i,x_j))
+\end{equation}
+\item {\bf 群平均法(group average method)} \\
+
+\begin{equation}
+d(C_1,C_2) = \frac{1}{|C_1||C_2|}\sum_{x_i \in C_1} \sum_{x_j \in C_2}d(x_i,x_j)
+\end{equation}
+\item {\bf ウォード法(Ward's method)} \\
+\begin{equation}
+d(C_1,C_2) = E(C_1 \cup C_2)-E(C_1)-E(C_2)
+\end{equation}
+\item {\bf 重心法(Centroid method)} \\
+重心法は
+\begin{equation}
+d(C_1,C_2) = d(\bar{x_i},\bar{x_j})
+\end{equation}
+\end{itemize}
+
+\subsubsection{非階層的クラスタリング}
+\label{sss:nhc}
+非階層的クラスタリング(Non-hierarchical Clustering)は
+
+\subsection{Niche Radius}
+\label{ss:nr}
+Niche Radiusは探索空間の
+
+\subsection{Dynamic Niche Radius}
+\label{ss:dnr}
+
+\section{Niching Methods}
+\label{sec:nm}
+% \textbf{XCSR}(実数値表現を扱う学習分類子システム)はXCSを実数値に対応するように拡張したものである.
+% その為, 基本的にはXCSと同様のアーキテクチャーやメカニズム, アルゴリズムを持つので, この節ではXCSとXCSRの違いに焦点を当てる. 
+% まず\ref{sss:XCSR_overview}節でXCSRの特徴について説明する. 
+% \ref{sss:XCSR_CS}節でXCSR実数値の表現方法であるCS表現について説明し, XCSとXCSRのメカニズムの違いを\ref{sss:XCSR_difference}節で説明する. 
+% 最後に\ref{sss:XCSR_parameter}でXCSRのハイパーパラメーターを説明する.
+
+
+\subsection{Crowding DE (CDE)}
+\label{ss:cde}
+
+\subsection{A Dynamic Archive Niching Differential Evolution (dADE)}
+\label{ss:dADE}
+
+\subsection{Niching the CMA-ES via Nearest-Better Clustering (NEA)}
+\label{ss:nea}
+
+
+\subsection{Covariance Matrix Self Adaptation Evolution Strategy with Repelling Subpopulations (RS-CMSA-ES)}
+\label{ss:rs-cmsa-es}
+
+
+
+\clearpage
+\newpage
+\section{Novelty Search-based Bat Algorithm (NSBA)}
+\label{sec:NSBA}
+% この章では\proposed で用いるDCAの基礎となるニューラルネットワーク及びディープラーニングを扱う.
+% はじめに階層型ニューラルネットワークとその学習方法を\ref{ss:NN}節で説明し, その学習方法を\ref{ss:bpg}節で説明する.
+% 次にニューラルネットワークを利用した機構である自己符号化器(オートエンコーダー)\cite{AE}を\ref{ss:AE}節で説明し, 最後に深いニューラルネットワークの学習である深層学習を\ref{ss:DL}節で説明する.
+
+\subsection{概要}
+\label{ss:NSBA-abst}
+% この節では最も基本的なニューラルネットワークである階層型ニューラルネットワークを説明する.
+% まずはニューラルネットワークの思想や設計に関して\ref{sss:NN_brain}節で説明し, \ref{sss:NN_node_layer}節で基本的な構成要素であるノードとレイヤーについて, \ref{sss:NN_activate_function}節で活性化関数について, そして最後に\ref{sss:NN_problems}節で出力層の設定について説明する.
+
+\subsection{アルゴリズム}
+\label{sss:NSBA-algorithm}
+
+
+\clearpage
+\newpage
+\section{Niche Radius-based Bat Algorithm (NRBA)}
+\label{sec:NRBA}
+
+\subsection{概要}
+\label{ss:NRBA-abst}
+
+
+\subsection{アルゴリズム}
+\label{sss:NRBA-algorithm}
+
+\clearpage
+\newpage
+\section{Dynamic Niche Radius-based Bat Algorithm (DNRBA)}
+\label{sec:DNRBA}
+
+\subsection{概要}
+\label{ss:DNRBA-abst}
+
+
+\subsection{アルゴリズム}
+\label{sss:DNRBA-algorithm}
+
+
+\newpage
+\section{多峰性最適化問題}
+\label{sec:MOP}
+
+
+\newpage
+\section{実験}
+\label{sec:experiment}
+
+
+\FloatBarrier
+
+
+
+
+% \clearpage
+% \section{実験}
+% \label{sec:EXP}
+% この章では\proposed の検証実験を行う.
+% \ref{ss:EXP_intro}節では実験目的と実験内容, \ref{ss:EXP_mnist}節ではMNISTデータセット分類問題を用いた実験, \ref{ss:EXP_MPP}節ではマルチプレクサ問題を用いた実験を行う.
+% 最後に両実験の考察を\ref{ss:EXP_discussion}節で行う.
+
+% \subsection{実験内容}
+% \label{ss:EXP_intro}
+\subsubsection*{目的}
+% 1) \proposed が従来のXCSRが学習できない高次元な問題を解くことが出来るか, 及び 2) 得られた分類子は解釈性の高い一般化されたルールになっているか, を検証することを目的として実験を行う.
+% 本論文ではMNISTデータセット分類問題(\ref{ss:mnist}節)及び11-マルチプレクサ問題(\ref{ss:MPP}節)の2つの実験を行う.
+
+% MNISTデータセット分類問題は画像で入力された``3''と``8''を分類する問題であり, 入力が784次元と高次元であることが特徴である.
+% ``3''と``8''の共通する特徴と異なる部分を獲得することが目的である.
+% マルチプレクサ問題は入力は11次元と高次元ではないが, 画像のように均一な粒度での圧縮ができないため難しい問題である.
+% NNが上手く圧縮・復元出来ない問題に対して, 学習が出来るかそして一般的なルールが得られるかを検証するのが目的である.
+
+\subsubsection*{設定}
+% 実験は従来のXCSRと\proposed を比較する.
+% \proposed は圧縮された入力に向けたXCSRの正答率がほぼ100\%に収束していなければ高次元入力を学習するXCSRも用いる.
+% \proposed 内のXCSRと比較手法としてのXCSRのハイパーパラメーターは同一にし, 平等な条件にしている.
+% DCA及び全てのXCSRは予め決められた回数(エポック)学習を行う.
+% DCAは入力層と出力層以外に0.2の確率でドロップアウト(\ref{sss:DL_overlerning}節)を適用し, オプティマイザーにはAdam(\ref{sss:DL_optimizer}節)を用いた.
+% また, DCAの学習は100個のミニバッチ学習を用い事前学習や正則化は実施しなかった.
+% XCSRは学習を100回毎に評価を行い, 評価時には学習は行わず, $P_{explr}$(ランダムに行動する割合)の値に関わらずグリーディー選択\footnote{グリーディー選択は貪欲法とも呼ばれ, 最も評価値の高い行動を選択する戦略である. この実験においては評価値は予測報酬を指す.}によって出力を決定する.
+% また, 評価時に生成された分類子や更新・削除された分類子などは評価が終わると評価が始まる前の状態に復元され, 評価が学習に影響を与えることはない.
+% DCAも1000エポックに1回の頻度でモデルの評価を行うが, これも同様に学習に影響を与えない.
+% なお全てのXCSRにおいて, 入力に対し正しい出力がされていた時の報酬値を1000, 不正解時の報酬値は0に設定した.
+
+% 設定したハイパーパラメーターは問題によって異なるのでそれぞれの実験の節で説明する.
+
+
+% \subsection{MNISTデータセット分類問題}
+% \label{ss:EXP_mnist}
+% MNISTデータセット分類問題の評価基準と設定したハイパーパラメーターを\ref{sss:mnist_param}節で, 実験結果を\ref{sss:mnist_results}節で示す.
+
+\subsubsection{評価基準とハイパーパラメーター}
+\label{sss:mnist_param}
+
+
+
+\subsubsection{結果}
+\label{sss:mnist_results}
+
+
+% 最後に従来のXCSRと\proposed の学習回数ごとのマクロ分類子数の変化を図\ref{fig:mnist_c}に示した.
+% 薄い灰色の線が従来のXCSR, 濃い灰色の線が\proposed(圧縮ルール未使用)の結果で, 縦軸がマクロ分類子数(ユニークな分類子数), 横軸が学習回数を示している.
+% この実験では$N=1000$としたので最大値は1000である.
+% マクロ分類子数は少ないほど, 少ない分類子で環境に適用できているのでより一般的なルールが獲得されていると言える.
+% 図から, 従来のXCSRはマクロ分類子数は最大値である1000個を維持しているが, \proposed は450個程度で収束している.
+% \proposed とXCSRの収束値はそれぞれ447.9個, 1000.0個であった.
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/mnist_c.png}
+% \caption{MNISTデータセット分類問題における\proposed とXCSRのマクロ分類子数}
+% \label{fig:mnist_c}
+% \end{figure}
+\FloatBarrier
+
+
+
+\FloatBarrier
+\subsubsection{結果}
+\label{sss:mpp_results}
+% まずはDCAの学習エポックごとの出力層の損失(誤差)の変化を図\ref{fig:mpp_error}に示した.
+% 灰色の線がデコード層の損失(誤差)でグラフの縦軸の主軸(左軸)である.
+% 黒色の線が分類層の損失(誤差)でグラフの縦軸の副軸(右軸)である.
+% 横軸は学習エポックを示している.
+% 図から学習エポックが大きくなるにつれて損失が小さくなり, 途中から収束していることがわかる.
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/mpp_error.png}
+% \caption{11-マルチプレクサ問題における出力層の損失}
+% \label{fig:mpp_error}
+% \end{figure}
+
+% 次にDCAの学習エポックごとの分類精度の変化を図\ref{fig:mpp_accuracy}に示した.
+% 縦軸が分類精度, 横軸が学習エポックを示している.
+% 図から学習エポックが大きくなるにつれて分類精度が高くなり収束していることがわかる.
+% DCAの分類精度の収束値は86.7\%であった.
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/mpp_accuracy.png}
+% \caption{11-マルチプレクサ問題におけるDCAの分類精度}
+% \label{fig:mpp_accuracy}
+% \end{figure}
+
+% 次に従来のXCSRと\proposed の学習回数ごとの分類精度の変化を図\ref{fig:mpp_p}に示した.
+% 一番薄い灰色の線が従来のXCSR, 濃い灰色の線が\proposed(圧縮ルール未使用), 黒い線が\proposed(圧縮ルール使用)の結果で, 縦軸が分類精度, 横軸が学習回数を示している.
+% \proposed(圧縮ルール未使用)は圧縮された入力に向けたXCSRのみの結果を表し, 高次元入力を学習するXCSRを用いた結果ではない.
+% 11-マルチプレクサ問題では圧縮された入力に向けたXCSRのみでは十分に学習できていないので高次元入力を学習するXCSRを用いた学習も行った.
+% \proposed(圧縮ルール使用)は圧縮された入力に向けたXCSRを学習後, 高次元入力を学習するXCSRを用いた結果である.
+% 図からXCSR, \proposed(圧縮ルール未使用), \proposed(圧縮ルール使用)の分類精度は収束していることがわかる.
+% \proposed(圧縮ルール使用), \proposed(圧縮ルール未使用)とXCSRの収束値はそれぞれ100.0\%, 67.8\%, 56.8\%であった.
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/mpp_p.png}
+% \caption{11-マルチプレクサ問題における\proposed とXCSRの分類精度}
+% \label{fig:mpp_p}
+% \end{figure}
+
+% 表\ref{tab:mpp_classifier}にXCSR, \proposed(圧縮ルール未使用), \proposed(圧縮ルール使用)がそれぞれ獲得した分類子の例を示した.
+% 3つの表があるが, 上からXCSR, \proposed(圧縮ルール未使用), \proposed(圧縮ルール使用)の順である.
+% 得られた分類子は$f$の降順にソートして上から10個を表に掲載している.
+% なお, 分類子の条件部は本来はCS表現で表されるが, 表示の都合上, XCSの条件部$C$の形式に変換している(変換方法はMNISTデータセット分類問題(\ref{sss:mnist_results}節)と同様である).
+% 一番左の列はその分類子の正誤(神様視点)を示しており, ``○''は正しく``X''は誤っていることを示す.
+% XCSRの分類子を見てみると, 分類子は正しいが, $C$に\#が少なく, 一般的なルールが得られていない.
+% \proposed(圧縮ルール未使用)で得られた分類子は\#は多く, 一般的であるが, $\varepsilon$が大きく, 誤ったルールが多く獲得されてしまっている.
+% また, アドレス部(先頭の3桁)に\#が入ってしまっており, 表\ref{tab:11MPP}に示された最も一般的なルールではない.
+% 一方で\proposed(圧縮ルール使用)で得られた分類子は\#が多く, 一般的でありかつルールも正しい.
+% 表\ref{tab:11MPP}に示される最も一般的なルールも得られていることが確認できる.
+% つまり, \proposed(圧縮ルール使用)で得られた分類子は一般的で解釈性の高いと言える.
+% なお, あるシードにおいてそれぞれで得られた分類子の一覧は付録\ref{app:11mux_cl}に記している.
+% \begin{table}[h]
+% \caption{11-マルチプレクサ問題においてXCSRが獲得した分類子の例}
+% \label{tab:mpp_classifier}
+% \centering
+% \ \\ 
+% \textbf{XCSR}\\
+% \begin{tabular}{c|c|c|c|c|c|c|c|c|c}
+% \hline
+% 正誤&$C$&$A$&$p$&$\varepsilon$&$f$&$exp$&$ts$&$as$&$n$ \\
+% \hline
+% ○&00000000000&0&1000&0&0.59&4&48320&1.00&1 \\
+% ○&10101100000&0&1000&0&0.49&3&49812&1.00&1 \\
+% ○&11010000111&1&1000&0&0.49&3&49987&1.00&2 \\
+% ○&10011101001&0&0&0&0.49&3&49384&1.00&1 \\
+% ○&101101\#10\#0&1&0&0&0.49&3&49365&1.00&1 \\
+% ○&11011000110&0&0&0&0.49&3&49676&1.00&1 \\
+% ○&11011010000&1&0&0&0.49&3&49975&1.00&2 \\
+% ○&11101011110&1&0&0&0.49&3&49762&1.00&1 \\
+% ○&01101000001&0&1000&0&0.49&3&49222&1.33&1 \\
+% ○&10001000011&0&1000&0&0.49&3&49881&1.67&2 \\
+% \hline
+% \end{tabular}
+% \ \\
+% \ \\
+% \textbf{\proposed(圧縮ルール未使用)}\\
+% \begin{tabular}{c|c|c|c|c|c|c|c|c|c}
+% \hline
+% 正誤&$C$&$A$&$p$&$\varepsilon$&$f$&$exp$&$ts$&$as$&$n$ \\
+% \hline
+% ○&\#10\#\#11001\#&0&2.65&14.27&1.00&465&49898&13.62&15 \\
+% X&\#11\#\#11001\#&0&103.89&150.55&1.00&1155&49995&16.94&21 \\
+% X&\#00\#\#110100&1&637.97&403.46&1.00&866&49996&14.93&14 \\
+% X&\#01\#\#1\#001\#&0&915.58&142.56&1.00&2436&49993&22.80&19 \\
+% ○&\#10\#\#11001\#&1&842.53&239.09&0.93&42&49991&11.61&13 \\
+% X&\#\#0\#\#0\#0011&1&177.75&313.23&0.93&286&49976&8.81&6 \\
+% X&\#11\#\#11001\#&1&585.34&328.33&0.91&361&49968&18.42&12 \\
+% X&\#\#0\#\#0\#0011&0&854.01&276.37&0.89&568&49931&10.42&10 \\
+% X&\#01\#\#110100&0&479.26&433.07&0.88&4057&49988&17.07&15 \\
+% X&\#00\#\#1\#001\#&1&576.72&407.04&0.88&1855&49978&16.11&13 \\
+% \hline
+% \end{tabular}
+% \ \\
+% \ \\
+% \textbf{\proposed(圧縮ルール使用)}\\
+% \begin{tabular}{c|c|c|c|c|c|c|c|c|c}
+% \hline
+% 正誤&$C$&$A$&$p$&$\varepsilon$&$f$&$exp$&$ts$&$as$&$n$ \\
+% \hline
+% ○&1101011\#000&1&0&0&0.17&2&49712&9.00&2 \\
+% ○&0000\#\#\#\#\#\#\#&1&0&0&0.12&19&49946&20.74&2 \\
+% ○&100\#\#\#\#0\#\#\#&1&0&0&0.10&16&49981&25.29&2 \\
+% ○&1011\#\#\#\#1\#\#&0&0&0&0.10&20&49735&23.36&3 \\
+% ○&101\#\#\#\#\#0\#\#&1&0&0&0.08&13&49987&23.07&2 \\
+% ○&010\#\#1\#\#\#\#\#&1&1000&0&0.08&11&49982&22.33&2 \\
+% ○&001\#1\#\#\#\#\#\#&0&0&0&0.07&14&49986&25.36&2 \\
+% ○&101\#\#\#\#\#1\#\#&0&0&0&0.07&11&49935&18.33&1 \\
+% ○&100\#\#\#10\#\#\#&0&1000&0&0.07&17&49929&29.15&3 \\
+% ○&100\#\#\#\#0\#\#\#&1&0&0&0.06&13&49981&25.20&1 \\
+% \hline
+% \end{tabular}
+% \end{table}
+
+% 最後に従来のXCSRと\proposed の学習回数ごとのマクロ分類子数の変化を図\ref{fig:mpp_c}に示した.
+% 薄い灰色の線が従来のXCSR, 濃い灰色の線が\proposed(圧縮ルール未使用), 黒色の線が\proposed(圧縮ルール使用)の結果で, 縦軸がマクロ分類子数(ユニークな分類子数), 横軸が学習回数を示している.
+% この実験では$N=1000$としたので最大値は1000である.
+% マクロ分類子数は少ないほど, 少ない分類子で環境に適用できているのでより一般的なルールが獲得されていると言える.
+% 図から, 従来のXCSRと\proposed(圧縮ルール使用)に対して\proposed(圧縮ルール未使用)が少ない分類子数である.
+% \proposed(圧縮ルール使用), \proposed(圧縮ルール未使用)とXCSRの収束値はそれぞれ930.0個, 644.7個, 945.0個であった.
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/mpp_c.png}
+% \caption{11-マルチプレクサ問題における\proposed とXCSRのマクロ分類子数}
+% \label{fig:mpp_c}
+% \end{figure}
+
+% なお, マルチプレクサ問題ではDCAの初期値が\proposed に大きな影響を与えるため, この実験ではDCAの乱数シードを固定して行っているが, 乱数シードも変更した結果は付録\ref{app:11mux_seed}に示した.
+% この結果から, \proposed はDCAの初期値によっては上手く学習できないことがあることがわかる.
+
+\FloatBarrier
+\subsection{考察}
+\label{ss:EXP_discussion}
+% 図\ref{fig:mnist_error}, \ref{fig:mnist_accuracy}, \ref{fig:mpp_error}, \ref{fig:mpp_accuracy}から両問題について, DCAの学習は収束しており, 十分に学習が出来ていることがわかるため, DCAの学習に問題がない前提で考察する.
+
+% 表\ref{tab:exp_all}にMNISTデータセット分類問題と11-マルチプレクサ問題によるDCA, XCSR, \proposed(圧縮ルール未使用), \proposed(圧縮ルール使用)の分類精度(図\ref{fig:mnist_p}, \ref{fig:mpp_p})をまとめた.
+% 一番左の列の``MNIST分類問題''は``MNISTデータセット分類問題''を略した書き方であり, 右から2番目, 1番目の列の``\proposed(未使用)''と``\proposed(使用)''はそれぞれ\proposed(圧縮ルール未使用), \proposed(圧縮ルール使用)の略である.
+% \begin{table}[h]
+% \caption{分類精度のまとめ}
+% \label{tab:exp_all}
+% \centering
+% \ \\
+% \begin{tabular}{c|c|c|c|c}
+% \hline
+%  & DCA & XCSR & \proposed(未使用) & \proposed(使用)\\
+% \hline
+% MNIST分類問題&94.5\%&51.1\%&\textbf{97.3\%}&--\\
+% 11-マルチプレクサ問題&86.7\%&56.8\%&67.8\%&\textbf{100.0\%} \\
+% \hline
+% \end{tabular}
+% \end{table}
+
+% MNISTデータセット分類問題ではXCSRはほぼ50\%と, 全く学習できていないが, \proposed(圧縮ルール未使用)ではほぼ100\%の精度で学習できている.
+% これによりXCSRの学習が不可能な高次元な問題に対して, \proposed は学習が可能であると言える.
+% さらに, DCAの分類精度よりも\proposed の方が2.8ポイント程分類精度が高くなっている.
+% 11-マルチプレクサ問題においてはXCSRの分類精度約57\%なのに対して\proposed(圧縮ルール未使用)は約68\%と10ポイント以上精度が高まってはいるが, 決して精度が高いわけではない.
+% この原因はDCAで圧縮できなかったことだと考えられる.
+% 11 bitの小規模な問題にも関わらず, DCAの分類精度が約87\%と低いのはマルチプレクサ問題が情報の圧縮が出来ず, 特徴量の分布がサンプルによって異なる, とNNには難しい問題であるからである(なお, DCAの層を深くすることでDCAの分類精度を向上させることは可能である(付録\ref{app:deeper}参照)が, この問題がNNniha難し問題であることにはかわらない).
+% DCAでの圧縮時に複数の入力が1つの入力にマップングされたり, 情報の損失が起こったことによって\proposed(圧縮ルール未使用)は高い精度で学習することができなかった.
+% しかし, \proposed(圧縮ルール未使用)で得られた不完全なルールを利用した\proposed(圧縮ルール使用)は100.0\%まで学習が出来た.
+% これは不完全なルールが修復されたことによって実現された.
+% 実際に表\ref{tab:mpp_classifier}の\proposed(圧縮ルール未使用)で得られた分類子は理想は0か1000の値をとる$p$が変な値になっていたり, 条件部が正しくない一般化がされたりしているが, \proposed(圧縮ルール使用)でこれらが改善されていることが確認できる.
+% このことから, \proposed はNNの苦手な問題に対しても適用可能であると言える.
+% なお, DCAの学習精度より\proposed の方が高い理由は\proposed 内のXCSRが持つの特殊化の性能が関係している\cite{DCA}.
+% 通常NNは与えられたデータ全体に合わせた最適化が行われる.
+% これによって汎化性能が優れる一方, 外れ値に近いような特殊(稀)な入力に対して適応できない.
+% NNは1つのモデルしか持たないため, 特殊な入力や稀な入力は他の一般的な(普通)の入力によって平滑化されてしまう.
+% 一方でLCSは分類子という小さなモデルの集合体のため, 一般的な入力に照合する分類子と特殊(稀)な入力に照合する分類子を両方獲得し, 共存させることができるため, リソースが許せば全ての入力に適応した学習が可能になる.
+% この作用によって\proposed はNNであるDCAよりも高い分類精度を持つことが可能である.
+
+% 図\ref{fig:38_classifier}から, デコードした分類子は解釈性の高い分類子が得られていることがわかった.
+% また, 表\ref{tab:mpp_classifier}からも\proposed(圧縮ルール使用)は通常のXCSRに比べて\#が多く, またXCSRで得られなかった最も一般的な分類子が獲得できていることが確認できた.
+% 図\ref{fig:mnist_c}, \ref{fig:mpp_c}から\proposed は従来のXCSRに比べて少ない分類子で高い分類精度であり, より一般的な分類子が獲得できていると言える.
+% よって\proposed は解釈性に優れた一般的なルールが獲得できると言える.
+
+% よって, \proposed は 1) 従来のXCSRが学習できない次元の問題に対して学習が可能であり, 2) NNよりも精度良く学習できる可能性があり, 3) 解釈性の高い一般的なルールを獲得できると言える.
+% これらのことから\proposed の有効性が実証された.
+
+
+\clearpage
+\section{おわりに}
+\label{sec:END}
+この章では本論文のまとめを\ref{ss:END_end}節で行い, 今後の課題を\ref{ss:END_future}節で行う.
+
+\subsection{まとめ}
+\label{ss:END_end}
+% 本論文では, 高次元の入力に適用できる解釈性の高い汎用的な知識獲得手法の取り組みとして, 解釈性に優れた知識を獲得可能な機械学習であるLCSと高次元な入力の学習が可能な機械学習法であるDLに着目し, オートエンコーダーと分類NNを組み合わせることで高次元入力の圧縮精度を高めたDNNであるDCAと, それを用いることで解釈性と多様な入力への高次元対応性を併せ持った\proposed を提案した.
+
+% LCSは, 解釈性に優れた知識を生成可能な知識獲得技術であり, 状態-行動ルール(分類子)を学習する遺伝的アルゴリズムと強化学習を組み合わせたルールベースの進化的機械学習手法である.
+% LCSの特徴は,複数の入力状態にする一般的なルールを獲得(分類子の一般化)することである.
+% この結果, 一般化されたルールは, データセットに存在する共通の規則を表現することになり, 解釈性に優れた知識となる.
+% しかしながら, 高次元のデータセットにおいて, LCSは適切に一般化されたルールの獲得が困難となり, 学習性能が著しく低下する問題がある.
+% 一方でDLは様々な高次元情報を扱う問題に対して高いパフォーマンスを得ることが出来るが, 得られた結果の理由付けが難しく, 人間が理解することは困難である.
+
+% これらの問題を解決するために, 低次元問題の知識を利用して高次元問題に対応するLCSや入力の注目した特徴を可視化するDL技術などが提案されているが, これらの手法は適用できる問題が限られていたり, 根本的な知識獲得できなかったりという問題がある.
+
+% そこで, \proposed は, DCAによって高次元入力を圧縮し, 低次元環境において実数値に対応したLCSの1つであるXCSRがルールを学習し, これにより得られた圧縮された知識を元の次元に復元することで高次元入力の高い分類精度と解釈性の高いルールの獲得を可能にした.
+% またここで獲得されたルールが, DLによる次元圧縮によって必要な情報の損失によって不完全なものになってしまった場合, この不完全なルールを状態空間の絞り込みに利用し, 修正することで完全なルールを獲得可能になる.
+
+% \proposed では具体的に以下のプロセスを行う.
+% 1) 環境からの入力サンプルを用いてDCAの学習を行う.
+% 2) XCSRがDCAのエンコーダーで圧縮された入力を学習する. 入力に対する行動を環境に行い, 環境から報酬を得ることによって分類子の更新を行う.
+% 3) XCSRで得られた分類子をDCAのデコーダーでデコードする.
+% 4) デコードされた分類子が不完全であればそれを初期値としてXCSRを高次元入力から学習させ, 不完全ルールを修復する.
+% 以上のプレセスを踏むことにより, 高次元な入力から解釈性の高い知識を獲得する.
+
+% 提案手法の有効性を検証するために, MNISTデータベースを用いた分類問題と11-マルチプレクサ問題による実験を行った.
+% MNISTデータベースを用いた分類問題は784次元の高次元な問題であり, 11-マルチプレクサ問題は次元数は少ないがNNによる圧縮が出来ない難しい問題である.
+% 従来手法であるXCSRとの比較を行った結果, 次のような知見が得られた.
+% 1) 従来のXCSRが学習できない高次元の問題に対して学習が可能であった.
+% 2) NNよりも精度良く学習できる可能性がある.
+% 3) 解釈性の高い一般的なルールを獲得可能である.
+% このことから提案手法は高次元データから解釈性の高い知識を獲得できることが示された.
+
+\subsection{今後の課題}
+\label{ss:END_future}
+% 今後の課題及び改善点は次の通りである.
+% \begin{itemize}
+% \item ニューラルネットワークでの圧縮が困難な問題において, \proposed はDCAの初期値によって学習性能が依存し, 学習できたりできなかったりすることがある(付録\ref{app:11mux_seed}参照). DCAを初期値依存しないような改良をする必要がある. DCAの事前学習などが例として挙げられる.
+% \item \proposed はNNとLCSを組み合わせているためただでさえ多いハイパーパラメーターがより多くなり, またそのパラメーターが結果に与える影響が大きい(付録\ref{app:deeper}参照)のに加えて, 適切なパラメーター値を決定する理論が無い.
+% 現状試行錯誤や経験による設定しかできず, パラメーター数の削減など今後改良の余地がある.
+% \item コンプリートアクションマップを生成するXCSRは, 負例の分類子も生成する必要があり, 行動数が増えた際に必要なリソース(計算コストや分類子数)が多くなってしまう. より少ないリソースで学習が可能なようにコンプリートアクションマップではなくベストアクションマップを作成するよう改良する.
+% \item オートエンコーダーでの圧縮空間内ではデータは連続ではないため, その中でのデータの加工が実世界に及ぼす影響を想定することはできず, 理論的な説明ができない. 変分オートエンコーダー(Variable Autoencoder)\cite{VAE}を用いるなど, 圧縮空間内でのデータの加工が意味を持つような改良を加えることで精度や解釈性が向上する見込みがある.
+% \item 本論文ではMNIST分類問題とマルチプレクサ問題を題材として取り上げたが, 他の問題に適用しその有効性を広く検証する必要がある.
+% \item XCSRは実数値入力に対応しているが, 本論文では離散値の問題でしか検証をしていない. 連続値入力に対する性能検証をする必要がある.
+% \item 二点交叉は問題によっては不向きなため, 一様交叉に変更することでGAの効率を上げる.
+% \item 本論文の実験では1つの問題として11-マルチプレクサ問題を取り上げ, 学習に成功したが20-マルチプレクサ問題においては学習が上手く行っていない. パラメーターの設定を変えるなどの検討が必要である.
+% \end{itemize}
+
+
+\clearpage
+\pagestyle{plain}
+\section*{謝辞}
+\addcontentsline{toc}{section}{謝辞}
+本論文の執筆並びに研究を進める上で御指導頂いた高玉圭樹教授に感謝の意を表します. 
+また, 論文執筆において校正・校閲をして頂いた博士課程の高野諒さん, 日々の研究テーマに関して助言をして頂いた佐藤寛之准教授, 並びに日々研究を共にしている研究室の皆様, 研究を支えて頂いている皆様にこの場を借りて感謝致します. 
+
+\clearpage
+\newpage
+\addcontentsline{toc}{section}{参考文献}
+\bibliography{./ref/ref}
+
+\clearpage
+\setcounter{section}{0}
+\setcounter{subsection}{0}
+\section*{付録}
+\addcontentsline{toc}{section}{付録}
+\renewcommand{\thesubsection}{\Alph{subsection}}
+\renewcommand{\thesubsubsection}{\Alph{subsection}-\arabic{subsubsection}}
+
+% \subsection{DCAの復元精度と分類精度の比較}
+% \label{app:dca}
+% DCA分類層の分類誤差を同じ条件で学習したDNNと, またDCAのデコード層の復元誤差(デコードの精度)を同じ条件で学習したディープオートエンコーダーと比較し, DCAの有効性を検証する.
+% 実験には論文\cite{sonar}で用いているソナー問題(Connectionist Bench (Sonar, Mines vs. Rocks) Data Set)\cite{uci_sonar}を用いた.
+% ソナー問題はソナーを発し, 反射波のスペクトルから鉱物か岩かどうかを見分ける問題であり, 60次元の実数値のスペクトルが与えられ, 2つのクラスに分類をする.
+% DCA, DNN, ディープオートエンコーダーの入力層のノード数は60であり, 中間層のノード数は\{24-10-24\}の3層で, ディープオートエンコーダーの出力層とDCAのデコード層のノードは60個, DNNの出力層とDCAの分類層のノードは2個で構成されている.
+% DCA, DNN, ディープオートエンコーダーのそれぞれのハイパーパラメーターは表\ref{tab:NN_parameter}に示した値を使用した.
+% DNNの出力層の活性化関数はソフトマックス関数(式(\ref{eq:softmax1}), (\ref{eq:softmax2}))を用いた.
+
+% \begin{table}[h]
+% \caption{NNのハイパーパラメーター}
+% \label{tab:NN_parameter}
+% \centering
+% \ \\
+% \begin{tabular}{c|c}
+% \hline
+% パラメーター名 & 値 \\
+% \hline
+% 入力層ノード数 & 60 \\
+% 中間層数 & 3 \\
+% 中間層の活性化関数 & ロジスティックシグモイド関数(式(\ref{eq:logistic})) \\
+% 中間層構造 & 24-10-24 \\
+% オプティマイザー & SGD \\
+% 初期学習係数 & 0.02 \\
+% バイアスの初期値 & 0 \\
+% 重みの初期値 & ガウス分布に従う乱数 \\
+% 正則化 & L1正則化 \\
+% 事前学習 & 早期終了 \\
+% ドロップアウト & 入出力層以外に適用 \\
+% ドロップアウト率 & 50\% \\
+% ミニバッチのサンプル数 & 1 \\
+% \hline
+% \end{tabular}
+% \end{table}
+
+% 図\ref{fig:dnn_error}にDCAの分類層とDNNの出力層の損失の遷移を示す.
+% また, 図\ref{fig:ae_error}にDCAのデコード層とディープオートエンコーダーの出力層の損失の遷移を示す.
+% 両図とも横軸は学習エポックで縦軸が損失で小さい(下)ほど良い.
+
+% まず図\ref{fig:dnn_error}に注目すると, DCAとDNNの分類誤差は大きく変わらないか若干DCAの方が小さいことがわかる.
+% これによりDCAの分類精度は同じ条件のDNNの分類精度と同等以上であるといえる.
+% 次に図\ref{fig:ae_error}に注目すると, DCAのデコード誤差は同じ条件のディープオートエンコーダーのデコード誤差よりも小さいことがわかる.
+% つまりDCAのデコード及び圧縮の精度はディープオートエンコーダーよりも高いといえる.
+% 以上の結果よりDCAはディープオートエンコーダーよりも精度良く圧縮(エンコード)/復元(デコード)が可能であることがわかった.
+
+% \begin{figure}[!h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/dnn_error.png}
+% \caption{DCAの分類層とDNNの損失}
+% \label{fig:dnn_error}
+% \end{figure}
+% \begin{figure}[!h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/ae_error.png}
+% \caption{DCAのデコード層とディープオートエンコーダーの損失}
+% \label{fig:ae_error}
+% \end{figure}
+
+
+% \FloatBarrier
+% \subsection{高次元入力を学習するXCSRの引き継ぐパラメーターの検討}
+% \label{app:parameter}
+% デコードされた圧縮された入力に向けたXCSRで得られた分類子を高次元入力を学習するXCSRの初期値として設定する際, どのパラメーターを引き継ぐかが学習精度に影響を及ぼす.
+% どのパラメーターを引き継ぐかを11-マルチプレクサ問題を用いて検討するための実験を行った.
+% 分類子が持つパラメーターは\ref{sss:XCS_classifier}節に示したがその内, $C, A$はif-thenルールを構成する上で不可欠であるため必ず引き継ぐ必要がある.
+% $ts$は新しいXCSRで時間が初期化され, 互換性が無いため, 引き継げない.
+% 残りのパラメーター$p, \varepsilon, f, exp, as, n$に関して引き継ぐべきかを検討する必要がある.
+% $p, \varepsilon, f$は分類子の性質そのものを示しており, $exp, as, n$はその分類子が過去に経験した回数を示している.
+% 実験ではこの2種類のパラメーター群に分けて比較を行う.
+% 評価基準は, XCSR,　\proposed(圧縮ルール未使用), \proposed(圧縮ルール使用) で引き継ぐパラメーターを変更したときの分類精度である.
+% 実験のハイパーパラメーターは学習回数を20000回に変更したこと以外は\ref{ss:EXP_MPP}節の実験設定と同様である.
+% 表\ref{tab:exp_para}に実験を行った比較するパラメーターの初期値を示す.
+% \begin{table}[h]
+% \centering
+% \caption{比較するパラメーター初期値の一覧}
+% \label{tab:exp_para}
+% \ \\
+% \begin{tabular}{c|ccccc}
+% \hline 
+%  &$p$&$\varepsilon$&$f$&$exp$&$n, as$ \\
+% \hline
+% 引き継ぎ無し($C, A$のみ) & 0 & 0 & 0 & 0 & 1 \\
+% $p$ & ● & 0 & 0 & 0 & 1 \\
+% $\varepsilon$ & 0 & ● & 0 & 0 & 1 \\
+% $f$ & 0 & 0 & ● & 0 & 1 \\
+% $exp$ & 0 & 0 & 0 & ● & 1 \\
+% $n, as$ & 0 & 0 & 0 & 0 & ● \\
+% \hline
+% \end{tabular}
+% \ \\\ \\●は引き継ぐ項目を示す\\
+% \end{table}
+
+% 図\ref{fig:param1}～\ref{fig:param3}に実験結果を示した.
+% 横軸が学習回数で, 縦軸は分類精度を示す.
+% 凡例の``DCAXCSR(圧縮ルール未使用)''は圧縮された入力に向けたXCSRでの結果であり``DCAXCSR(圧縮ルール使用, 引き継ぎ無し)''は条件部と行動部以外の引き継ぎがないことを意味し, ``DCAXCSR(圧縮ルール使用, [パラメーター名])''は条件部・行動部に加えて[パラメーター名]に示されるパラメーターも引き継いだ結果である.
+
+% 図\ref{fig:param1}は分類子の性質を表すパラメーターを引き継いだ\proposed(引き継ぎ無し, $p$, $\varepsilon$, $f$)の分類精度の遷移を示す.
+% 結果として圧縮ルール使用する場合は最終的にほぼ100\%に収束するが, $p$を引き継いだ場合の学習の速度が一番早く, 逆に$\varepsilon$や$f$を引き継ぐと, $C, A$以外に何も引き継がない場合よりも学習の速度が下がってしまうことがわかる.
+% これにより, $p$は引き継ぐべきパラメーターであると言える.
+% 分類子の性質を表すパラメーターは引き継ぐことで学習の速度に影響を与えることがわかる.
+
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/param1.png}
+% \caption{分類子の性質を表すパラメーターを引き継いだ\proposed(引き継ぎ無し, $p$, $\varepsilon$, $f$)の分類精度の遷移}
+% \label{fig:param1}
+% \end{figure}
+
+% 図\ref{fig:param2}は分類子の過去の経験に関するパラメーターを引き継いだ\proposed(引き継ぎ無し, $exp$, $as, n$)の分類精度の遷移を示す.
+% 結果として圧縮ルール使用する場合は最終的にほぼ100\%に収束するが,  $C, A$以外に何も引き継がない場合, $exp$, $as+n$を引き継いだ場合の学習の様子に変化は見られなかった.
+% このことから, 過去の経験に関するパラメーターに関しては引き継ぐ/引き継がないは学習に影響を及ぼさないと言え, 引き継ぐ必要は無い.
+
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/param2.png}
+% \caption{分類子の過去の経験に関するパラメーターを引き継いだ\proposed(引き継ぎ無し, $exp$, $as, n$)の分類精度の遷移}
+% \label{fig:param2}
+% \end{figure}
+
+% また, 引き継ぐパラメーターが独立ではなくお互いに依存している可能性を考え, 複数のパラメーターを引き継ぐ実験を全組み合わせのパターンで行った. 
+% その中で, 単体で引き継いだときに最も性能が良かった$p$と別のパラメーターを組み合わせた結果を図\ref{fig:param3}に示した.
+% 結果として引き継ぐパラメーターの組み合わせによっては多少の影響はあるものの$p$のみに勝る結果は得られなかった.
+% これら実験結果をまとめると, $C, A$以外では$p$のみ引き継ぐのが最も学習性能を上げる効果があると言える.
+% なお, これらの考察に関しては既に\ref{sss:proposed_xcsr2}節で説明してある.
+
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/param3.png}
+% \caption{引き継ぐパラメーターを組み合わせた時の\proposed の分類精度の遷移}
+% \label{fig:param3}
+% \end{figure}
+
+% \clearpage
+% \subsection{MNISTデータセットの例}
+% \label{app:mnist_sample}
+% 実験で用いたMNISTデータセットの一部を``3''とラベル付けされたものを図\ref{fig:mnist3}, ``8''とラベル付けされたものを図\ref{fig:mnist8}に示した.
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/mnist3.png}
+% \caption{``3''とラベル付けされたサンプルの例}
+% \label{fig:mnist3}
+% \end{figure}
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/mnist8.png}
+% \caption{``8''とラベル付けされたサンプルの例}
+% \label{fig:mnist8}
+% \end{figure}
+
+% \clearpage
+% \subsection{MNISTデータセット分類問題で得られた分類子一覧}
+% \label{app:mnist_cl}
+% \ref{ss:EXP_mnist}節で行ったMNISTデータセット分類問題であるシードで得られた分類子の一覧を示す.
+% \ref{app:mnist_cl_xcsr}にはXCSRで得られた分類子, \ref{app:mnist_cl_proposed}では\proposed(圧縮ルール未使用)で得られた分類子を示す.
+% なお, 分類子は全て$f$の降順にソートしてある.
+
+% \subsubsection{XCSRで得られた分類子}
+% \label{app:mnist_cl_xcsr}
+
+
+\clearpage
+% \subsection{11-マルチプレクサ問題でのDCAの乱数シードを変更した際の実験結果}
+% \label{app:11mux_seed}
+% \ref{ss:EXP_MPP}節の11-マルチプレクサ問題の実験ではDCAの乱数シードを固定した場合の結果を示した.
+% これは, 単純な圧縮が出来ないような問題においてDCAの学習は初期値に依存しやすく, その値によって\proposed の学習精度に大きな影響を及ぼすからである.
+% MNIST分類問題においては全てのシードにおいて安定した結果が出ているため, DCAの乱数シードも固定せずに実験を行った.
+% ここでは, 11-マルチプレクサ問題においてもDCAの乱数シードを固定せずに10回実験した結果を示す.
+% 実験の条件は乱数シードを固定しないこと以外は\ref{sss:mpp_param}節と同様である.
+
+% まずはDCAの学習エポックごとのデコード層の損失(誤差)の変化を図\ref{fig:mpp_error_s}に示した.
+% 細い線はそれぞれが各シードでの損失(誤差)を示し, 太い点線はその平均値を示す.
+% 横軸は学習エポックを示している.
+% 図から学習エポックが大きくなるにつれて損失が小さくなっているが, ばらつきがあることがわかる.
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/11mux_ae.png}
+% \caption{11-マルチプレクサ問題におけるデコード層の損失}
+% \label{fig:mpp_error_s}
+% \end{figure}
+
+% 次にDCAの学習エポックごとの分類精度の変化を図\ref{fig:mpp_accuracy_s}に示した.
+% 縦軸が分類精度, 横軸が学習エポックを示している.
+% 細い線はそれぞれが各シードの結果を示し, 太い点線はその平均値を示す.
+% 図から学習エポックが大きくなるにつれて分類精度が高くなってはいるが損失と同様, 分類精度にばらつきが出ている.
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/11mux_class.png}
+% \caption{11-マルチプレクサ問題におけるDCAの分類精度}
+% \label{fig:mpp_accuracy_s}
+% \end{figure}
+
+% 次に\proposed(圧縮ルール未使用)及び\proposed(圧縮ルール使用)の学習回数ごとの分類精度の変化を図\ref{fig:mpp_p1_s}と\ref{fig:mpp_p2_s}に示した.
+% 細い線はそれぞれが各シードの結果を示し, 太い点線はその平均値を示す.
+% 縦軸が分類精度, 横軸が学習回数を示している.
+% 図から\proposed(圧縮ルール未使用)の分類精度はシードごとに多少のばらつきがあるもののほぼ同様の結果が得られているが, \proposed(圧縮ルール使用)の分類精度はばらつきが大きくシードによって精度が大きく変わってしまっている.
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/11mux_p_p1.png}
+% \caption{11-マルチプレクサ問題における\proposed(圧縮ルール未使用)の分類精度}
+% \label{fig:mpp_p1_s}
+% \end{figure}
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/11mux_p_p2.png}
+% \caption{11-マルチプレクサ問題における\proposed(圧縮ルール使用)の分類精度}
+% \label{fig:mpp_p2_s}
+% \end{figure}
+% なお, DCAの分類精度(損失)と\proposed の分類精度に相関はない(DCAの分類精度が高くても\proposed の分類精度は低くなることもある).
+% また, \proposed 内のXCSRはDCAのシードを固定すれば安定することは以前の実験からわかっている.
+
+% 最後に\proposed(圧縮ルール未使用)及び\proposed(圧縮ルール使用)の学習回数ごとのマクロ分類子数の変化を図\ref{fig:mpp_c_s1}, \ref{fig:mpp_c_s2}に示した.
+% 細い線はそれぞれが各シードの結果を示し, 太い点線はその平均値を示す.
+% 縦軸が分類精度, 横軸が学習回数を示している.
+% この実験では$N=1000$としたので最大値は1000である.
+% この図からマクロ分類子数も分類精度と同様, シードの影響を受けていることがわかる.
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/11mux_c_p1.png}
+% \caption{11-マルチプレクサ問題における\proposed(圧縮ルール未使用)のマクロ分類子数}
+% \label{fig:mpp_c_s1}
+% \end{figure}
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/11mux_c_p2.png}
+% \caption{11-マルチプレクサ問題における\proposed(圧縮ルール使用)のマクロ分類子数}
+% \label{fig:mpp_c_s2}
+% \end{figure}
+
+% この実験より, \proposed は圧縮が難しい問題において, DCAの初期値に依存してしまう問題があることがわかった.
+
+
+\clearpage
+% \subsection{11-マルチプレクサ問題における深い層のDCAを用いた際の実験結果}
+% \label{app:deeper}
+% 11-マルチプレクサ問題(\ref{ss:EXP_MPP}節)の実験において, DCAの学習精度は86.7\%であった.
+% \ref{ss:EXP_MPP}節はDCAの隠れ層は22-9-22の3層で構成されていた.
+% ここでは, この層を更に深くし, 隠れ層を44-22-11-9-11-22-44の7層にして実験を行う.
+% なお, 層が深いことに伴って学習エポック数も300000から3000000に変更した.
+% DCAの層構成と学習エポック数以外の実験設定(パイパーパラメーターなど)は全て\ref{ss:EXP_MPP}節と同様にした.
+% まずに層数を増やしたDCAの学習エポックごとの分類精度の変化を図\ref{fig:mpp_deep_accuracy}に示した.
+% 縦軸が分類精度, 横軸が学習エポックを示している.
+% 図から学習エポックが大きくなるにつれて分類精度が高くなり収束していることがわかる.
+% 層数を増やしたDCAの分類精度の収束値は98.6\%であった.
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/deep_acc.png}
+% \caption{11-マルチプレクサ問題における層を深くしたDCAの分類精度}
+% \label{fig:mpp_deep_accuracy}
+% \end{figure}
+% これにより層を深くすることにより, DCAの学習精度が向上したことがわかる.
+
+% 次に従来のXCSRと\proposed(DCAの隠れ層が3層と7層それぞれ)の学習回数ごとの分類精度の変化を図\ref{fig:mpp_deep_p}に示した.
+% 一番薄い灰色の実線が従来のXCSR, 濃い灰色の線が\proposed(圧縮ルール未使用), 黒い線が\proposed(圧縮ルール使用)で実線が隠れ層が3層, 点線が隠れ層が7層の時の結果で, 縦軸が分類精度, 横軸が学習回数を示している.
+% \proposed(圧縮ルール未使用)は圧縮された入力に向けたXCSRのみの結果を表し, 高次元入力を学習するXCSRを用いた結果ではない.
+% \proposed(圧縮ルール使用)は圧縮された入力に向けたXCSRを学習後, 高次元入力を学習するXCSRを用いた結果である.
+% 図から\proposed は層が深ければ圧縮ルールを使用しなくても100\%に近い精度で学習でき, 圧縮ルールを使用した場合は層が浅い時に比べて早く100\%に収束していることがわかる.
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.85\hsize]{./img/deep_p.png}
+% \caption{11-マルチプレクサ問題における\proposed((DCAの隠れ層が3層と7層)とXCSRの分類精度}
+% \label{fig:mpp_deep_p}
+% \end{figure}
+\end{document}
+
+なお, より深いDCAを用いた\proposed は圧縮ルールの使用/不使用に関係なく表\ref{tab:mpp_classifier}の一番下のような解釈性の高い分類子が獲得できた.
+
+これらの結果より, より深い層のDCAを用いると圧縮ルールを使用しない場合は分類精度が向上し, 圧縮ルールを使用する場合は収束が早くなるため, より深い層のDCAを用いる事は有効であると言える.
