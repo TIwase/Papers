@@ -559,11 +559,24 @@ c_c=\frac{4}{n+4}
 \newpage
 \section{Niching Scheme}
 \label{sec:ns}
-この章では，多峰性最適化問題において，EAsを拡張させて複数の最適解及び局所解探索を行うための機構であるNiching Schemeについて説明する．EAsは一つの最適解を探索することを目的とした設計であるため，複数の局所解を探索し，保持するには限界がある．この問題を解決するために導入したNiching Schemeについて\ref{ss:Crowding}節から\ref{ss:dnr}節で紹介する．
+この章では，多峰性最適化問題において，EAsを拡張させて複数の最適解及び局所解探索を行うための機構であるNiching Schemeについて説明する．EAsは一つの最適解を探索することを目的とした設計であるため，複数の局所解を探索し，保持するには限界がある．この問題を解決するために導入したNiching Schemeについて\ref{ss:Crowding}節から\ref{ss:clustering}節で紹介する．
 
 \subsection{Crowding}
 \label{ss:Crowding}
 Crowding \cite{Crowding} は評価値が類似する個体が同じ場所付近に位置しているとき，その最近傍個体同士を比較し，評価値の高い方を残す．この時，比較する個体は親集合と子集合を含めた全個体における最近傍個体同士が比較対象となる．この動作を毎世代繰り返すことによって同じ局所解に個体が陥らないことを目的とした機構である．
+
+\subsection{Niche Radius}
+\label{ss:nr}
+Niche Radiusは探索空間の大きさと局所解数(あるいは個体数)に基づいて算出される距離であり，Fig. は理想的な個体の分布及びNiche radiusを示している．次式で表される．
+\begin{equation}
+\label{eq:nr-d}
+dist=\frac{1}{2}\sqrt{(x_{ub}-x_{lb})^2}
+\end{equation}
+\begin{equation}
+\label{eq:nr-s}
+\sigma=\frac{dist}{\sqrt[D]{q}}
+\end{equation}
+この時，$x_{ub},x_{lb}$は探索空間の上限と下限を表しており，$D$は次元数を表す．$q$は解の数(あるいは個体数)が適用される．
 
 \subsection{Fitness Sharing}
 \label{ss:fs}
@@ -575,7 +588,7 @@ sh(d_{ij})= \begin{cases}
 0 & ({\rm otherwise})
 \end{cases}
 \end{equation}
-ここで$d_{ij}$は個体$i,j$の間の距離を表し，$\alpha$は係数で$\sigma$はある恣意的な閾値(あるいはNiche radius\footnote{次節で説明する．})を表す．個体間距離が近いほどSharing function $sh(d_{ij})$の値は大きくなり，この数値を基にNiche count $m_i$を算出する．
+ここで$d_{ij}$は個体$i,j$の間の距離を表し，$\alpha$は係数で$\sigma$はある恣意的な閾値(あるいはNiche radius)を表す．個体間距離が近いほどSharing function $sh(d_{ij})$の値は大きくなり，この数値を基にNiche count $m_i$を算出する．
 \begin{equation}
 \label{eq:nc}
 m_i=\sum_{j=1}^N sh(d_{ij})
@@ -587,6 +600,9 @@ f_i'=\frac{f_i}{m_i}
 \end{equation}
 ここで，$f_i$は$i$番目の個体の評価値を表す．Shared function $f_i'$は，その個体密度であるNiche count $m_i$によって値が大きく変動する．$f_i'$の値が小さいほど$i$番目の個体密度は高く，値が大きければ個体密度は低いということになる．
 
+\subsection{Dynamic Niche Sharing}
+\label{ss:dns}
+
 \subsection{クラスタリング}
 \label{ss:clustering}
 クラスタリングは対象となる集合の全個体に対して部分集合に分割する手法である．クラスタリングは，{\bf 階層的クラスタリング}と{\bf 非階層的クラスタリング}の２つに分類される．
@@ -596,12 +612,12 @@ f_i'=\frac{f_i}{m_i}
 階層的クラスタリング(Hierarchical Clustering)は，一般的に$N$個のデータ(個体)が与えられたときに初期状態として$N$個のクラスタを生成する．次にクラスタ間の距離に基づいてクラスタ同士を併合させる．一つのクラスタになるまでこの併合を繰り返す．代表的なクラスタ分類に関して以下の手法がある．
 \begin{itemize}
 \item {\bf 最短距離法(Nearest neighbor method)} \\
-最近傍クラスタ同士を併合していく手法 \cite{NN-Clustering} である．クラスタ間の距離$d(C_i,C_j)$は次の式で定義される．
+最近傍クラスタ同士を併合していく手法 \cite{NN-Clustering} である．クラスタ間の距離$d(C_1,C_2)$は次の式で定義される．
 \begin{equation}
 d(C_1,C_2) = \min_{x_i \in C_i, x_j \in C_j}(d(x_i,x_j))
 \end{equation}
 \item {\bf 最長距離法(furthest neighbor method)} \\
-最も遠いクラスタ同士を併合する手法 \cite{FN-Clustering} である．クラスタ間の距離$d(C_i,C_j)$は次の式で定義される．
+最も遠いクラスタ同士を併合する手法 \cite{FN-Clustering} である．クラスタ間の距離$d(C_1,C_2)$は次の式で定義される．
 \begin{equation}
 d(C_1,C_2) = \max_{x_i \in C_1, x_j \in C_2}(d(x_i,x_j))
 \end{equation}
@@ -625,13 +641,9 @@ d(C_1,C_2) = d(\bar{x_i},\bar{x_j})
 \label{sss:nhc}
 非階層的クラスタリング(Non-hierarchical Clustering)は
 
-\subsection{Niche Radius}
-\label{ss:nr}
-Niche Radiusは探索空間の
 
-\subsection{Dynamic Niche Radius}
-\label{ss:dnr}
 
+\newpage
 \section{Niching Methods}
 \label{sec:nm}
 % \textbf{XCSR}(実数値表現を扱う学習分類子システム)はXCSを実数値に対応するように拡張したものである.
@@ -701,7 +713,46 @@ Niche Radiusは探索空間の
 \newpage
 \section{多峰性最適化問題}
 \label{sec:MOP}
+本実験では，複数最適解を探索する手法の性能を比較するため，CEC ({\it IEEE Congress on Evolutionary Computation}) 2013 Competition on Niching Methods for Multimodal Function Optimization \cite{CEC2013} で扱われたベンチマーク関数を用いる．使用する関数について,次節で説明する．
 
+\subsection{ベンチマーク関数}
+\label{ss:benchmark}
+使用する20のベンチマーク関数は以下の通りである．
+
+\begin{description}
+\item[$F_1$: Five-Uneven-Peak Trap (1D)]\mbox{}\\
+\begin{equation}
+\label{eq:f1}
+F_1(x)=\begin{cases}
+80(2.5-x) & {\rm for} \ 0 \leq x < 2.5, \\
+64(x-2.5) & {\rm for} \ 2.5 \leq x < 5.0, \\
+64(7.5-x) & {\rm for} \ 5.0 \leq x < 7.5, \\
+28(x-7.5) & {\rm for} \ 7.5 \leq x < 12.5, \\
+28(17.5-x) & {\rm for} \ 12.5 \leq x < 17.5, \\
+32(x-17.5) & {\rm for} \ 17.5 \leq x < 22.5, \\
+32(27.5-x) & {\rm for} \ 22.5 \leq x < 27.5, \\
+80(x-27.5) & {\rm for} \ 27.5 \leq x < 30.
+\end{cases}
+\end{equation}
+
+\item[$F_2$: Equal Maxima (1D)]\mbox{}\\
+\begin{equation}
+\label{eq:F2}
+F_2(x)=\sin^6{(5\pi x)}.
+\end{equation}
+
+\item[$F_3$: Uneven Decreasing Maxima (1D)]\mbox{}\\
+\begin{equation}
+\label{eq:F3}
+F_3(x)=exp(-2log(2)(\frac{x-0.08}{0.854})^2)\sin^6{(5\pi(x^{\frac{3}{4}}-0.05))}.
+\end{equation}
+
+\item[$F_4$: Himmelblau (2D)]\mbox{}\\
+\begin{equation}
+\label{eq:F4}
+F_4(x,y) = 200 - (x^2+y-11)^2 - (x+y^2-7)^2.
+\end{equation}
+\end{description}
 
 \newpage
 \section{実験}
@@ -750,13 +801,13 @@ Niche Radiusは探索空間の
 % \label{ss:EXP_mnist}
 % MNISTデータセット分類問題の評価基準と設定したハイパーパラメーターを\ref{sss:mnist_param}節で, 実験結果を\ref{sss:mnist_results}節で示す.
 
-\subsubsection{評価基準とハイパーパラメーター}
-\label{sss:mnist_param}
+\subsection{評価基準}
+\label{ss:eval_criteria}
 
 
 
-\subsubsection{結果}
-\label{sss:mnist_results}
+\subsection{結果}
+\label{ss:results}
 
 
 % 最後に従来のXCSRと\proposed の学習回数ごとのマクロ分類子数の変化を図\ref{fig:mnist_c}に示した.
@@ -776,8 +827,8 @@ Niche Radiusは探索空間の
 
 
 \FloatBarrier
-\subsubsection{結果}
-\label{sss:mpp_results}
+% \subsubsection{結果}
+% \label{sss:mpp_results}
 % まずはDCAの学習エポックごとの出力層の損失(誤差)の変化を図\ref{fig:mpp_error}に示した.
 % 灰色の線がデコード層の損失(誤差)でグラフの縦軸の主軸(左軸)である.
 % 黒色の線が分類層の損失(誤差)でグラフの縦軸の副軸(右軸)である.
