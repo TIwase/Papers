@@ -1,0 +1,556 @@
+%==========================================================================
+%Template File for Evolutionary Computation Symposium
+%==========================================================================
+\documentclass[a4paper,11pt,twocolumn]{jarticle}
+\usepackage{evocomp}
+\usepackage{fancyhdr}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage[dvipdfmx]{}
+\pagestyle{empty}
+
+\renewcommand{\headrulewidth}{0.0pt}
+\renewcommand{\footrulewidth}{0.0pt}
+
+\begin{document}
+\twocolumn[%
+\begin{center}
+
+%---------------------------------------------------------------------------
+% ヘッダ 
+%---------------------------------------------------------------------------
+\beginheader
+
+
+%---------------------------------------------------------------------------
+% 発表題目    書式：\title{日本語タイトル}{日本語サブタイトル} 「\\」で改行できます
+%---------------------------------------------------------------------------
+\jtitle%
+{Searching multiple local optimal solutions in Multimodal Function by Bat Algorithm based on Novelty Search}
+%%%
+%もしサブタイトルが必要な場合には，
+%\2jtitle%
+%{タイトル}{サブタイトル}
+%を使用
+%%%
+
+%---------------------------------------------------------------------------
+% 著者名      書式：\author{日本語著者名}{英語著者名}
+%---------------------------------------------------------------------------
+
+\begin{authors}
+%%%%
+%\name{所属番号(下記の\affに対応)}{著者名を記入},
+%%%%
+
+\name{1}{Takuya Iwase},
+\name{1}{Ryo Takano},
+\name{1}{Fumito Uwano},
+\name{1}{Yuta Umenai},
+\name{1}{Hiroyuki Sato},
+\name{1}{Keiki Takadama}
+
+%%%%,
+
+\end{authors}
+
+
+
+\begin{affiliation}
+\aff{1}{Department of Informatics, The University of Electro-Communications},
+%\aff{2}{The University of Electro-Communications},
+%\aff{3}{The University of Electro-Communications}
+\end{affiliation}
+
+%---------------------------------------------------------------------------
+
+
+\endheader
+%--------------------------------------------------------------
+\end{center}
+]%
+
+%--------------------------------------------------------------
+% 英文タイトル
+%--------------------------------------------------------------
+
+%\etitle{Improved Bat Algorithm for distributed solutions in global optimization}
+
+%--------------------------------------------------------------
+% 英語語著者名
+%--------------------------------------------------------------
+% ename{1}{***} : 所属１の氏名
+% ename{2}{***} : 所属２の氏名　のようにする．
+
+%\ename{1}{Takuya Iwase(tanu\_iwa@cas.lab.uec.ac.jp)}
+%\ename{2}{Ryo Takano(XXX@xxx.xxx.ac.jp)}
+%\ename{2}{Fumito Uwano(XXX@xxx.xxx.ac.jp)}
+%\ename{3}{Yuta Umenai(XXX@xxx.xxx.ac.jp)}
+
+
+%--------------------------------------------------------------
+% 英語所属
+%--------------------------------------------------------------
+% eaff{1}{***} : 所属１
+% eaff{2}{***} : 所属２　のようにする．所属の引数は４まで.
+% ※日本語の所属と対応させること．
+
+
+%\eaff{1}{%
+%Department of ○○, %
+%×× University%
+%}
+
+%\eaff{2}{%
+%Graduated School of ○○, %
+%×× University%
+%}
+
+%\eaff{3}{%
+%National Institute of ○○, %
+%×× Research Center%
+%}
+
+
+\vspace{3mm}
+
+\kanjiskip=.1zw plus 3pt minus 3pt
+\xkanjiskip=.1zw plus 3pt minus 3pt
+%---------------------------------------------------------------------------
+% 本文
+%---------------------------------------------------------------------------
+
+\section{Introduction}
+Metaheuristic algorithms became major method for solving optimization problem recently．Generally, they are based on biological evolution in nature-inspired system. These various methods are adaptable for a specific situation using non-linear objective functions. Particle Swarm Optimization (PSO) modeled fish swarm if just a fish find a global optimum, the other fishes move to the fish \cite{1}. One of the other algorithm is Firefly Algorithm (FA), which is based on flashing light of fireflies. In two fireflies, a firefly is attracted by the other one which is brighter light. They are widely used for optimization problem, bat algorithm is one of these algorithms for searching global optimum with characteristic of echolocation \cite{3}%\cite{4}.
+We need to adapt for global searching because bat algorithm is also fallen local minima easily. For this reason, we propose BA for distributed solutions and validate performance of the algorithm.
+
+\section{Bat Algorithm}
+BA based on echolocation behaviour of microbat uses frequency and loudness for adaptive global search on a multimodal function. In this algorithm, loudness ${A^0}$ is used as a parameter to adjust frequency. When microbat moves toward target, loudness ${A^0}$ is also gradually decreased in proportion to travel distance of microbat decreases. Behaviour of microbat is consists of following three rules: 
+
+\begin{itemize}
+\item Each bat measures the distance between own location and target using frequency ${f_i}$.
+\item On the location ${x_i}$, bat with velocity ${v_i}$ moves to another bat closed target randomly.
+\item Loudness ${A^0}$ varies to sense how far approaching toward the target.  
+\end{itemize}
+
+Each bat with velosity ${v_i}$, location ${x_i}$, and frequency ${f_i}$ is updated as follows:
+\begin{equation}
+f_{i} =f_{min}+(f_{max}-f_{min}) \beta
+\label{eq:freq} 
+\end{equation}
+\begin{equation}
+v_i^t=v_i^{t-1}+(x_i^t-x_*) f_i
+\label{eq:vel}
+\end{equation}
+\begin{equation}
+x_i^t=x_i^{t-1}+v_i^t
+\label{eq:xi}
+\end{equation}
+
+Velocity ${v_i}$ varies by tuning frequency ${f_i}$ from [${f_{max}}$ ${f_{min}}$] as ${f_{max}}=1$ and ${f_{min}}=0$. $\beta $ is uniform random distribution from 0 to 1. Firstly in global search step, BA calculates the distance from all bats position to current global best solution ${x_*}$, when population is generated. And then, each bat moves to location ${x_i}$ with velocity ${v_i}$ toward the solution. Secondly in local search step, generates a new solution ${x_{new}}$ around global best solution. The equation as below
+
+\begin{equation}
+x_{new}=x_{*}+ \epsilon A^t \ ,
+\label{eq:loc}
+\end{equation}
+
+where ${\epsilon}$ is uniform random distribution between ${[0 \ 1]}$. ${A^t}$ is the average loudness of all bats. Initialized all bats start searching target using loudness ${A_i}$ and the reflect wave as pulse emission rate ${r_i}$. Loudness and pulse rate are updated as follows:
+
+\begin{equation}
+A_i^{t+1}=\alpha A_i^t
+\label{eq:A}
+\end{equation}
+\begin{equation}
+r_i^{t+1}=r_i^0[1-exp(-\gamma t)]
+\label{eq:r}
+\end{equation}
+
+Both of them are also updated in case of updated new solution by equation (\ref{eq:loc}) for each iteration. Loudness gradually decreases as approaching to target, pulse rate increases in contrast. BA initializes pulse rate as a uniform random distribution ${r_i^0}$ between ${[0 \ 1]}$ or a number closed around zero. ${\alpha}$ and ${\gamma}$ are symbolized damping coefficient. In simulated experiment, they are set ${\alpha = \gamma = 0.9}$. \\
+
+The pseudo code of basic BA is presented as below.
+
+\begin{algorithm}[H]
+\caption{basic Bat Algorithm}
+\label{code:ba}
+\begin{algorithmic}[1]
+\REQUIRE $Objective\ Function\ f(x)$
+\ENSURE Initialize Population $x_i(i=1,2,..., n)$ and $v_i$\\
+Define frequency $f_i$ at location $x_i$ \\
+Initialize pulse rates $r_i$, and the loudness $A_i$
+\WHILE{($t <$ Max number of iterations)}
+\FOR{i=1 to n}
+\STATE Generate new solutions $x_i$ by tuning frequency $f_i$
+\STATE Update location $x_i$ and velocity $v_i$  [eqs.(\ref{eq:freq}) to (\ref{eq:xi})]
+\IF{($rand>r_i$)}
+\STATE Generate a new solution $x_{new}$ around global best solution $x_i$ [eq.(\ref{eq:loc})] 
+\ELSE
+\STATE Continue
+\ENDIF
+\STATE Generate a new solution $x_{rnd}$ randomly
+\IF{($rand<A_i \& f(x_i)<f(x_*)$)}
+\STATE Accept the new solution,\\ and update pulse rate $r_i$ \\ \& the loudness $A_i$ [eqs. (\ref{eq:A})(\ref{eq:r})]  
+\ENDIF
+\STATE Evaluate the all bats and select a best solution $x_*$ in the current solutions
+\ENDFOR
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+\section{Proposed Bat Algorithm}
+\subsection{Novelty Search}
+Novelty search is used as evolutionary search approach to expand dense solutions into sparse area and to measure the distance between current candidate solutions to reward or delete it. The sparseness of solutions is calculated as below,
+\begin{equation}
+\rho(x)=\cfrac{1}{k}\sum_{i=0}^k dist(x,\mu_i)
+\label{eq:nov}
+\end{equation}
+, where the sparseness ${\rho(x)}$ at a point ${x}$ shows the scatter of solutions. The dist in k-nearest neighbors is the average distance between the point ${x}$ and ${\mu_i}$, which is the ${i}$th nearest neighbor of ${x}$.
+
+  
+\subsection{Bat Algorithm for Novelty Search}
+In order to adapt multimodal optimization not only single objective optimization, BA based on Novelty Search (NSBA) enables all population to reach local optimal solutions. This paper proposes a method of keeping over a certain distance between each location of bat, and letting population remain around local optimal solution. To use the characteristic, all population are concentrated at a point when initializing. Based on novelty search, updated equation of the distance between each other of population, is written as 
+\begin{equation}
+d_i^t=\cfrac{1}{N}\sum_{j=1}^N {(x_i^t-x_j^t)*\delta^{\cfrac{5}{|x_i^t-x_j^t|}}},
+\label{eq:d}
+\end{equation}
+where ${N}$ is population size, and ${\delta}$ is used as a parameter. Here is ${\delta=1.2}$ in this simulation. 
+In addition, bats with velocity ${v_i^t}$ is updated as follows:
+\begin{equation}
+v_i^t=v_i^{t-1}+d_i^t*f_i
+\label{eq:nv}
+\end{equation}
+, and location ${x_i^t}$ is updated same as equation (\ref{eq:xi}). Here is the Algorithm flow on global minimum optimization.
+\begin{itemize}
+\item STEP1: Initialize population of bats \\
+Initialize location ${x_i}(i=1, 2, ..., n)$ with velocity ${v_i}(i=1, 2, ..., n)$ randomly. Each bat has loudness ${A_0}$, parse rate ${r_i}$ and frequency ${f_i}$ as initial value.
+\item STEP2: Generate new solutions \\
+Generate new solutions ${x_i^t}$ based on equation (\ref{eq:xi})(\ref{eq:d})(\ref{eq:nv}).
+\item STEP3: In local search phase, Generate a new solution around solutions ${x_i}$\\
+In case of a random distribution higher than parse rate ${r_i}$, generate a new solution ${x_{local}}$ around ${x_i}$.
+\item STEP4: Generate a new solution randomly\\
+Generate a new solution ${x_{rnd}}$ by random walk of bat.  
+\item STEP5: Rank and update solutions\\
+In case of ${rand < A_i}$, choose the best from all solutions which are ${x_i, x_{local}}$, and ${x_{rnd}}$, and cross over as personal best solution unless it is higher than the value of former iteration.  
+\item STEP6: Loop to STEP2
+\end{itemize}
+The NSBA pseudo code is described in Algorithm 2.
+
+\begin{algorithm}[H]
+\caption{Bat Algorithm for Novelty}
+\label{code:sba}
+\begin{algorithmic}[1]
+\REQUIRE $Objective\ Function\ f(x)$
+\ENSURE Initialize Population $x_i(i=1,2,..., n)$ and $v_i$\\
+Define frequency $f_i$ at location $x_i$ \\
+Initialize pulse rates $r_i$, and the loudness $A_i$
+\WHILE{($t <$ Max number of iterations)}
+\FOR{i=1 to n}
+\STATE Generate new solutions $x_i$ by tuning frequency $f_i$
+\STATE Update location $x_i$ and velocity $v_i$  [eqs.(\ref{eq:freq})(\ref{eq:xi})(\ref{eq:d})(\ref{eq:nv})]
+\IF{($rand>r_i$)}
+\STATE Generate a new solution ${x_{local}}$ around the solution $x_{i}$ [eq.(\ref{eq:loc})] 
+\ELSE
+\STATE Continue
+\ENDIF
+\STATE Generate a new solution $x_{rnd}$ randomly
+\IF{($rand<A_i \& f(x_i)<f(x_i)$)}
+\STATE Accept the new solution,\\ and update pulse rate $r_i$ \\ \& the loudness $A_i$ [eqs. (\ref{eq:A})(\ref{eq:r})]  
+\ENDIF
+\ENDFOR
+\STATE Evaluate the all bats and select a best solution $x_i*$ in the current solutions
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+In this paper, the algorithm is implemented on Matlab for a benchmark function.
+
+\subsection{Comparison with Nearest Neighbor Bat Algorithm}
+To validate proposed NSBA, we have tested another modified Bat Algorithm for Nearest Neighbor search (NNBA). The updated equation as below
+\begin{equation}
+d_i^t=x_i^t-x_j^t
+\label{eq:nn}
+\end{equation} 
+, which ${d_i^t}$ is the distance of nearest neighbor between ${x_i^t}$ and ${x_j^t}$. NNBA also uses Algorithm 2, where equation (\ref{eq:d}) is replaced as equation (\ref{eq:nn}).
+
+
+\section{Multi-Objective Function}
+As an example to demonstrate the bat motion of this algorithm, we use Griewank function as below (shows Fig. \ref{fig:gf})
+\begin{equation}
+f(x)= \sum_{i=1}^d \cfrac{x_{i}}{4000} - \prod_{i=1}^d \cos(\cfrac{x_i}{\sqrt{i}}) + 1
+\end{equation}
+, where global optimum is ${f(x_*)}=0$, at $x_* = {[0 \ 0]}$. Local minima at ${\pm x \approx}$ ${ [6.2800 \ 8.8769], [3.1400 \ 4.4385], [0 \ 8.8769], [6.2800 \ 0],}$ ${ [9.4200 \ 4.4385]}$ in the range of this function is between ${-10 \leq x_i \leq 10}$ with i=1,2,...,d. The function ${f(x)}$ has global minimum ${f(x)_{gbest}}=0$ and also the other local minima ${f(x)_{pbest}}$ = 0 for ${d=2}$.
+ 
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=1.0\linewidth]{eps/Griewank.eps}
+\end{center}
+\caption{Griewank function}
+\label{fig:gf}
+\end{figure}
+
+%\begin{figure}[h]
+%\begin{center}
+%\includegraphics[width=1.0\linewidth]{eps/griewank_cont.eps}
+%\end{center}
+%\caption{Griewank contour}
+%\label{fig:gfc}
+%\end{figure}
+
+\section{Experiment}
+\subsection{Evaluation Criteria}
+In this experiment, we focus on how many found local minima, and $\bigtriangleup-dist$ which total amount of the distance between local minima and solutions of nearest neighbor. We compare with the performance of these algorithms in term of the population size and the bat behavior by iteration. 
+
+\subsection{Experimental Parameter}
+All experiments use same parameters, where population size of 20, frequency ${f_{max}=2, f_{min}=0}$, the loudness ${A^0}=1$, parse rate ${r^0} \in [0 \ 1]$ with ${\alpha =\gamma = 0.9}$, and ${\delta =1.2}$.
+
+\subsection{Comparison with the other Algorithms}
+$\bigtriangleup-dist$ is total amount of the distance between local minima and nearest neighbor population, in case of initializing population randomly each algorithm. We compared proposed NSBA with the other algorithms, which NNBA and Original BA. Each algorithm was run for 10 seeds to validate the performance of NSBA. 
+
+\section{Result}
+From Table \ref{tb:comp},  NSBA performed better than the other algorithms. It means the performance of distribution is very powerful. NNBA was a bit larger distance than NSBA. On the other hand, original BA is highest numerical value of three algorithms due to most of population tend to congregate to global best solution, as wee can see Fig. \ref{fig:oba}. Besides, the number of reached local minima of NSBA with 9.6 from 17 local minima (53.53\%), is nearly the same numrical value as NNBA (56.47\%).   
+
+
+\begin{table}[h]
+\begin{center}
+\caption{$\bigtriangleup-dist$ of basic BA, NNBA, and NSBA (n=20)}
+\label{tb:comp}
+\begin{tabular}{cccc}
+\hline 
+Seed & $basic BA$ & $NNBA$ & $NSBA$ 
+\\
+\hline \hline
+1 & 117.4624 & 40.80115 & 34.73127 \\
+2 & 157.3706 & 34.486130 & 36.39555 \\
+3 & 145.3405 & 36.45273 & 39.05099 \\
+4 & 87.46077 & 54.79600 & 23.77053 \\
+5 & 157.0779 & 52.76253 & 34.5350 \\
+6 & 214.1643 & 58.38884 & 39.75885 \\
+7 & 157.3706 & 48.75871 & 43.40263 \\
+8 & 99.27593 & 46.05835 & 39.37115 \\
+9 & 156.868 & 33.65436 & 39.14996 \\
+10 & 124.6715 & 33.78423 & 29.0620 \\
+\hline
+Average & 141.706 & 43.9943 & 35.9228 \\
+SD & 36.27235 & 9.406605 & 5.783791 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\caption{the number of reached local minima}
+\label{tb:numsol}
+\begin{tabular}{cccc}
+
+\hline
+& $basic BA$ & $NNBA$ & $NSBA$
+\\
+\hline \hline
+average & 1.7 & 9.6 & 9.1 \\
+search ratio & 10.0 \% & 56.47 \% & 53.53 \% \\
+SD & 1.05935 & 1.429841 & 0.875595 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{figure}[h]
+\begin{center}
+%\begin{tabular}
+\includegraphics[width=0.45\textwidth]{eps/oba/seed01/iter1000.epsc}
+\end{center}
+\caption{Distribution of Original BA }
+\label{fig:oba}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.45\textwidth]{eps/nnba/seed01/iter1000.epsc}
+\end{center}
+\caption{Distribution of NNBA}
+\label{fig:nnba}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.45\textwidth]{eps/nsba/n=20/seed01/iter1000.epsc}
+\end{center}
+\caption{Distribution of NSBA}
+\label{fig:nsba}
+\end{figure}
+
+\section{Discussion}
+\subsection{Different Population Size}
+\begin{table}[h]
+\begin{center}
+\caption{$\bigtriangleup-dist$ of NSBA}
+\label{tb:nsba}
+\begin{tabular}{cccc}
+\hline 
+Seed & $n=10$ & $n=20$ & $n=40$ 
+\\
+\hline \hline
+1 & 57.89055 & 34.73127 & 36.01941 \\
+2 & 74.33342 & 36.39555 & 17.5624 \\
+3 & 58.77926 & 39.05099 & 28.25238 \\
+4 & 55.87579 & 23.77053 & 17.093489 \\
+5 & 62.14158 & 34.53509 & 17.76876 \\
+6 & 49.07995 & 39.75885 & 22.30472 \\
+7 & 53.441226 & 43.40263 & 12.50444 \\
+8 & 65.24583 & 39.37115 & 28.42639 \\
+9 & 65.17686 & 39.149967 & 22.16795 \\
+10 & 64.97366 & 29.06209 & 22.04256 \\
+\hline
+Average & 60.6938 & 35.9228 & 22.4143 \\
+SD & 7.22257 & 5.783791 & 6.889419 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\begin{center}
+\caption{the number of reached local minima}
+\label{tb:numsolp}
+\begin{tabular}{cccc}
+
+\hline
+& $n=10$ & $n=20$ & $n=40$
+\\
+\hline \hline
+average & 6 & 9.1 & 12.7 \\
+search ratio & 35.30 \% & 53.53 \% & 74.71 \% \\
+SD & 1.247219 & 0.875595 & 1.766981 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+We can see $\bigtriangleup-dist$ was directly proportional to increase population size from Table. \ref{tb:nsba}, \ref{tb:numsolp}. Likewise SD gradually grew between $n=10$ to $40$. $\bigtriangleup-dist$ was a significant rise from $n=20$ to $40$. 
+
+\subsection{Bat Behavior by Iteration}
+After initialized population, two algorithms of NNBA and NSBA remains from 20 to 40 $\bigtriangleup-dist$ by iterations. Especially, original BA is a sharply rise until 100 iterations from Fig. \ref{fig:iter}. From 800 iteration, $\bigtriangleup-dist$ of all three algorithms became stable.    
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.45\textwidth]{eps/dist_comp.eps}
+\end{center}
+\caption{$\bigtriangleup-dist$ of bats motion by iteration}
+\label{fig:iter}
+\end{figure}
+
+%\begin{table}[h]
+%\begin{center}
+%\caption{$\bigtriangleup-dist$ of Iteration}
+%\label{tb:iter}
+%\begin{tabular}{cccc}
+%\hline 
+%Iteration & $basic BA$ & $NNBA$ & $NSBA$ 
+%\\
+%\hline \hline
+%1 & 26.95242 & 24.35089 & 16.05445 \\
+%10 & 13.39285 & 19.50691 & 14.40768 \\
+%50 & 2.98181 & 12.47268 & 11.18692 \\
+%100 & 1.109472 & 10.27867 & 9.473851 \\
+%250 & 0.285528 & 8.100225 & 6.176774 \\
+%500 & 0.189971 & 5.970682 & 4.716612 \\
+%1000 & 0.046741 & 4.718828 & 3.429006 \\
+%\hline
+%\end{tabular}
+%\end{center}
+%\end{table}
+%\section{Discussion}
+  
+\section{Conclusion}
+We validated the performance of proposed Bat Algorithm based on Novelty Search, in comparison to original Bat Algorithm. As a result, NSBA is nearly same performance as NNBA, better than original BA for searching multiple local minima. As population size of bat increases, the number of searched local minima  also increased. Our future prospects are 
+adapting this algorithm for the other benchmark functions, and blushing up the performance to cover unspecified large number of local minima.
+%\begin{figure}[htbp]
+%\begin{center}
+%\includegraphics[width=0.7\linewidth]{eps/graphic_data.eps}
+%\end{center}
+%\caption{図形}
+%\label{fig::graphic}
+%\end{figure}
+
+%\subsection{表について}
+
+%表を出力するためには，下記のような書式で記述してください．
+
+%\begin{screen}
+%\begin{verbatim}
+
+
+%\end{verbatim}
+%\end{screen}
+
+%\begin{table}[tbp]
+%\begin{center}
+%\caption{Problem Instance.}
+%\label{tb::example}
+%\begin{tabular}{c|cccc}
+%\hline 
+%Problem & $N$ & $W$ & $\bar{w}$ & $\sigma (w)$\\
+%\hline \hline
+%tai75a & 75 & 1445 & 183.4 & 242.9\\
+%tai75b & 75 & 1679 & 198.7 &  273.4\\
+%tai100a & 100 & 1409 & 152.0 &  201.5\\
+%tai150a & 150 & 1544 & 145.54 & 200.7\\
+%\hline
+%\end{tabular}
+%\end{center}
+%\end{table}
+
+
+%\section{式について}
+
+%式の書き方には幾つかの種類がありますが，以下，幾つかの例について示します．
+%\begin{enumerate}
+%\item 文中で式を入れ込む場合\\
+% \verb|$数式$|という書き方をします．例えば，\verb|$\cfrac{b_{2}}{a^2}\le 0$|と記述すると，「$\cfrac{b_{2}}{a^2}\le 0$」のように出力されます．
+%\item 数式を番号なしで1行挿入する場合\\
+% \verb| \[ \] |と記述します．\\
+%例えば，
+%\verb| \[ \cfrac{b_{2}}{a^2}\le 0 \]|と記述すると，下記のように出力されます．
+%\[ \cfrac{b_{2}}{a^2}\le 0 \]
+%\item 数式を番号つきで1行挿入する場合\\
+%\verb| \begin{equation}| \verb| 式 \end{equation}|と記述します．\\
+%例えば，\verb| \begin{equation} \cfrac{b_{2}}| \verb|{a^2}\le 0 \end{equation}|と記述すると，下記のように出力されます．
+%\begin{equation} \cfrac{b_{2}}{a^2}\le 0 \end{equation}
+%\end{enumerate}
+
+%なお，番号付きの式には図，表と同様にラベル付けおよびその参照を行うことができます．一例を以下に示します．
+
+%\begin{screen}
+%\begin{verbatim}
+%\begin{eqnarray} 
+%\cfrac{b_{2}}{a^2}\le 0  
+  %       \label{eq::const-1} \\
+%a\times b \ge 10  \label{eq::const-2} 
+%\end{eqnarray}
+%\end{verbatim}
+%\end{screen}
+
+
+%\begin{eqnarray} 
+%\cfrac{b_{2}}{a^2}\le 0  \label{eq::const-1} \\
+%a\times b \ge 10  \label{eq::const-2} 
+%\end{eqnarray}
+
+%式を参照するときには，\verb|\eqref{式ラベル}|と記述します．上記の例では\verb|\eqref{eq::const-1}|と記述することにより「\eqref{eq::const-1}」が出力されています．
+
+%ちなみに図，表，式だけでなく章(section),節(subsection)など様々な箇所でラベル付けおよびその参照を行うことができます．その場合には，\verb|\ref{ラベル}|と記述することによってラベル付けされた場所の番号を呼び出すことができます．
+
+%------------
+%以下，参考文献に関する記述
+%------------
+\begin{thebibliography}{9}
+\small{
+\bibitem{1} Eberhart, R. C., and Kennedy, J. : ''A New Optimizer Using Particle Swarm Theory'', Proc. Sixth International Symposium on Micro Machine and Human Science (Nagoya, Japan), IEEE Service center, Pis-cataway, NJ, 39-43(1995)
+\bibitem{2} Yang, X. S. ''Firefly Algorithms for Multimodal Optimization'', in:Stochastic Algorithms: Foundations and Applications, SAGA 2009, Lecture Notes in Computer Sciences, Vol.5792, pp. 169-178 (2009)
+\bibitem{3} Yang, X. S. ''A Metaheuristic Bat-Inspired Algorithm'', in: Nature Inspired Cooperative Strategies for Optimization (NISCO 2010) (Eds J.R. Gonzales et al.), Studies in Computational Intelligence, Springer Berlin, 284, Springer, 65-74 (2010)
+%\bibitem{4} Yang, X. S., and A.H. Gandomi, ''Bat algorithm: a novel approach for global engineering optimization,'' Engineering Computations, vol. 29, no.5, pp.464-483,2012
+}
+\end{thebibliography}
+
+
+%------------------------------------------------------------------------------
+\end{document}
