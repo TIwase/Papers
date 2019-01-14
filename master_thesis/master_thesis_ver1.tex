@@ -5,7 +5,9 @@
 \def\proposedJ{適応的個体間距離に基づく複数解探索型Bat Algorithm}
 
 \usepackage[dvipdfmx]{graphicx}
+\usepackage{otf}
 \usepackage{graphicx}
+\usepackage{subfigure}
 \usepackage{algorithmic}
 \usepackage{algorithm}
 \usepackage{./ref/placeins}
@@ -160,7 +162,7 @@ DCAXCSRの有効性を検証するため, 784次元の画像を分類するMNIST
 \newpage
 \subsection{論文構成}
 本論文の構成は次の通りである.
-\ref{sec:EAs}章で最適化問題において一般的に用いられるEAsについて説明し，\ref{sec:ns}章で実問題を模擬的に表した多峰性最適化問題における複数解探索手法の機構であるNiching Schemeについて説明する．\ref{sec:nm}章では，EAsとNiching Schemeを組み合わせた複数解探索手法を説明し，\ref{sec:NSBA}章から\ref{sec:DNRBA}章までは提案手法であるNSBA, NRBA及びDNRBAの説明をする．
+\ref{sec:MA}章で最適化問題において一般的に用いられるEAsについて説明し，\ref{sec:ns}章で実問題を模擬的に表した多峰性最適化問題における複数解探索手法の機構であるNiching Schemeについて説明する．\ref{sec:nm}章では，EAsとNiching Schemeを組み合わせた複数解探索手法を説明し，\ref{sec:NSBA}章から\ref{sec:DNRBA}章までは提案手法であるNSBA, NRBA及びDNRBAの説明をする．
 % \ref{sec:LCS}章ではLCSとその拡張システムについて説明し, \ref{sec:NN}章ではニューラルネットワークとその機械学習であるDLの説明を行う.
 % \ref{sec:DCA}章では提案システムである\proposed の圧縮器として使われるニューラルネットワークの機構であるDCAの説明をし, \ref{sec:proposed}章では学習分類子システムとDCAを組み合わせた提案システムである\proposedJ(\proposed)を説明する.
 % \ref{sec:PROBLEM}章では問題の種類と検証で用いるベンチマーク問題あるMNISTデータセットとマルチプレクサ問題を説明する.
@@ -174,11 +176,11 @@ DCAXCSRの有効性を検証するため, 784次元の画像を分類するMNIST
 \section{Metaheuristic Algorithms}
 
 % \subsection{Evolutionary Algorithms (EAs)}
-% \label{ss:EAs}
+\label{sec:MA}
 
 現実問題は非常に複雑であり，その複雑さを多峰性関数として表現した問題をを最適化するためにEvolutionary Algorithms (EAs)が用いられるようになった．EAsのメカニズムとして単一の最適解を探索することを目的として設計されており，生物の生殖や突然変異，交叉，適者生存といった過程をモデルとしている．その代表的なアルゴリズムを\ref{ss:GA}節から\ref{ss:cma-es}節で紹介する．
 
-\subsection{Genetic Algorithm (GA)}
+\subsection{遺伝的アルゴリズム (GA)}
 \label{ss:GA}
 遺伝的アルゴリズム(Genetic Algorithm:GA) \cite{GA} は生物の進化の過程を模擬したアルゴリズムであり，最適化問題において最も基本的なヒューリスティック手法である．生物は次の世代により良い遺伝子を持った個体を残すため，まずは親集合の中から個体を選択し，選択した個体同士を交叉させる．この時，ある一定の確率で突然変異させる．次に，交叉させて新たに生成された個体を子集合の解候補とし，親と子の個体を評価して，評価値の高い個体は次世代の個体として保存され，評価値の低い個体は淘汰される．各個体に対し，この「選択」，「交叉」，「突然変異」，「評価(淘汰)」を繰り返すことで，環境に対する適合度が高くなっていく(評価値の高い遺伝子が残る)．アルゴリズムの疑似コードは，以下のAlgorithm\ref{code:ga}に記す．
 
@@ -218,7 +220,7 @@ $N$個の個体$x_i$を初期集合として生成し，ランダムな評価値
 \end{algorithm}
 
 
-\subsection{Particle Swarm Optimization (PSO)}
+\subsection{粒子群最適化 (PSO)}
 \label{ss:PSO}
 % 数式番号に章番号を追加
   \makeatletter
@@ -261,7 +263,7 @@ PSOのアルゴリズムの疑似コードであるAlgorithm\ref{code:pso}を以
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Differential Evolution (DE)}
+\subsection{差分進化 (DE)}
 \label{ss:DE}
 
 % 数式番号に章番号を追加
@@ -593,55 +595,65 @@ sh(d_{ij})= \begin{cases}
 \label{eq:nc}
 m_i=\sum_{j=1}^N sh(d_{ij})
 \end{equation}
-Niche count $m_i$は$i$番目の個体に対する全個体の密度を表している．このNiche countより，Shared function $f_i'$が次式のように算出される．
+Niche count $m_i$は$i$番目の個体に対する全個体の密度を表している．このNiche countより，Shared fitness $f_i'$が次式のように算出される．
 \begin{equation}
 \label{eq:sfit}
-f_i'=\frac{f_i}{m_i}
+\phi_i=\frac{F_i}{m_i}
 \end{equation}
-ここで，$f_i$は$i$番目の個体の評価値を表す．Shared function $f_i'$は，その個体密度であるNiche count $m_i$によって値が大きく変動する．$f_i'$の値が小さいほど$i$番目の個体密度は高く，値が大きければ個体密度は低いということになる．
+ここで，$F_i$は$i$番目の個体の評価値を表す．Shared fitness $\phi_i$は，その個体密度であるNiche count $m_i$によって値が大きく変動する．$\phi_i$の値が小さいほど$i$番目の個体密度は高く，値が大きければ個体密度は低いということになる．
 
 \subsection{Dynamic Niche Sharing}
 \label{ss:dns}
-
-\subsection{クラスタリング}
-\label{ss:clustering}
-クラスタリングは対象となる集合の全個体に対して部分集合に分割する手法である．クラスタリングは，{\bf 階層的クラスタリング}と{\bf 非階層的クラスタリング}の２つに分類される．
-
-\subsubsection{階層的クラスタリング}
-\label{sss.hc}
-階層的クラスタリング(Hierarchical Clustering)は，一般的に$N$個のデータ(個体)が与えられたときに初期状態として$N$個のクラスタを生成する．次にクラスタ間の距離に基づいてクラスタ同士を併合させる．一つのクラスタになるまでこの併合を繰り返す．代表的なクラスタ分類に関して以下の手法がある．
-\begin{itemize}
-\item {\bf 最短距離法(Nearest neighbor method)} \\
-最近傍クラスタ同士を併合していく手法 \cite{NN-Clustering} である．クラスタ間の距離$d(C_1,C_2)$は次の式で定義される．
+\ref{ss:fs}節で前述したShared fitnessを用い，Dynamic niche sharing は次式で表される．
 \begin{equation}
-d(C_1,C_2) = \min_{x_i \in C_i, x_j \in C_j}(d(x_i,x_j))
+\label{eq:dns}
+m_i^{dyn}=\begin{cases}
+n_j & ({\rm if \ individual}\ i {\rm \ is \ within \ the \ dynamic \ niche }\ j) \\
+m_i & ({\rm otherwise})
+\end{cases}
 \end{equation}
-\item {\bf 最長距離法(furthest neighbor method)} \\
-最も遠いクラスタ同士を併合する手法 \cite{FN-Clustering} である．クラスタ間の距離$d(C_1,C_2)$は次の式で定義される．
-\begin{equation}
-d(C_1,C_2) = \max_{x_i \in C_1, x_j \in C_2}(d(x_i,x_j))
-\end{equation}
-\item {\bf 群平均法(group average method)} \\
 
-\begin{equation}
-d(C_1,C_2) = \frac{1}{|C_1||C_2|}\sum_{x_i \in C_1} \sum_{x_j \in C_2}d(x_i,x_j)
-\end{equation}
-\item {\bf ウォード法(Ward's method)} \\
-\begin{equation}
-d(C_1,C_2) = E(C_1 \cup C_2)-E(C_1)-E(C_2)
-\end{equation}
-\item {\bf 重心法(Centroid method)} \\
-重心法は
-\begin{equation}
-d(C_1,C_2) = d(\bar{x_i},\bar{x_j})
-\end{equation}
-\end{itemize}
+% \subsection{クラスタリング}
+% \label{ss:clustering}
+% クラスタリングは対象となる集合の全個体に対して部分集合に分割する手法である．クラスタリングは，{\bf 階層的クラスタリング}と{\bf 非階層的クラスタリング}の２つに分類される．
 
-\subsubsection{非階層的クラスタリング}
-\label{sss:nhc}
-非階層的クラスタリング(Non-hierarchical Clustering)は
+% \subsubsection{階層的クラスタリング}
+% \label{sss.hc}
+% 階層的クラスタリング(Hierarchical Clustering)は，一般的に$N$個のデータ(個体)が与えられたときに初期状態として$N$個のクラスタを生成する．次にクラスタ間の距離に基づいてクラスタ同士を併合させる．一つのクラスタになるまでこの併合を繰り返す．代表的なクラスタ分類に関して以下の手法がある．
+% \begin{itemize}
+% \item {\bf 最短距離法(Nearest neighbor method)} \\
+% 最近傍クラスタ同士を併合していく手法 \cite{NN-Clustering} である．クラスタ間の距離$d(C_1,C_2)$は次の式で定義される．
+% \begin{equation}
+% d(C_1,C_2) = \min_{x_i \in C_i, x_j \in C_j}(d(x_i,x_j))
+% \end{equation}
+% \item {\bf 最長距離法(furthest neighbor method)} \\
+% 最も遠いクラスタ同士を併合する手法 \cite{FN-Clustering} である．クラスタ間の距離$d(C_1,C_2)$は次の式で定義される．
+% \begin{equation}
+% d(C_1,C_2) = \max_{x_i \in C_1, x_j \in C_2}(d(x_i,x_j))
+% \end{equation}
+% \item {\bf 群平均法(group average method)} \\
 
+% \begin{equation}
+% d(C_1,C_2) = \frac{1}{|C_1||C_2|}\sum_{x_i \in C_1} \sum_{x_j \in C_2}d(x_i,x_j)
+% \end{equation}
+% \item {\bf ウォード法(Ward's method)} \\
+% \begin{equation}
+% d(C_1,C_2) = E(C_1 \cup C_2)-E(C_1)-E(C_2)
+% \end{equation}
+% \item {\bf 重心法(Centroid method)} \\
+% 重心法は
+% \begin{equation}
+% d(C_1,C_2) = d(\bar{x_i},\bar{x_j})
+% \end{equation}
+% \end{itemize}
 
+% \subsubsection{非階層的クラスタリング}
+% \label{sss:nhc}
+% 非階層的クラスタリング(Non-hierarchical Clustering)は
+
+% \begin{itemize}
+% \item k-means法
+% \end{itemize}
 
 \newpage
 \section{Niching Methods}
@@ -666,58 +678,227 @@ d(C_1,C_2) = d(\bar{x_i},\bar{x_j})
 \subsection{Covariance Matrix Self Adaptation Evolution Strategy with Repelling Subpopulations (RS-CMSA-ES)}
 \label{ss:rs-cmsa-es}
 
+\newpage
+\section{多峰性最適化問題}
+\label{sec:MOP}
+本実験では，複数最適解を探索する手法の性能を比較するため，CEC ({\it IEEE Congress on Evolutionary Computation}) 2013 Competition on Niching Methods for Multimodal Function Optimization \cite{CEC2013} で扱われたベンチマーク関数を用いる．使用する関数について,次節で説明する．
 
+\subsection{多峰性関数}
+\label{ss:benchmark}
+本節では，多峰性最適化に用いられる一般的なベンチマーク関数について説明する．
 
 \clearpage
 \newpage
 \section{Novelty Search-based Bat Algorithm (NSBA)}
 \label{sec:NSBA}
+本章では多峰性最適化に対し，大域探索と局所探索を自動で切り替えることに優れたBat Algorithm (BA) と，未探索領域に解を生成するNovelty Searchを組み合わせたNSBA \cite{NSBA} を説明する．
 % この章では\proposed で用いるDCAの基礎となるニューラルネットワーク及びディープラーニングを扱う.
-% はじめに階層型ニューラルネットワークとその学習方法を\ref{ss:NN}節で説明し, その学習方法を\ref{ss:bpg}節で説明する.
+% はじめに階層型ニューラルネットワークとその学習方法を\ref{ss:NN}{}節で説明し, その学習方法を\ref{ss:bpg}節で説明する.
 % 次にニューラルネットワークを利用した機構である自己符号化器(オートエンコーダー)\cite{AE}を\ref{ss:AE}節で説明し, 最後に深いニューラルネットワークの学習である深層学習を\ref{ss:DL}節で説明する.
 
-\subsection{概要}
+\subsection{Novelty Search}
+\label{ss:NS}
+Novelty Search \cite{NS} は未探索領域に新たに解を生成することを目的とした手法である．個体間距離の算出式は次式で表される．
+\begin{equation}
+\label{eq:ns}
+\rho(x)=\frac{1}{k}\sum_{i=1}^k dist(x,\mu_i)
+\end{equation}
+この時，$\rho(x)$は個体$x$における密度を表しており，$kは$個体$x$の近傍数，$dist$は個体$x$と$\mu_i$の距離を表す．図\ref{fig:ns}は近傍数が3の時の解の生成を表す．
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\linewidth]{eps/IES2018/ns.eps}
+  \caption{解候補の生成}
+  \label{fig:ns}
+\end{figure}
+
+\subsection{メカニズム}
 \label{ss:NSBA-abst}
-% この節では最も基本的なニューラルネットワークである階層型ニューラルネットワークを説明する.
-% まずはニューラルネットワークの思想や設計に関して\ref{sss:NN_brain}節で説明し, \ref{sss:NN_node_layer}節で基本的な構成要素であるノードとレイヤーについて, \ref{sss:NN_activate_function}節で活性化関数について, そして最後に\ref{sss:NN_problems}節で出力層の設定について説明する.
+\begin{equation}
+d_i^{t} = \frac {1}{N} \sum _{j=1}^N \frac {(x_{i*}-x_j^{t})}{|x_{i*}-x_j^{t}|^2}
+\label{eq:nd*}
+\end{equation}
+\begin{equation}
+v_i^{t+1}=v_i^{t}+d_i^{t}*f_i
+\label{eq:nsvi}
+\end{equation}
+
+\begin{equation}
+x_{loc}=x_{i*}+ \epsilon A^t,
+\label{eq:ns_xloc}
+\end{equation}
 
 \subsection{アルゴリズム}
-\label{sss:NSBA-algorithm}
+\label{ss:NSBA-algorithm}
+アルゴリズムの疑似コードを以下のAlgorithm \ref{code:nsba}に記す．
+\begin{algorithm}[H]
+\caption{Novelty Search-based Bat Algorithm}
+\label{code:nsba}
+\begin{algorithmic}[6]
+\REQUIRE Objective\ Function\ $F(x)$
+\STATE Initialize Population $x_i(i=1,2,..., N)$ and $v_i$\\
+\STATE Define frequency $f_i$ at location $x_i$ [Eq.(\ref{eq:freq})]
+\STATE Initialize pulse rates $r_i$, and loudness $A_i$
+\WHILE{($t <$ Max number of iterations)}
+\FOR{i=1 to N}
+\STATE Generate a new solution $x_i$ and update velocity $v_i$  [Eqs.(\ref{eq:xi})(\ref{eq:nd*})(\ref{eq:nsvi})] 
+\IF{($rand>r_i$)}
+\STATE Generate a new solution ${x_{loc}}$ around the solution $x_{i}$ [Eq.(\ref{eq:ns_xloc})] 
+\ENDIF
+\STATE Generate a new solution $x_{rnd}$ randomly (or without ${x_{rnd}}$)
+\IF{($rand<A_i \ \& \min (F(x_i), F(x_{new}), F(x_{rnd}))<F(x_{i*})$)}
+\STATE Accept the new solution, and update pulse rate $r_i$ \\ \& loudness $A_i$ [Eqs. (\ref{eq:loud})(\ref{eq:pulse})] 
+\ENDIF
+\ENDFOR
+\STATE Evaluate the all bats and select a best solution $x_{i*}$ in the current solutions
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
 
+\subsection{実験}
+\label{ss:NSBA-exp}
+本実験では従来のBAとNSBAの性能を比較するため，代表的な以下の多峰性関数を用いる．
 
-\clearpage
+\subsubsection{評価関数}
+\label{sss:NSBA-func}
+扱う評価関数とその概形を図\ref{fig:nsba-f1}, \ref{fig:nsba-f2}に表す．
+
+\begin{description}
+\item[$F_1$: Griewank (2D)]\mbox{}\\
+\begin{equation}
+\label{eq:nsba-F1}
+F_1(x)=\sum_{i=1}^D \frac{x_i}{4000}- \prod_{i=1}^D \cos(\frac{x_i}{\sqrt{i}})+1.
+\end{equation}
+
+\begin{figure}[t]
+\centering
+\subfigure[Fitness Landscape]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/3d_griewank.eps}
+\label{fig:nsba-f1(3d)}}
+\subfigure[Contour Plot]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/cont_griewank.eps}
+\label{fig:nsba-f1(2d)}}
+\caption{Griewank関数}
+\label{fig:nsba-f1}
+\end{figure}
+
+\item[$F_2$: Rastrigin (2D)]\mbox{}\\
+\begin{equation}
+\label{eq:nsba-F2}
+F(x)=10D+\sum_{i=1}^D[x_i^2-10\cos(2\pi x_i)].
+\end{equation}
+
+\begin{figure}[t]
+\centering
+\subfigure[Fitness Landscape]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/3d_rastrigin.eps}
+\label{fig:nsba-f2(3d)}}
+\subfigure[Contour Plot]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/cont_rastrigin.eps}
+\label{fig:nsba-f2(2d)}}
+\caption{Rastrigin関数}
+\label{fig:nsba-f2}
+\end{figure}
+
+\end{description}
+\FloatBarrier
+
+\subsubsection{評価基準}
+\label{sss:NSBA-eval}
+本実験ではPeak Ratio (PR) \cite{CDE} を採用し，最適解及び局所解の発見率を次式で求める．
+\begin{equation}
+\label{eq:PR}
+PR=\frac{\sum_{run=1}^{MR}FPs}{TP*MR}
+\end{equation}
+ここで，$TP$は評価関数の全最適解と局所解数(Total Peak)を表し，$MR$は実験回数(Max Run)を表す．$FPs$は発見した解の数(Found Peaks)を表す．
+\subsubsection{パラメータ設定}
+
+\subsubsection{実験結果}
+\label{sss:NSBA-results}
+
+\begin{table}[h]
+\caption{Found Peaks and Peak Ratio of BA and NSBA}
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c|c}
+\hline
+\multicolumn{1}{c|}{} & \multicolumn{3}{c|}{BA} & \multicolumn{3}{c}{NSBA}  \\
+\hline
+Function & Mean & SD & PR & Mean & SD & PR \\
+\hline
+$F_1 \ (N=50)$ & 1.0 & 0 & 5.89 \% & 6.8 & 0.7024 & 40.0 \% \\
+\hline
+$F_1 \ (N=100)$ & 1.0 & 0 & 5.89 \% & 7.267 & 0.5735 & 42.75 \% \\
+\hline
+$F_2 \ (N=100)$ & 1.0 & 0 & 0.87 \% & 7.9333 & 0.8929 & 6.56 \% \\
+\hline
+$F_2 \ (N=150)$ & 1.0 & 0 & 0.87 \% & 8.0667 & 0.7717 & 6.67 \% \\
+\hline
+\end{tabular}
+\label{tab:nsba}
+\end{center}
+\end{table}
+\FloatBarrier
+
 \newpage
 \section{Niche Radius-based Bat Algorithm (NRBA)}
 \label{sec:NRBA}
-
-\subsection{概要}
+探索空間の分割方法の一つとしてNiche Radiusが挙げられる．Niche Radiusは探索空間のスケールと探索する解の数を元に個体の探索範囲を決定することのできる手法である．これにより，各個体が同じ解に留まることなく分散させ，従来のBAに以下3つの変更点を加えることで，最適解だけでなく局所解も同時に探索可能なNRBA \cite{NRBA} を説明する．
+\subsection{メカニズム}
 \label{ss:NRBA-abst}
 
 
 \subsection{アルゴリズム}
-\label{sss:NRBA-algorithm}
+\label{ss:NRBA-algorithm}
+
+\subsection{実験}
+\label{ss:NRBA-exp}
+\subsubsection{評価関数}
+\label{sss:NRBA-func}
+
+\subsubsection{評価基準}
+\label{sss:NRBA-eval}
+\subsubsection{実験結果}
+\label{sss:NRBA-results}
 
 \clearpage
 \newpage
 \section{Dynamic Niche Radius-based Bat Algorithm (DNRBA)}
 \label{sec:DNRBA}
 
-\subsection{概要}
+\subsection{メカニズム}
 \label{ss:DNRBA-abst}
 
 
 \subsection{アルゴリズム}
 \label{sss:DNRBA-algorithm}
 
+\subsection{実験}
+\label{ss:DNRBA-exp}
+\subsubsection{評価関数}
+\label{sss:DNRBA-func}
+
+\subsubsection{評価基準}
+\label{sss:DNRBA-eval}
+\subsubsection{実験結果}
+\label{sss:DNRBA-results}
+
+
 
 \newpage
-\section{多峰性最適化問題}
-\label{sec:MOP}
+\section{他の最先端手法との性能比較実験}
+\label{sec:experiment}
+
+
+\FloatBarrier
+
+
+\subsection{複数解探索における多峰性最適化問題}
+\label{ss:cec2013}
 本実験では，複数最適解を探索する手法の性能を比較するため，CEC ({\it IEEE Congress on Evolutionary Computation}) 2013 Competition on Niching Methods for Multimodal Function Optimization \cite{CEC2013} で扱われたベンチマーク関数を用いる．使用する関数について,次節で説明する．
 
-\subsection{ベンチマーク関数}
-\label{ss:benchmark}
-使用する20のベンチマーク関数は以下の通りである．
+\subsubsection{ベンチマーク関数}
+\label{sss:benchmark}
+使用する20のベンチマーク関数とその概形は以下の通りである．
+
 
 \begin{description}
 \item[$F_1$: Five-Uneven-Peak Trap (1D)]\mbox{}\\
@@ -734,35 +915,102 @@ F_1(x)=\begin{cases}
 80(x-27.5) & {\rm for} \ 27.5 \leq x < 30.
 \end{cases}
 \end{equation}
+% \begin{figure}[h]
+%   \centering
+%   \includegraphics[width=0.8\linewidth]{eps/f1.eps}
+%   \caption{Five-Uneven-Peak Trap}
+%   \label{fig:f1}
+% \end{figure}
 
 \item[$F_2$: Equal Maxima (1D)]\mbox{}\\
 \begin{equation}
 \label{eq:F2}
 F_2(x)=\sin^6{(5\pi x)}.
 \end{equation}
+% \begin{figure}[h]
+%   \centering
+%   \includegraphics[width=0.8\linewidth]{eps/f2.eps}
+%   \caption{Equal Maxima}
+%   \label{fig:f2}
+% \end{figure}
 
 \item[$F_3$: Uneven Decreasing Maxima (1D)]\mbox{}\\
 \begin{equation}
 \label{eq:F3}
 F_3(x)=exp(-2log(2)(\frac{x-0.08}{0.854})^2)\sin^6{(5\pi(x^{\frac{3}{4}}-0.05))}.
 \end{equation}
+% \begin{figure}[h]
+%   \centering
+%   \includegraphics[width=0.8\linewidth]{eps/f3.eps}
+%   \caption{Uneven Decreasing Maxima}
+%   \label{fig:f3}
+% \end{figure}
 
 \item[$F_4$: Himmelblau (2D)]\mbox{}\\
 \begin{equation}
 \label{eq:F4}
 F_4(x,y) = 200 - (x^2+y-11)^2 - (x+y^2-7)^2.
 \end{equation}
+% \begin{figure}[h]
+%   \centering
+%   \includegraphics[width=0.8\linewidth]{eps/f4.eps}
+%   \caption{2D Himmelblau}
+%   \label{fig:f4}
+% \end{figure}
+
+\item[$F_5$: Six-Hump Camel Back (2D)]\mbox{}\\
+\begin{equation}
+\label{eq:F5}
+F_5(x,y)=-4[(4-2.1x^2+\frac{x^4}{3})x^2+xy+(4y^2-4)y^2].
+\end{equation}
+% \begin{figure}[h]
+%   \centering
+%   \includegraphics[width=0.8\linewidth]{eps/f5.eps}
+%   \caption{2D Six-Hump Camel Back}
+%   \label{fig:f5}
+% \end{figure}
+
+\item[$F_6$: Shubert (2D)]\mbox{}\\
+\begin{equation}
+\label{eq:F6}
+F_6(x)=-\prod_{i=1}^D \sum_{j=1}^5 j\cos[(j+1)x_i+j].
+\end{equation}
+% \begin{figure}[h]
+%   \centering
+%   \includegraphics[width=0.8\linewidth]{eps/f6.eps}
+%   \caption{2D Shubert}
+%   \label{fig:f6}
+% \end{figure}
+
 \end{description}
 
-\newpage
-\section{実験}
-\label{sec:experiment}
+\begin{table}[h]
+\caption{Benchmark Test Functions}
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c}
+\hline
 
-
-\FloatBarrier
-
-
-
+Function & $F(x*)$ & Num of & Num of & Dimension & Search Range \\
+& & goptima & loptima & & \\
+\hline
+$F_1$ & 200.0 & 2 & 3 & 1 & $x \in [0,30]$  \\
+\hline
+$F_2$ & 1.0 & 5 & 0 & 1 & $x \in [0,1]$  \\
+\hline
+$F_3$ & 1.0 & 1 & 4 & 1 & $x \in [0,1]$  \\
+\hline
+$F_4$ & 200.0 & 4 & 0 & 2 & $x,y \in [-6,6]$  \\
+\hline
+$F_5$ & 1.03163 & 2 & 2 & 2 & $x \in [-1.9,1.9]$, \\
+& & & & & $y \in [-1.1,1.1]$ \\
+\hline
+$F_6$ & 186.731 & 18 & 0 & 2 & $x_i \in [-10,10]$  \\
+\hline
+% \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
+\end{tabular}
+\label{tab:MOP}
+\end{center}
+\end{table}
 
 % \clearpage
 % \section{実験}
@@ -773,7 +1021,7 @@ F_4(x,y) = 200 - (x^2+y-11)^2 - (x+y^2-7)^2.
 
 % \subsection{実験内容}
 % \label{ss:EXP_intro}
-\subsubsection*{目的}
+% \subsubsection*{目的}
 % 1) \proposed が従来のXCSRが学習できない高次元な問題を解くことが出来るか, 及び 2) 得られた分類子は解釈性の高い一般化されたルールになっているか, を検証することを目的として実験を行う.
 % 本論文ではMNISTデータセット分類問題(\ref{ss:mnist}節)及び11-マルチプレクサ問題(\ref{ss:MPP}節)の2つの実験を行う.
 
@@ -782,7 +1030,7 @@ F_4(x,y) = 200 - (x^2+y-11)^2 - (x+y^2-7)^2.
 % マルチプレクサ問題は入力は11次元と高次元ではないが, 画像のように均一な粒度での圧縮ができないため難しい問題である.
 % NNが上手く圧縮・復元出来ない問題に対して, 学習が出来るかそして一般的なルールが得られるかを検証するのが目的である.
 
-\subsubsection*{設定}
+% \subsubsection*{設定}
 % 実験は従来のXCSRと\proposed を比較する.
 % \proposed は圧縮された入力に向けたXCSRの正答率がほぼ100\%に収束していなければ高次元入力を学習するXCSRも用いる.
 % \proposed 内のXCSRと比較手法としてのXCSRのハイパーパラメーターは同一にし, 平等な条件にしている.
