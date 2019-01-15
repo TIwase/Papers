@@ -810,7 +810,7 @@ F(x)=10D+\sum_{i=1}^D[x_i^2-10\cos(2\pi x_i)].
 PR=\frac{\sum_{run=1}^{MR}FPs}{TP*MR}
 \end{equation}
 ここで，$TP$は評価関数の全最適解と局所解数(Total Peak)を表し，$MR$は実験回数(Max Run)を表す．$FPs$は発見した解の数(Found Peaks)を表す．
-\subsubsection{パラメータ設定}
+\subsubsection{実験設定}
 
 \subsubsection{実験結果}
 \label{sss:NSBA-results}
@@ -842,17 +842,136 @@ $F_2 \ (N=150)$ & 1.0 & 0 & 0.87 \% & 8.0667 & 0.7717 & 6.67 \% \\
 \section{Niche Radius-based Bat Algorithm (NRBA)}
 \label{sec:NRBA}
 探索空間の分割方法の一つとしてNiche Radiusが挙げられる．Niche Radiusは探索空間のスケールと探索する解の数を元に個体の探索範囲を決定することのできる手法である．これにより，各個体が同じ解に留まることなく分散させ，従来のBAに以下3つの変更点を加えることで，最適解だけでなく局所解も同時に探索可能なNRBA \cite{NRBA} を説明する．
+
 \subsection{メカニズム}
 \label{ss:NRBA-abst}
+\begin{itemize}
+\item {\bf 変更点1:大域探索} \\
+ここではNiche Radiusを使用し，従来手法の式(\ref{eq:vi}),(\ref{eq:xi})を次式のように変更を加えた．
+\begin{equation}
+\label{eq:nrvi}
+v_i^{t+1}=v_i^t+(x_i^t-x_{NR*})*f_i
+\end{equation}
+\begin{equation}
+\label{eq:nrxi}
+x_i^{t+1}= \begin{cases}
+x_i^t+v_i^{t+1} & (if \ d_i^t < NR) \\
+x_i^t & (otherwise)
+\end{cases}
+\end{equation}
+個体移動時のイメージ図をFig. \ref{fig:nr}に表す．各個体はNRを半径とした円の探索領域が決まっており，個体間距離${d_i}$がNRより小さい場合において，式(\ref{eq:nrvi})にてNR内の最良解${x_{NR*}}$を中心とした円から離れる方向へ個体${x_i^t}$が速度${v_i}$で移動する．またNR内に他の個体が存在しない，あるいは最良解$x_{NR*}$は移動をせず，その場所に留まる．この変更により，個体が同じ探索領域内に留まらず分散化をはかる．
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.5\linewidth]{eps/SICESSI2018/niche_radius.eps}
+  \caption{Generating new solution　candidates}
+  \label{fig:nr}
+\end{figure}
 
+\item {\bf 変更点2: 局所探索} \\
+次に局所探索性能を上げるため，各個体が持つNiche Radius内の最良解${x_{NR*}}$の周辺に新しい解候補${x_{loc}}$を生成するよう変更した．生成式は次の通りである．
+\begin{equation}
+\label{eq:nrloc}
+x_{loc}=x_{NR*} + \epsilon A_i^t
+\end{equation}
+
+$\epsilon$は1 $\times$ $D$次元の配列で$[-NR, \ NR]$区間のランダムな値が割り当てられる．この変更により，個体を局所解へ収束するよう促す．
+\item {\bf 変更点3: ランダム探索} \\
+ランダム探索では各個体の持つNR内にランダムで解候補を以下の式のように生成する．
+\begin{equation}
+\label{eq:nrrnd}
+x_{rnd}=x_i^t + rand(1,D,[-NR, NR])
+\end{equation}
+$[-NR, \ NR]$区間内の1×$D$次元の配列により現在位置$x_i^t$周辺に解候補を生成する．この変更では各個体を最適解あるいは局所解近辺へ移動させることで同じ場所に留まることを避ける．
+\end{itemize}
 
 \subsection{アルゴリズム}
 \label{ss:NRBA-algorithm}
+提案手法のNRBAのアルゴリズムの疑似コードをAlgorithm \ref{code:nrba}に記す．
+\begin{algorithm}[H]
+\caption{Niche Radius-based Bat Algorithm}
+\label{code:nrba}
+\begin{algorithmic}[7]
+\REQUIRE 評価関数 $F(x)$の設定
+\STATE 各個体$x_i(i=1,2,...,N)$と速度$v_i$の初期化
+\STATE 周波数$f_i$の定義　[eq.(\ref{eq:freq})]
+\STATE パルスレート$r_i$とラウドネス$A_i$の初期化
+\STATE Niche Radiusの算出 [eqs.(\ref{eq:lambda}), (\ref{eq:NR})]
+\WHILE{(t $<$ Max Iteration)}
+\FOR{i=1 to N}
+\IF{($d_i<NR$)}
+\STATE 大域探索: 新しい解候補$x_i^{t+1}$の生成と速度$v_i$の更新 [eqs.(\ref{eq:nrvi}),(\ref{eq:nrxi})]
+% \ELSE
+% \STATE Continue
+\ENDIF
+\IF{($rand>r_i$)}
+\STATE 局所探索: 生成した解候補$x_i^{t+1}$近辺に新しい解$x_{loc}$を生成 [eq.(\ref{eq:nrloc})]
+\ENDIF
+\STATE ランダム探索: パーソナルベストの持つNR内に解候補の生成 [eq.(\ref{eq:nrrnd})]
+\IF{($rand<A_i \ \& \ F(x_i), F(x_{loc}), F(x_{rnd})<F(x_{i*})$)}
+\STATE 新しい解の評価と更新
+\STATE パルスレート$r_i$の増加とラウドネス$A_i$の減少 [eqs.(\ref{eq:loud}),(\ref{eq:pulse})]
+\ENDIF
+\ENDFOR
+\STATE t=t+1
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{実験}
 \label{ss:NRBA-exp}
+最適解と局所解の数が異なる評価関数において，各手法の探索性能にどのような影響があるか調査する．次の4つのパターンの評価関数を用意し，従来手法と比較することで提案手法の探索性能を検証する．．一つの最適解に対して複数の局所解を持つ;複数の最適解に対して同じ数の局所解を持つ;一つの最適解の数に対して一つの局所解を持つ;最適解のみ複数持つ．これらのパターンに適した多峰性関数を用いて実験を行う．
+
 \subsubsection{評価関数}
 \label{sss:NRBA-func}
+実験で使用するベンチマーク関数の４つを図\ref{fig:nrba-f1}-\ref{fig:nrba-f4}に示す．図\ref{fig:nrba-f1(3d)}から図\ref{fig:nrba-f4(3d)}は各評価関数の概形を表す．図\ref{fig:nrba-f1(2d)}から図\ref{fig:nrba-f4(2d)}の各グラフの平面は2変数$x_1,x_2$空間を表しており，カラーバーは評価値を色濃度で表現したものとなる．本実験では最小化問題として，色濃度の濃い（評価値の低い）部分となる最適解と局所解の探索を目的とした．Table \ref{tab1}は各関数の探索領域と，最適解の評価値，最適解及び局所解の個数を示している．
+
+\begin{figure}[t]
+\centering
+\subfigure[Fitness Landscape]{
+\includegraphics[width=0.8\linewidth]{eps/SICESSI2018/3d_griewank.eps}
+\label{fig:nrba-f1(3d)}}
+\subfigure[Contour Plot]{
+\includegraphics[width=0.8\linewidth]{eps/SICESSI2018/cont_griewank.eps}
+\label{fig:nrba-f1(2d)}}
+\caption{Griewank関数}
+\label{fig:nrba-f1}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\subfigure[Fitness Landscape]{
+\includegraphics[width=0.8\linewidth]{eps/SICESSI2018/3d_sixhump_camel.eps}
+\label{fig:nrba-f2(3d)}}
+\subfigure[Contour Plot]{
+\includegraphics[width=0.8\linewidth]{eps/SICESSI2018/cont_sixhump_camel.eps}
+\label{fig:nrba-f2(2d)}}
+\caption{Six-Hump Camel関数}
+\label{fig:nrba-f2}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\subfigure[Fitness Landscape]{
+\includegraphics[width=0.8\linewidth]{eps/SICESSI2018/3d_michalewicz.eps}
+\label{fig:nrba-f3(3d)}}
+\subfigure[Contour Plot]{
+\includegraphics[width=0.8\linewidth]{eps/SICESSI2018/cont_michalewicz.eps}
+\label{fig:nrba-f3(2d)}}
+\caption{Michalewicz関数}
+\label{fig:nrba-f3}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\subfigure[Fitness Landscape]{
+\includegraphics[width=0.8\linewidth]{eps/SICESSI2018/3d_himmelblau.eps}
+\label{fig:nrba-f4(3d)}}
+\subfigure[Contour Plot]{
+\includegraphics[width=0.8\linewidth]{eps/SICESSI2018/cont_himmelblau.eps}
+\label{fig:nrba-f4(2d)}}
+\caption{Himmelblau関数}
+\label{fig:nrba-f4}
+\end{figure}
 
 \subsubsection{評価基準}
 \label{sss:NRBA-eval}
