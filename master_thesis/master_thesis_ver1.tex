@@ -604,7 +604,7 @@ Niche count $m_i$は$i$番目の個体に対する全個体の密度を表して
 
 \subsection{Dynamic Niche Sharing}
 \label{ss:dns}
-\ref{ss:fs}節で前述したShared fitnessを用い，Dynamic niche sharing は次式で表される．
+\ref{ss:fs}節で前述したShared fitnessを用い，Dynamic niche sharing \cite{DNS} は次式で表される．
 \begin{equation}
 \label{eq:dns}
 m_i^{dyn}=\begin{cases}
@@ -812,9 +812,16 @@ PR=\frac{\sum_{run=1}^{MR}FPs}{TP*MR}
 ここで，$TP$は評価関数の全最適解と局所解数(Total Peak)を表し，$MR$は実験回数(Max Run)を表す．$FPs$は発見した解の数(Found Peaks)を表す．
 \subsubsection{実験設定}
 \label{sss:nsba-setup}
+本実験では，$F_1$関数では個体数$N=50,100$，$F_2$関数では$N=100,150$とした．2つの関数において，$f_{max}=1, f_{min}=0$, ラウドネス$A^0=1$, パルスレート$r^0 \in rand[0,1]$とし，$\alpha = \gamma = 0.9$と設定した．世代数は10000，実験回数を30回とした．
 
 \subsubsection{実験結果}
-\label{sss:NSBA-results}
+\label{sss:nsba-results}
+\begin{itemize}
+\item {\bf PRと発見した解数} \\
+表\ref{tab:nsba}はBAとNSBAにおける，発見した解の数(FPs)とその発見率(PR)の30試行回数による平均値と標準偏差を示す．表\ref{tab:nsba}より2つの関数に対し，NSBAはBAよりもFPs及びPR値が高いことから探索性能が良好である．図\ref{fig:nsba-results_ba}, \ref{fig:nsba-results_nsba}は最終世代における解の分布を表し，白い丸が解の位置である．図よりBAは一つの最適解に収束する傾向にあるが，一方でNSBAは最適解とその周辺にある複数の局所解に留まっていることが分かった．
+\item {\bf 収束速度} \\
+図\ref{fig:nsba-all_iter}はNSBAとBAの世代数によるPR値の推移を表しており，縦軸はPR値，横軸は世代数を示す．黒い実線はBA，黒い点線はNSBAの推移を示している．図\ref{fig:nsba-f1_n50}から\ref{fig:nsba-f2_n150}でBAは最終世代において，PR値が0\%付近で収束しているのに対し，NSBAは$F_1$関数では70\%までPR値が上昇し，1000世代以降は徐々に低下する傾向にある．$F_2$関数ではNSBAのPR値が20\%から10\%まで減少し，3000世代以降は停滞する傾向が見られた．
+\end{itemize}  
 
 \begin{table}[h]
 \caption{Found Peaks and Peak Ratio of BA and NSBA}
@@ -839,6 +846,102 @@ $F_2 \ (N=150)$ & 1.0 & 0 & 0.87 \% & 8.0667 & 0.7717 & 6.67 \% \\
 \end{table}
 \FloatBarrier
 
+\begin{figure}[t]
+\centering
+\subfigure[$F_1 :(N=50)$]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/f1_ba50.eps}
+\label{fig:nsba-f1_ba50}}
+\subfigure[$F_1 :(N=100)$]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/f1_ba100.eps}
+\label{fig:nsba-f1_ba100}}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\subfigure[$F_2 :(N=100)$]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/f2_ba100.eps}
+\label{fig:nsba-f2_ba100}}
+\subfigure[$F_2 :(N=150)$]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/f2_ba150.eps}
+\label{fig:nsba-f2_ba150}}
+\caption{BA}
+\label{fig:nsba-results_ba}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\subfigure[$F_1 :(N=50)$]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/f1_nsba50.eps}
+\label{fig:nsba-f1_nsba50}}
+\subfigure[$F_1 :(N=100)$]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/f1_nsba100.eps}
+\label{fig:nsba-f1_nsba100}}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\subfigure[$F_2 :(N=100)$]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/f2_nsba100.eps}
+\label{fig:nsba-f2_nsba100}}
+\subfigure[$F_2 :(N=150)$]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/f2_nsba150.eps}
+\label{fig:nsba-f2_nsba150}}
+\caption{NSBA}
+\label{fig:nsba-results_nsba}
+\end{figure}
+
+\FloatBarrier
+\subsection{考察}
+\label{ss:nsba-disc}
+
+\subsubsection{個体数による影響}
+
+\begin{figure}[t]
+\centering
+\subfigure[$F_1 :(N=50)$]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/f1_n50.eps}
+\label{fig:nsba-f1_n50}}
+\subfigure[$F_1 :(N=100)$]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/f1_n100.eps}
+\label{fig:nsba-f1_n100}}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\subfigure[$F_2 :(N=100)$]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/f2_n100.eps}
+\label{fig:nsba-f2_n100}}
+\subfigure[$F_2 :(N=150)$]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/f2_n150.eps}
+\label{fig:nsba-f2_n150}}
+\caption{Convergence Speed of Peak Ratio implemented by BA and NSBA}
+\label{fig:nsba-all_iter}
+\end{figure}
+
+\subsubsection{解の分布}
+\begin{figure}[t]
+\centering
+\subfigure[$F_1 :(N=50)$]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/f1_n50_1000.eps}
+\label{fig:nsba-f1_n50_1000}}
+\subfigure[$F_1 :(N=100)$]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/f1_n100_1000.eps}
+\label{fig:nsba-f1_n100_1000}}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\subfigure[$F_2 :(N=100)$]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/f2_n100_1000.eps}
+\label{fig:nsba-f2_n100_1000}}
+\subfigure[$F_2 :(N=150)$]{
+\includegraphics[width=0.8\linewidth]{eps/IES2018/f2_n150_1000.eps}
+\label{fig:nsba-f2_n150_1000}}
+\caption{1000世代目の解分布 (NSBA)}
+\label{fig:nsba-results_nsba_1000}
+\end{figure}
+
+\FloatBarrier
 \newpage
 \section{Niche Radius-based Bat Algorithm (NRBA)}
 \label{sec:NRBA}
@@ -848,7 +951,7 @@ $F_2 \ (N=150)$ & 1.0 & 0 & 0.87 \% & 8.0667 & 0.7717 & 6.67 \% \\
 \label{ss:NRBA-abst}
 \begin{itemize}
 \item {\bf 変更点1:大域探索} \\
-ここではNiche Radiusを使用し，従来手法の式(\ref{eq:vi}),(\ref{eq:xi})を次式のように変更を加えた．
+ここではNiche Radiusを使用し，従来であるBAの解候補の生成式(\ref{eq:vi}),(\ref{eq:xi})を次式のように変更を加えた．
 \begin{equation}
 \label{eq:nrvi}
 v_i^{t+1}=v_i^t+(x_i^t-x_{NR*})*f_i
@@ -896,7 +999,7 @@ $[-NR, \ NR]$区間内の1×$D$次元の配列により現在位置$x_i^t$周辺
 \STATE 各個体$x_i(i=1,2,...,N)$と速度$v_i$の初期化
 \STATE 周波数$f_i$の定義　[eq.(\ref{eq:freq})]
 \STATE パルスレート$r_i$とラウドネス$A_i$の初期化
-\STATE Niche Radiusの算出 [eqs.(\ref{eq:lambda}), (\ref{eq:NR})]
+\STATE Niche Radiusの算出 [eqs.(\ref{eq:nr-s}), (\ref{eq:nr-d})]
 \WHILE{(t $<$ Max Iteration)}
 \FOR{i=1 to N}
 \IF{($d_i<NR$)}
@@ -976,15 +1079,13 @@ $[-NR, \ NR]$区間内の1×$D$次元の配列により現在位置$x_i^t$周辺
 
 \begin{description}
 \item[Griewank Function]\mbox{}\\
-
 多峰性関数の一つである，16個の局所解と1つの最適解を持つGriewank Function \cite{f1f3} を用いる（Fig. \ref{fig:nrba-f1}参照）．評価関数の式は以下の通りである．
 \begin{equation}
 F_1(x_i)=\sum_{i=1}^D \frac{x_i^2}{4000}- \prod_{i=1}^D \cos( \frac{x_i}{\sqrt{i}})+1
 \end{equation}
-解空間の探索領域は$x_i \in [-10, \ 10]$である$(i=1,2)$．最適解の座標は$x_*=[0, \ 0]$で，その評価値は$F(x_*)=0$である．局所解の座標は$\pm x \approx [6.2800, \ 8.8769], [3.1400, \ 4.4385], [0, \ 8.8769],$ \\ $ [6.2800, \ 0], [9.4200, \ 4.4385]$となる．
+解空間の探索領域は$x_i \in [-10, \ 10]$である$(i=1,2)$．最適解の座標は$x_*=[0, \ 0]$で，その評価値は$F(x_*)=0$である．局所解の座標は$\pm x \approx [6.2800, \ 8.8769], [3.1400, \ 4.4385]$, \\ $[0, \ 8.8769],$  $ [6.2800, \ 0], [9.4200, \ 4.4385]$となる．
 
 \item[Six-Hump Camel Function]\mbox{}\\
-% \subsubsection{$F_2$: Six-Hump Camel Function}
 最適解と局所解が各2個存在するSix-Hump Camel Function\cite{f1f3}は以下の式で表される．
 \begin{equation}
 \label{eq:sixhump}
@@ -1006,19 +1107,19 @@ Himmelblau Function \cite{f4} の関数式は次の通りとなる．
 \label{eq:himmelblau}
 F_4(x_1,x_2)=(x_1^2+x_2-11)^2+(x_1+x_2^2-7)^2
 \end{equation}
-評価関数に局所解は存在せず，最適解のみ4個持つ関数である．最適解の位置は各々$x_*=[3, \ 2]$,$[-2.805118, \ 3.283186]$,$[-3.779310,$ \\ \ $-3.283186],$ $[3.584458, \ -1.848126]$にあり，その評価値は$F_4(x_*)=0$である．探索領域は$x_i \in [-5, \ 5]$となる($i=1,2$)．
+評価関数に局所解は存在せず，最適解のみ4個持つ関数である．最適解の位置は各々$x_*=[3, \ 2]$,$[-2.805118, \ 3.283186]$,$[-3.779310,$  \ $-3.283186],$ $[3.584458, \ -1.848126]$にあり，その評価値は$F_4(x_*)=0$である．探索領域は$x_i \in [-5, \ 5]$となる($i=1,2$)．
 
 \end{description}
 
 \FloatBarrier
 \subsubsection{評価基準}
 \label{sss:NRBA-eval}
-本実験において，Congress on Evolutionary Computation(CEC2013) \cite{CEC2013} のコンペティションで用いられた評価尺度であるPeak Ratio(PR) \cite{CDE} により評価する．評価式は以下のように設定した．
+本実験において，Congress on Evolutionary Computation (CEC2013) \cite{CEC2013} のコンペティションで用いられた評価尺度であるPeak Ratio (PR) \cite{CDE} により評価する．評価式は以下のように設定した．
 \begin{equation}
 \label{eq:PR}
 PR=\frac{\sum_{run=1}^{MR}FPs}{TP*MR}
 \end{equation}
-Max Run(MR)は実験回数を表し，Found Peaks(FPs)は発見した解の数を，Total Peak(TP)は探索領域内の全最適解及び局所解数を表す．また最適解及び局所解の位置座標と最近傍個体とのユークリッド距離が0.1未満であれば，その解を発見したと定義する．
+Max Run (MR) は実験回数を表し，Found Peaks (FPs) は発見した解の数を，Total Peak (TP) は探索領域内の全最適解及び局所解数を表す．また最適解及び局所解の位置座標と最近傍個体とのユークリッド距離が0.1未満であれば，その解を発見したと定義する．
 
 \subsubsection{実験設定}
 \label{sss:NRBA-setup}
@@ -1026,7 +1127,7 @@ Max Run(MR)は実験回数を表し，Found Peaks(FPs)は発見した解の数�
 
 \subsubsection{実験結果}
 \label{sss:NRBA-results}
-各評価関数について従来のBAと提案手法のNRBAにおける発見した解の数をTable \ref{tab:nrba}に示す．表中のMean（平均値）とSD（標準偏差）は実験回数30回分での最終世代における発見した最適解及び局所解数の実験結果である．各手法の最終世代での個体の分布をFig. \ref{fig:results_ba}, \ref{fig:results_nrba}で表す．またグラフ中の赤い丸は個体の分布を示す．従来手法であるBAは全個体の最良解へ向かって進んでしまうため，全ての評価関数において，最適解あるいは評価値の高い局所解に収束した．しかしFig. \ref{fig:nrba-f4_ba}については局所解は存在しないが，最終世代では一つの最適解へ収束する結果となった．一方で提案したNRBAではFig. \ref{fig:results_nrba}から全評価関数において，全ての解に個体が到達しているように分布しているが，Table \ref{tab:nrba}から実際に最適解や局所解の位置まで到達していないケースが多く見られた．また最適解や局所解に到達していない個体については用いた評価関数によって分布に偏りがあった．
+各評価関数について従来のBAと提案手法のNRBAにおける発見した解の数を表\ref{tab:nrba}に示す．表中のMean（平均値）とSD（標準偏差）は実験回数30回での最終世代における発見した最適解及び局所解数の実験結果である．各手法の最終世代での個体の分布を図 \ref{fig:results_ba}, \ref{fig:results_nrba}で表す．またグラフ中の赤い丸は個体の分布を示す．従来手法であるBAは全個体の最良解へ向かって進んでしまうため，全ての評価関数において，最適解あるいは評価値の高い局所解に収束した．しかし図\ref{fig:nrba-f4_ba}については局所解は存在しないが，最終世代では一つの最適解へ収束する結果となった．一方で提案したNRBAでは図\ref{fig:results_nrba}から全評価関数において，全ての解に個体が到達しているように分布しているが，表\ref{tab:nrba}から実際に最適解や局所解の位置まで到達していないケースが多く見られた．また最適解や局所解に到達していない個体については用いた評価関数によって分布に偏りがあった．
 
 \begin{figure}[p]
 \centering
@@ -1050,7 +1151,6 @@ Max Run(MR)は実験回数を表し，Found Peaks(FPs)は発見した解の数�
 \label{fig:results_ba}
 \end{figure}
 
-\clearpage
 \begin{figure}[p]
 \centering
 \subfigure[$F_1$: Griewank]{
@@ -1072,9 +1172,9 @@ Max Run(MR)は実験回数を表し，Found Peaks(FPs)は発見した解の数�
 \caption{NRBA}
 \label{fig:results_nrba}
 \end{figure}
-
 \FloatBarrier
-\begin{table}[t]
+
+\begin{table}[h]
 \caption{Found Peaks and Peak Ratio}
 \begin{center}
 \begin{tabular}{c|c|c|c|c|c|c}
@@ -1097,6 +1197,20 @@ $F_4$ & 0.967 & 0.547 & 24.17 \% & 3.433 & 0.496 & 85.83 \% \\
 \end{center}
 \end{table}
 
+\subsection{考察}
+\label{ss:nrba-disc}
+全ての評価関数において，従来のBAより提案のNRBAのほうが探索した解の数および発見率が高かったことから最適解への収束を防ぎ，複数の局所解へ分散させることができた．また提案手法の探索性能の有効性を確かめるため，評価尺度による解の発見数及び発見率の結果と，最終世代の解の分布という観点から分析を行った．
+
+
+\subsubsection{解の発見数}
+\label{sss:nrba-pr} 
+表\ref{tab:nrba}から従来手法のBAは全ての評価関数において一つの解へ収束する傾向が強かったが，$F_2$関数では2つの解を探索することができた．これは従来手法のアルゴリズムの解候補の生成において，全個体の最良解へ向かって探索をしていることが原因であると考えられる．提案手法のNRBAは全ての評価関数に対して，従来手法よりも発見した解の数が多く，最適解と複数の局所解を探索することができた．評価関数の中でも$F_2$関数，次いで$F_4$関数のPRの値が高いことから最適解のみ存在する場合と，最適解と局所解の評価値の差が小さい場合において提案手法の探索が有効に働いたと考えられる．また局所解を多く含む$F_1$関数や局所解の範囲が非常に狭い$F_3$関数では探索性能が落ちたことから今後の課題として手法を改良する必要がある．
+
+\subsubsection{最終世代における解の分布}
+\label{sss:dstr_sol} 
+図\ref{fig:results_ba}から従来のBAは，最適解への収束が非常に強かった．しかし，図\ref{fig:nrba-f2_ba}では2つの最適解に収束していたものの，図\ref{fig:nrba-f4_ba}では複数の最適解へ収束することなく一つの最適解へ収束した．これは，$F_4$関数の方が探索領域が広く，評価値の数値の範囲も広いことから各個体の持つ評価値にバラつきが出やすく，一つの最適解へ収束したと考えられる．図\ref{fig:results_nrba}より提案手法のNRBAは，図\ref{fig:nrba-f1_nrba}では色濃度の濃い領域に各個体を分散させることができたが，図\ref{fig:nrba-f2_nrba}, \ref{fig:nrba-f3_nrba}, \ref{fig:nrba-f4_nrba}では最適解や局所解でない場所に分布する個体も多く見られた．このことから従来手法から変更した，Niche Radius内の最良解より個体が遠ざかる機構が働いたと考えられる．以上より探索領域を分割し，各個体の探索領域内での大域探索性能を保ちながらも徐々に局所解へ収束させることが，解の発見率の増加に繋がったと考えられる．
+
+
 \clearpage
 \newpage
 \section{Dynamic Niche Radius-based Bat Algorithm (DNRBA)}
@@ -1104,10 +1218,84 @@ $F_4$ & 0.967 & 0.547 & 24.17 \% & 3.433 & 0.496 & 85.83 \% \\
 
 \subsection{メカニズム}
 \label{ss:DNRBA-abst}
+\ref{ss:dns}節で説明したDynamic Niche Sharing \cite{DNS} より，探索領域に属する個体が同じ局所解に収束することを避けるため，本研究では以下の変更を加えた．
+\begin{equation}
+\label{eq:mi}
+m_i^{dyn}=\begin{cases}
+\sigma & ({\rm if } \ m_i < \sigma) \\
+m_i & ({\rm otherwise})
+\end{cases}
+\end{equation}
+(\ref{eq:mi})式に基づいて，個体の更新式は以下で表される．
+\begin{equation}
+\label{eq:dnrba-vi}
+v_i^{t+1} = v_i^t + (x_i^t-x_{NR*})*f_i
+\end{equation}
+\begin{equation}
+\label{eq:dnrba-xi}
+x_i^{t+1}=\begin{cases}
+x_i^t+v_i^{t+1} & ({\rm if} \ m_i < \sigma) \\
+x_i^t & ({\rm otherwise})
+\end{cases}
+\end{equation}
 
 
 \subsection{アルゴリズム}
 \label{sss:DNRBA-algorithm}
+
+\begin{algorithm}[h]
+\caption{Dynamic Niche Radius}
+\label{code:dnr}
+\begin{algorithmic}[2]
+\REQUIRE Current Population $x_i(i=1,2,..., N)$ and $v_i$
+\FOR{i=1 to N}
+\FOR{j=1 to N}
+\STATE Calculate $d_{ij}$ between individuals $i,j$
+\IF{( $d_{ij} < \sigma$)}
+\STATE $sh(d_{ij}) =  (1-\frac{d_{ij}}{\sigma})$ [Eq.(\ref{eq:sfunc})]
+\ELSE
+\STATE $sh(d_{ij}) =  0 $ [Eq.(\ref{eq:sfunc})]
+\ENDIF
+\ENDFOR
+\STATE $m_i=\sum_{j=1}^N sh(d_{ij})$ [Eq.(\ref{eq:nc})]
+\ENDFOR
+\FOR{i=1 to N}
+\IF{$(m_i < \sigma)$}
+\STATE $m_i^{dyn}=\sigma$ [Eq.(\ref{eq:mi})]
+\ELSE 
+\STATE $m_i^{dyn} = m_i$ [Eq.(\ref{eq:mi})]
+\ENDIF
+\ENDFOR
+\RETURN Dynamic Niche Radius $m_i^{dyn}$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[h]
+\caption{Bat Algorithm with Dynamic Niche Radius (DNRBA)}
+\label{code:dnrba}
+\begin{algorithmic}[3]
+\REQUIRE Objective\ Function\ $F(x)$
+\STATE Initialize Population $x_i(i=1,2,..., N)$ and $v_i$\\
+\STATE Define frequency $f_i$ at location $x_i$ [Eq.(\ref{eq:freq})]
+\STATE Initialize pulse rates $r_i$, and loudness $A_i$
+\WHILE{($t <$ Max number of iterations)}
+\STATE Calculate Dynamic Niche Radius (Algorithm 2)
+\FOR{i=1 to N}
+\STATE Generate a new solution $x_i$ and velocity $v_i$ [Eqs.(\ref{eq:dnrba-vi}) and (\ref{eq:dnrbaxi})]
+\IF{($rand>r_i$)}
+\STATE Generate a new solution $x_{loc}$ around a global best solution $x_i$ [Eq.(\ref{eq:dnrloc})] 
+% \ELSE
+% \STATE Continue
+\ENDIF
+\STATE Generate a new solution $x_{rnd}$ randomly [Eq.(\ref{eq:dnrrnd})]
+\IF{($rand<A_i \& \min (F(x_i), F(x_{loc}), F(x_{rnd})<F(x_{i*})$)}
+\STATE Accept the new solution, and update pulse rate $r_i$ \\ \& loudness $A_i$ [Eqs. (\ref{eq:A}) and (\ref{eq:r})]  
+\ENDIF
+\STATE Evaluate all bats and select a best solution $x_*$ in the current solutions
+\ENDFOR
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{実験}
 \label{ss:DNRBA-exp}
