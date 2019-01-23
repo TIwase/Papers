@@ -1023,7 +1023,7 @@ $[-NR, \ NR]$区間内の1×$D$次元の配列により現在位置$x_i^t$周辺
 
 \subsection{実験}
 \label{ss:NRBA-exp}
-最適解と局所解の数が異なる評価関数において，各手法の探索性能にどのような影響があるか調査する．次の4つのパターンの評価関数を用意し，従来手法と比較することで提案手法の探索性能を検証する．．一つの最適解に対して複数の局所解を持つ;複数の最適解に対して同じ数の局所解を持つ;一つの最適解の数に対して一つの局所解を持つ;最適解のみ複数持つ．これらのパターンに適した多峰性関数を用いて実験を行う．
+最適解と局所解の数が異なる評価関数において，各手法の探索性能にどのような影響があるか調査する．次の4つのパターンの評価関数を用意し，従来手法と比較することで提案手法の探索性能を検証する．一つの最適解に対して複数の局所解を持つ;複数の最適解に対して同じ数の局所解を持つ;一つの最適解の数に対して一つの局所解を持つ;最適解のみ複数持つ．これらのパターンに適した多峰性関数を用いて実験を行う．
 
 \subsubsection{評価関数}
 \label{sss:NRBA-func}
@@ -1215,7 +1215,7 @@ $F_4$ & 0.967 & 0.547 & 24.17 \% & 3.433 & 0.496 & 85.83 \% \\
 \newpage
 \section{Dynamic Niche Radius-based Bat Algorithm (DNRBA)}
 \label{sec:DNRBA}
-本章では，NRBAで局所解に収束しなかった個体を最適解や局所解へ移動させることで，収束性能を高めることを目的としたDynamic Niche RadiusをBAに適用させた手法を検討する．
+本章では，NRBAで局所解に収束しなかった個体を最適解や局所解へ移動させることで，収束性能を高めることを目的としたDynamic Niche RadiusをBAに適用させたDNRBAを提案する．
 \subsection{メカニズム}
 \label{ss:DNRBA-abst}
 \ref{ss:dns}節で説明したDynamic Niche Sharing \cite{DNS} より，探索領域に属する個体が同じ局所解に収束することを避けるため，本研究では以下の変更を加えた．
@@ -1312,8 +1312,20 @@ DNRBAのアルゴリズムの疑似コードを以下のAlgorithm \ref{code:dnr}
 
 \subsection{実験}
 \label{ss:DNRBA-exp}
+DNRBAの収束性能を検証するため，ここではBAと比較する．本実験では最小化問題における，最適解と局所解を持つGriewank関数とShubert関数を用いた．
+
 \subsubsection{評価関数}
 \label{sss:DNRBA-func}
+実験で使用する評価関数は以下の通りである．
+
+\begin{description}
+\item[$F_1$: Griewank Function]\mbox{}\\
+Griewank関数の概形を図\ref{fig:dnrba-f1}に示す.
+\begin{equation}
+F_1(x)= \sum_{i=1}^D \frac{x_{i}}{4000} - \prod_{i=1}^D \cos(\frac{x_i}{\sqrt{i}}) + 1,
+\label{eq:dnrba-f1}
+\end{equation}
+最適解の評価値は${F(x_*)}=0$であり，1つの最適解と16個の局所解を持つ．探索範囲は$x_1, x_2 \in [-10, \ 10]$である.
 
 \begin{figure}[h]
 \centering
@@ -1325,8 +1337,15 @@ DNRBAのアルゴリズムの疑似コードを以下のAlgorithm \ref{code:dnr}
 \label{fig:cf1}}
 
 \caption{$F_1$: Griewank Function}
-\label{fig:f1}
+\label{fig:dnrba-f1}
 \end{figure}
+
+\item[$F_2$: Shubert Function]\mbox{}\\
+Shubert関数の概形を図\ref{fig:dnrba-f2}に示す.
+ \begin{equation}
+F_2(x) = \prod_{i=1}^D \sum_{j=1}^5 j \cos[(j+1)x_i+j], 
+\end{equation}
+$D$は次元数を表し，最適解の評価値は${F(x_*)=-187.731}$である.この関数では$D \cdot 3^D $個の最適解のみ存在し，2次元では18個の最適解を持つ．探索範囲は$x_i \in [-10, 10]^D$ $(i=1,2,...,D)$である.
 
 \begin{figure}[h]
 \centering
@@ -1338,8 +1357,11 @@ DNRBAのアルゴリズムの疑似コードを以下のAlgorithm \ref{code:dnr}
 \label{fig:cf2}}
 
 \caption{$F_2$: Shubert Function}
-\label{fig:f2}
+\label{fig:dnrba-f2}
 \end{figure}
+
+\end{description}
+
 
 \subsubsection{評価基準}
 \label{sss:DNRBA-eval}
