@@ -1365,6 +1365,21 @@ $D$は次元数を表し，最適解の評価値は${F(x_*)=-187.731}$である.
 
 \subsubsection{評価基準}
 \label{sss:DNRBA-eval}
+
+\subsubsection{Peak Ratio}
+本実験ではCEC2013Competitionで用いられたPeak Ratio (PR) \cite{CEC2013} を用い，発見した解の数の割合を求める．PRの算出式は次式で表される．
+\begin{equation}
+PR=\frac{\sum_{run=1}^{MR}FPs}{TP*MR}
+\end{equation}
+Max Run (MR) は実験回数を表し，Found Peaks (FPs) は発見した解の数を，Total Peak (TP) は探索領域内の全最適解及び局所解数を表す．また最適解及び局所解の位置座標と最近傍個体とのユークリッド距離が0.1未満であれば，その解を発見したと定義する．
+
+\subsubsection{Peak Accuracy}
+探索する個体が最適解にどのくらい近づいているかを計測する尺度としてPeak Accuracy (PA) \cite{CEC2013} を用いる．PAの算出式は以下で表される．
+\begin{equation}
+PA=\sum_{j=1}^{TP}|F(s_j)-F(x_{NN_j})|,
+\end{equation}
+この時，$s_j$は$j$番目の最適解の評価値を表し，その最近傍個体$x_{NN_j}$の評価値との差分和を求める．則ち，PA値が0に近づくほど，個体が最適解に位置していることを示す．
+
 \subsubsection{実験結果}
 \label{sss:DNRBA-results}
 
