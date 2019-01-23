@@ -1215,7 +1215,7 @@ $F_4$ & 0.967 & 0.547 & 24.17 \% & 3.433 & 0.496 & 85.83 \% \\
 \newpage
 \section{Dynamic Niche Radius-based Bat Algorithm (DNRBA)}
 \label{sec:DNRBA}
-
+本章では，NRBAで局所解に収束しなかった個体を最適解や局所解へ移動させることで，収束性能を高めることを目的としたDynamic Niche RadiusをBAに適用させた手法を検討する．
 \subsection{メカニズム}
 \label{ss:DNRBA-abst}
 \ref{ss:dns}節で説明したDynamic Niche Sharing \cite{DNS} より，探索領域に属する個体が同じ局所解に収束することを避けるため，本研究では以下の変更を加えた．
@@ -1226,23 +1226,36 @@ m_i^{dyn}=\begin{cases}
 m_i & ({\rm otherwise})
 \end{cases}
 \end{equation}
-(\ref{eq:mi})式に基づいて，個体の更新式は以下で表される．
+
 \begin{equation}
 \label{eq:dnrba-vi}
-v_i^{t+1} = v_i^t + (x_i^t-x_{NR*})*f_i
+ \mbox{\boldmath $v_i^{t+1}$} = \mbox{\boldmath $v_i^t$} + (\mbox{\boldmath $x_i^t$}-\mbox{\boldmath $x_{NR*}$})*f_i
 \end{equation}
+$v_i$，$x_i$は個体の速度と位置を表し，$x_{NR*}$は$x_i$が属するNiche Radius内の最良個体を示す．
+(\ref{eq:mi})式に基づいて，個体の更新式は以下で表される．
 \begin{equation}
 \label{eq:dnrba-xi}
-x_i^{t+1}=\begin{cases}
-x_i^t+v_i^{t+1} & ({\rm if} \ m_i < \sigma) \\
-x_i^t & ({\rm otherwise})
+\mbox{\boldmath $x_i^{t+1}$}=\begin{cases}
+\mbox{\boldmath $x_i^t$}+\mbox{\boldmath $v_i^{t+1}$} & ({\rm if} \ m_i < \sigma) \\
+\mbox{\boldmath $x_i^t$} & ({\rm otherwise})
 \end{cases}
 \end{equation}
+ここでは個体の分布密度が高いほど，個体$x_i$の持つNiche Count $m_i$の範囲内にある最良個体$x_{NR*}$から遠ざかる方向へ新たに個体候補を生成する．
 
+局所探索では(\ref{eq:mi})式で算出した最良個体$x_{NR*}$が持つ$m_i$の範囲内で個体$x_i$が新たに個体候補$x_{loc}$を生成する．
+\begin{equation}
+\label{eq:dnrloc}
+\mbox{\boldmath $x_{loc}$}=\mbox{\boldmath $x_{NR*}$} + A_i^t*rand(1,D,[-m_i, m_i])
+\end{equation}
+ランダム探索では，個体$x_i$の持つ$m_i$の範囲内で新たに個体候補$x_{rnd}$を生成することで，局所解への収束性能を高める．生成式は次式で表される．
+\begin{equation}
+\label{eq:dnrrnd}
+\mbox{\boldmath $x_{rnd}$}=\mbox{\boldmath $x_i^t$} + rand(1,D,[-m_i, m_i])
+\end{equation}
 
 \subsection{アルゴリズム}
 \label{sss:DNRBA-algorithm}
-
+DNRBAのアルゴリズムの疑似コードを以下のAlgorithm \ref{code:dnr}, \ref{code:dnrba}に記す．
 \begin{algorithm}[h]
 \caption{Dynamic Niche Radius}
 \label{code:dnr}
@@ -1281,7 +1294,7 @@ x_i^t & ({\rm otherwise})
 \WHILE{($t <$ Max number of iterations)}
 \STATE Calculate Dynamic Niche Radius (Algorithm 2)
 \FOR{i=1 to N}
-\STATE Generate a new solution $x_i$ and velocity $v_i$ [Eqs.(\ref{eq:dnrba-vi}) and (\ref{eq:dnrbaxi})]
+\STATE Generate a new solution $x_i$ and velocity $v_i$ [Eqs.(\ref{eq:dnrba-vi}) and (\ref{eq:dnrba-xi})]
 \IF{($rand>r_i$)}
 \STATE Generate a new solution $x_{loc}$ around a global best solution $x_i$ [Eq.(\ref{eq:dnrloc})] 
 % \ELSE
@@ -1302,19 +1315,42 @@ x_i^t & ({\rm otherwise})
 \subsubsection{評価関数}
 \label{sss:DNRBA-func}
 
+\begin{figure}[h]
+\centering
+\subfigure[Fitness landscape]{
+\includegraphics[width=0.8\linewidth]{eps/ISMSI2019/3d_griewank.eps}
+\label{fig:3df1}}
+\subfigure[Contour plot]{
+\includegraphics[width=0.8\linewidth]{eps/ISMSI2019/cont_griewank.eps}
+\label{fig:cf1}}
+
+\caption{$F_1$: Griewank Function}
+\label{fig:f1}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\subfigure[Fitness landscape]{
+\includegraphics[width=0.8\linewidth]{eps/ISMSI2019/3d_shubert.eps}
+\label{fig:3df2}}
+\subfigure[Contour plot]{
+\includegraphics[width=0.8\linewidth]{eps/ISMSI2019/cont_shubert.eps}
+\label{fig:cf2}}
+
+\caption{$F_2$: Shubert Function}
+\label{fig:f2}
+\end{figure}
+
 \subsubsection{評価基準}
 \label{sss:DNRBA-eval}
 \subsubsection{実験結果}
 \label{sss:DNRBA-results}
 
 
-
+\FloatBarrier
 \newpage
 \section{他の最先端手法との性能比較実験}
 \label{sec:experiment}
-
-
-\FloatBarrier
 
 
 \subsection{複数解探索における多峰性最適化問題}
