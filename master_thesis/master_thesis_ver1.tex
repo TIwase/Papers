@@ -223,9 +223,21 @@ $N$個の個体$x_i$を初期集合として生成し，ランダムな評価値
 \subsection{粒子群最適化 (PSO)}
 \label{ss:PSO}
 % 数式番号に章番号を追加
+  % \makeatletter
+  % \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
+  % \@addtoreset{equation}{subsection}
+  % \makeatother
+
   \makeatletter
-  \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
-  \@addtoreset{equation}{subsection}
+    \renewcommand{\theequation}{%
+    \thesection.\arabic{equation}}
+    \@addtoreset{equation}{section}
+  \makeatother
+% 図に章番号追加
+  \makeatletter
+    \renewcommand{\thefigure}{%
+    \thesection.\arabic{figure}}
+    \@addtoreset{figure}{section}
   \makeatother
 
 最適化手法の一つとして粒子群最適化(Particle Swarm Optimization:PSO)がある．PSOは，ランダムに個体を初期化するという点において，遺伝的アルゴリズム(GA)に似た性質を持つ．魚や鳥の群れの動きをモデルにしたアルゴリズムであり，個体間のユークリッド距離を速度として新たに解候補を生成する．個体の速度及び生成式は以下の通りである．
@@ -267,10 +279,10 @@ PSOのアルゴリズムの疑似コードであるAlgorithm\ref{code:pso}を以
 \label{ss:DE}
 
 % 数式番号に章番号を追加
-  \makeatletter
-  \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
-  \@addtoreset{equation}{subsection}
-  \makeatother
+%   \makeatletter
+%   \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
+%   \@addtoreset{equation}{subsection}
+%   \makeatother
 
 差分進化(Differential Evolution:DE) \cite{DE} は進化的計算手法の一つであり，問題に応じて個体間同士の相対距離に基づいた探索戦略を用いることのできる，他のアルゴリズムとは異なる特徴を持つ．DEは以下の手順により探索を繰り返す．
 \begin{itemize}
@@ -359,10 +371,10 @@ x_{i,j}^{t+1} & {\rm if}(rand(0,1) > C_r) \ and \ j \neq D
 \label{ss:BA}
 
 % 数式番号に章番号を追加
-  \makeatletter
-  \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
-  \@addtoreset{equation}{subsection}
-  \makeatother
+  % \makeatletter
+  % \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
+  % \@addtoreset{equation}{subsection}
+  % \makeatother
 
 Bat Algorithm(BA) \cite{BA}は群知能アルゴリズムの一つで，対象物までの方向や距離を知るコウモリの特性（エコロケーション）を利用して周囲の状況を認知し，大域探索と局所探索が進むにつれて探索速度を徐々に落とし，探索性能を自動調節することが可能なアルゴリズムである．
 % ．BAにおいて，コウモリは自らの発する超音波の周波数を持ち，その周波数を調整するためのパラメータとしてラウドネス${A}$を用いる．
@@ -448,10 +460,10 @@ r_i^{t+1}=r_i^t[1-exp(- \gamma t)]
 \subsection{Evolution Strategies with Covariance Matrix Adaptation (CMA-ES)}
 \label{ss:cma-es}
 % 数式番号に章番号を追加
-  \makeatletter
-  \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
-  \@addtoreset{equation}{subsection}
-  \makeatother
+  % \makeatletter
+  % \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
+  % \@addtoreset{equation}{subsection}
+  % \makeatother
 
 Evolution Strategy with Covariance Matrix Adaptation (CMA-ES)　\cite{mu-CMA-ES}\cite{CMA-ES} は多変量正規分布を用いて解候補を生成し，それらの評価値を基に算出する共分散行列から探索範囲を決定する．CMA-ESの大きな特徴として，変数間の依存度を考慮している(パラメータチューニングを必要としない)という点と，単調に増減する線形的な問題に依存しないという点が挙げられる．CMA-ESには様々な手法がある中で，ここでは一般的な$(\mu|\mu_w,\lambda)$-CMA-ES \cite{CMA-ES} を紹介する．具体的なアルゴリズムについては以下のAlgorithm \ref{code:cma-es}に示し，終了条件を満たすまで以下の手順を繰り返す．
 \begin{itemize}
@@ -1440,7 +1452,7 @@ $F_2 $ & {\bf 0.0556} $\pm$ 0.0619 & {\bf 1.8160} $\pm$ 0.4990 & 0.0426 $\pm$ 0.
 表\ref{tab:dnrba-1}より$\varepsilon=1.0E-1$の$F_1$関数では，BAよりもDNRBAのPR値の方が高く，図\ref{fig:dnrba-f1}からほぼ全ての最適解と局所解を発見していることが分かる．対して$F_2$関数では，図\ref{fig:dnrba-f2ba}，\ref{fig:dnrba-f2dnrba}から個体が全最適解に位置しているように見て取れるが，DNRBAよりもBAの方が僅かにPR値が高かった．このことから最適解しか存在しない関数についてはBAのほうが探索性能則ち収束性能が高いことが分かった．$\varepsilon=1.0E-2$についても同様，PR値は$F_1$関数はDNRBAの方が高く，$F_2$関数ではBAの方が高かった．
 
 \subsubsection{Peak Accuracy}
-表\ref{tab:dnrba-1}, \ref{tab:dnrba-2}の$\varepsilon = 1.0E-1, 1.0E-2$から$F_1$関数では，BAよりDNRBAの方がPA値が高かったが，$F_2$関数ではBAの方がPA値が高かった．
+表\ref{tab:dnrba-1}, \ref{tab:dnrba-2}から$F_1$関数では，BAよりDNRBAの方がPA値が高かったが，$F_2$関数ではBAの方がPA値が高かった．
 
 
 \begin{figure}[h]
@@ -1573,24 +1585,24 @@ F_6(x)=-\prod_{i=1}^D \sum_{j=1}^5 j\cos[(j+1)x_i+j].
 \begin{table}[h]
 \caption{Benchmark Test Functions}
 \begin{center}
-\begin{tabular}{c|c|c|c|c|c}
+\begin{tabular}{c|c|c|c|c|c|c}
 \hline
 
-Function & $F(x*)$ & Num of & Num of & Dimension & Search Range \\
-& & goptima & loptima & & \\
+Function & $F(x*)$ & Num of & Num of & $\rho$ & Dimension & Search Range \\
+& & goptima & loptima & & & \\
 \hline
-$F_1$ & 200.0 & 2 & 3 & 1 & $x \in [0,30]$  \\
+$F_1$ & 200.0 & 2 & 3 & 0.01 & 1 & $x \in [0,30]$  \\
 \hline
-$F_2$ & 1.0 & 5 & 0 & 1 & $x \in [0,1]$  \\
+$F_2$ & 1.0 & 5 & 0 & 0.01 & 1 & $x \in [0,1]$  \\
 \hline
-$F_3$ & 1.0 & 1 & 4 & 1 & $x \in [0,1]$  \\
+$F_3$ & 1.0 & 1 & 4 & 0.01 & 1 & $x \in [0,1]$  \\
 \hline
-$F_4$ & 200.0 & 4 & 0 & 2 & $x,y \in [-6,6]$  \\
+$F_4$ & 200.0 & 4 & 0 & 0.01 & 2 & $x,y \in [-6,6]$  \\
 \hline
-$F_5$ & 1.03163 & 2 & 2 & 2 & $x \in [-1.9,1.9]$, \\
-& & & & & $y \in [-1.1,1.1]$ \\
+$F_5$ & 1.03163 & 2 & 2 & 0.5 & 2 & $x \in [-1.9,1.9]$, \\
+& & & & & & $y \in [-1.1,1.1]$ \\
 \hline
-$F_6$ & 186.731 & 18 & 0 & 2 & $x_i \in [-10,10]$  \\
+$F_6$ & 186.731 & 18 & 0 & 0.5 & 2 & $x_i \in [-10,10]$  \\
 \hline
 % \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
 \end{tabular}
@@ -1598,42 +1610,39 @@ $F_6$ & 186.731 & 18 & 0 & 2 & $x_i \in [-10,10]$  \\
 \end{center}
 \end{table}
 
-% \clearpage
-% \section{実験}
-% \label{sec:EXP}
-% この章では\proposed の検証実験を行う.
-% \ref{ss:EXP_intro}節では実験目的と実験内容, \ref{ss:EXP_mnist}節ではMNISTデータセット分類問題を用いた実験, \ref{ss:EXP_MPP}節ではマルチプレクサ問題を用いた実験を行う.
-% 最後に両実験の考察を\ref{ss:EXP_discussion}節で行う.
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{eps/E-1.eps}
+\caption{$\varepsilon = 1.0E-1$}
+\label{fig:resutls_comp_E1}
+\end{figure}
 
-% \subsection{実験内容}
-% \label{ss:EXP_intro}
-% \subsubsection*{目的}
-% 1) \proposed が従来のXCSRが学習できない高次元な問題を解くことが出来るか, 及び 2) 得られた分類子は解釈性の高い一般化されたルールになっているか, を検証することを目的として実験を行う.
-% 本論文ではMNISTデータセット分類問題(\ref{ss:mnist}節)及び11-マルチプレクサ問題(\ref{ss:MPP}節)の2つの実験を行う.
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{eps/E-2.eps}
+\caption{$\varepsilon = 1.0E-2$}
+\label{fig:resutls_comp_E2}
+\end{figure}
 
-% MNISTデータセット分類問題は画像で入力された``3''と``8''を分類する問題であり, 入力が784次元と高次元であることが特徴である.
-% ``3''と``8''の共通する特徴と異なる部分を獲得することが目的である.
-% マルチプレクサ問題は入力は11次元と高次元ではないが, 画像のように均一な粒度での圧縮ができないため難しい問題である.
-% NNが上手く圧縮・復元出来ない問題に対して, 学習が出来るかそして一般的なルールが得られるかを検証するのが目的である.
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{eps/E-3.eps}
+\caption{$\varepsilon = 1.0E-3$}
+\label{fig:resutls_comp_E3}
+\end{figure}
 
-% \subsubsection*{設定}
-% 実験は従来のXCSRと\proposed を比較する.
-% \proposed は圧縮された入力に向けたXCSRの正答率がほぼ100\%に収束していなければ高次元入力を学習するXCSRも用いる.
-% \proposed 内のXCSRと比較手法としてのXCSRのハイパーパラメーターは同一にし, 平等な条件にしている.
-% DCA及び全てのXCSRは予め決められた回数(エポック)学習を行う.
-% DCAは入力層と出力層以外に0.2の確率でドロップアウト(\ref{sss:DL_overlerning}節)を適用し, オプティマイザーにはAdam(\ref{sss:DL_optimizer}節)を用いた.
-% また, DCAの学習は100個のミニバッチ学習を用い事前学習や正則化は実施しなかった.
-% XCSRは学習を100回毎に評価を行い, 評価時には学習は行わず, $P_{explr}$(ランダムに行動する割合)の値に関わらずグリーディー選択\footnote{グリーディー選択は貪欲法とも呼ばれ, 最も評価値の高い行動を選択する戦略である. この実験においては評価値は予測報酬を指す.}によって出力を決定する.
-% また, 評価時に生成された分類子や更新・削除された分類子などは評価が終わると評価が始まる前の状態に復元され, 評価が学習に影響を与えることはない.
-% DCAも1000エポックに1回の頻度でモデルの評価を行うが, これも同様に学習に影響を与えない.
-% なお全てのXCSRにおいて, 入力に対し正しい出力がされていた時の報酬値を1000, 不正解時の報酬値は0に設定した.
-
-% 設定したハイパーパラメーターは問題によって異なるのでそれぞれの実験の節で説明する.
-
-
-% \subsection{MNISTデータセット分類問題}
-% \label{ss:EXP_mnist}
-% MNISTデータセット分類問題の評価基準と設定したハイパーパラメーターを\ref{sss:mnist_param}節で, 実験結果を\ref{sss:mnist_results}節で示す.
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{eps/E-4.eps}
+\caption{$\varepsilon = 1.0E-4$}
+\label{fig:resutls_comp_E4}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{eps/E-5.eps}
+\caption{$\varepsilon = 1.0E-5$}
+\label{fig:resutls_comp_E5}
+\end{figure}
 
 \subsection{評価基準}
 \label{ss:eval_criteria}
