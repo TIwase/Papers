@@ -681,11 +681,15 @@ m_i & ({\rm otherwise})
 \newpage
 \section{多峰性最適化問題}
 \label{sec:MOP}
-本実験では，複数最適解を探索する手法の性能を比較するため，CEC ({\it IEEE Congress on Evolutionary Computation}) 2013 Competition on Niching Methods for Multimodal Function Optimization \cite{CEC2013} で扱われたベンチマーク関数を用いる．使用する関数について,次節で説明する．
+実問題を
 
 \subsection{多峰性関数}
 \label{ss:benchmark}
 本節では，多峰性最適化に用いられる一般的なベンチマーク関数について説明する．
+
+\subsection{月面着陸地点選定問題}
+\label{ss:LSM}
+実問題の一例として，進化計算シンポジウムコンペティション2018で取り上げられた月着陸における最適着陸地点選定問題 \cite{ECCompetition} が挙げられる．
 
 \clearpage
 \newpage
@@ -1367,7 +1371,7 @@ $D$は次元数を表し，最適解の評価値は${F(x_*)=-187.731}$である.
 \label{sss:DNRBA-eval}
 
 \subsubsection{Peak Ratio}
-本実験ではCEC2013Competitionで用いられたPeak Ratio (PR) \cite{CEC2013} を用い，発見した解の数の割合を求める．PRの算出式は次式で表される．
+本実験ではCEC2013　Competitionで用いられたPeak Ratio (PR) \cite{CEC2013} を用い，発見した解の数の割合を求める．PRの算出式は次式で表される．
 \begin{equation}
 PR=\frac{\sum_{run=1}^{MR}FPs}{TP*MR}
 \end{equation}
@@ -1378,11 +1382,94 @@ Max Run (MR) は実験回数を表し，Found Peaks (FPs) は発見した解の�
 \begin{equation}
 PA=\sum_{j=1}^{TP}|F(s_j)-F(x_{NN_j})|,
 \end{equation}
-この時，$s_j$は$j$番目の最適解の評価値を表し，その最近傍個体$x_{NN_j}$の評価値との差分和を求める．則ち，PA値が0に近づくほど，個体が最適解に位置していることを示す．
+この時，$F(s_j)$は$j$番目の最適解の評価値を表し，その最近傍個体$x_{NN_j}$の評価値との差分和を求める．則ち，PA値が0に近づくほど，個体が最適解に位置していることを示す．
 
-\subsubsection{実験結果}
+\FloatBarrier
+\subsection{実験設定}
+本実験では$f_{max}=1$, $f_{min}=0$，ラウドネス$A^0=1$，パルスレート$r^0 \in [0,1]$と設定した．また$\alpha= \gamma = 0.9$とし，個体数を100，世代数を30000としてランダムシードを変えた実験を30回行った．
+
+\subsection{実験結果と考察}
 \label{sss:DNRBA-results}
+本節ではDNRBAの性能の効果を確かめるため，各評価関数におけるPRとPAに着目する．表\ref{tab:dnrba-1}, \ref{tab:dnrba-2}は，BAとDNRBAのアルゴリズムにおけるPRとPAの結果を表す．各評価関数のPRとPAの30試行の平均値及び標準偏差を示している．また図\ref{fig:dnrba-results_ba}，\ref{fig:dnrba-results_dnrba}は最終世代の個体の分布を白い丸で表す．
 
+\begin{table}[h]
+\caption{PR and PA of BA and DNRBA (averaged over 30 runs)}
+\begin{center}
+\begin{tabular}{c|c|c|c|c}
+\multicolumn{5}{c}{$\varepsilon = 1.0E-1$} \\
+\hline
+\multicolumn{1}{c|}{} & \multicolumn{2}{c|}{BA} & \multicolumn{2}{c}{DNRBA} \\
+\hline
+ & PR & PA & PR & PA \\
+
+Function & (Mean and SD) & (Mean and SD) & (Mean and SD) & (Mean and SD) \\
+\hline
+$F_1 $ & 0.2725 $\pm$ 0.0598 & 0.2416 $\pm$ 0.0149 & {\bf 0.9373} $\pm$ 0.1176  & {\bf 0.0094} $\pm$ 0.0155  \\
+\hline
+$F_2 $ & {\bf 0.4889} $\pm$ 0.1819 & {\bf 1.8160} $\pm$ 0.4990 & 0.4241 $\pm$ 0.388 & 2.4123 $\pm$ 0.6780 \\
+\hline
+
+\end{tabular}
+\label{tab:dnrba-1}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\caption{PR and PA of BA and DNRBA (averaged over 30 runs)}
+\begin{center}
+\begin{tabular}{c|c|c|c|c}
+\multicolumn{5}{c}{$\varepsilon = 1.0E-2$} \\
+\hline
+\multicolumn{1}{c|}{} & \multicolumn{2}{c|}{BA} & \multicolumn{2}{c}{DNRBA} \\
+\hline
+ & PR & PA & PR & PA \\
+
+Function & (Mean and SD) & (Mean and SD) & (Mean and SD) & (Mean and SD) \\
+\hline
+$F_1 $ & 0.2725 $\pm$ 0.0608 & 0.2416 $\pm$ 0.0151 & {\bf 0.9373} $\pm$ 0.1176  & {\bf 0.0094} $\pm$ 0.0155  \\
+\hline
+$F_2 $ & {\bf 0.0556} $\pm$ 0.0619 & {\bf 1.8160} $\pm$ 0.4990 & 0.0426 $\pm$ 0.0477 & 2.4123 $\pm$ 0.6780 \\
+\hline
+
+\end{tabular}
+\label{tab:dnrba-2}
+\end{center}
+\end{table}
+
+\subsubsection{Peak Ratio}
+表\ref{tab:dnrba-1}より$\varepsilon=1.0E-1$の$F_1$関数では，BAよりもDNRBAのPR値の方が高く，図\ref{fig:dnrba-f1}からほぼ全ての最適解と局所解を発見していることが分かる．対して$F_2$関数では，図\ref{fig:dnrba-f2ba}，\ref{fig:dnrba-f2dnrba}から個体が全最適解に位置しているように見て取れるが，DNRBAよりもBAの方が僅かにPR値が高かった．このことから最適解しか存在しない関数についてはBAのほうが探索性能則ち収束性能が高いことが分かった．$\varepsilon=1.0E-2$についても同様，PR値は$F_1$関数はDNRBAの方が高く，$F_2$関数ではBAの方が高かった．
+
+\subsubsection{Peak Accuracy}
+表\ref{tab:dnrba-1}, \ref{tab:dnrba-2}の$\varepsilon = 1.0E-1, 1.0E-2$から$F_1$関数では，BAよりDNRBAの方がPA値が高かったが，$F_2$関数ではBAの方がPA値が高かった．
+
+
+\begin{figure}[h]
+\centering
+\subfigure[$F_1$]{
+\includegraphics[width=0.8\linewidth]{eps/ISMSI2019/f1_ba.eps}
+\label{fig:dnrba-f1ba}}
+\subfigure[$F_2$]{
+\includegraphics[width=0.8\linewidth]{eps/ISMSI2019/f2_ba.eps}
+\label{fig:dnrba-f2ba}}
+
+\caption{BA}
+\label{fig:dnrba-results_ba}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\subfigure[$F_1$]{
+\includegraphics[width=0.8\linewidth]{eps/ISMSI2019/f1_dnrba.eps}
+\label{fig:dnrba-f1dnrba}}
+\subfigure[$F_2$]{
+\includegraphics[width=0.8\linewidth]{eps/ISMSI2019/f2_dnrba.eps}
+\label{fig:dnrba-f2dnrba}}
+
+\caption{DNRBA}
+\label{fig:dnrba-results_dnrba}
+\end{figure}
+
+\subsection{まとめ}
 
 \FloatBarrier
 \newpage
@@ -1414,72 +1501,72 @@ F_1(x)=\begin{cases}
 80(x-27.5) & {\rm for} \ 27.5 \leq x < 30.
 \end{cases}
 \end{equation}
-% \begin{figure}[h]
-%   \centering
-%   \includegraphics[width=0.8\linewidth]{eps/f1.eps}
-%   \caption{Five-Uneven-Peak Trap}
-%   \label{fig:f1}
-% \end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F1.eps}
+\caption{Five-Uneven-Peak Trap}
+\label{fig:f1}
+\end{figure}
 
 \item[$F_2$: Equal Maxima (1D)]\mbox{}\\
 \begin{equation}
 \label{eq:F2}
 F_2(x)=\sin^6{(5\pi x)}.
 \end{equation}
-% \begin{figure}[h]
-%   \centering
-%   \includegraphics[width=0.8\linewidth]{eps/f2.eps}
-%   \caption{Equal Maxima}
-%   \label{fig:f2}
-% \end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F2.eps}
+\caption{Equal Maxima}
+\label{fig:f2}
+\end{figure}
 
 \item[$F_3$: Uneven Decreasing Maxima (1D)]\mbox{}\\
 \begin{equation}
 \label{eq:F3}
 F_3(x)=exp(-2log(2)(\frac{x-0.08}{0.854})^2)\sin^6{(5\pi(x^{\frac{3}{4}}-0.05))}.
 \end{equation}
-% \begin{figure}[h]
-%   \centering
-%   \includegraphics[width=0.8\linewidth]{eps/f3.eps}
-%   \caption{Uneven Decreasing Maxima}
-%   \label{fig:f3}
-% \end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F3.eps}
+\caption{Uneven Decreasing Maxima}
+\label{fig:f3}
+\end{figure}
 
 \item[$F_4$: Himmelblau (2D)]\mbox{}\\
 \begin{equation}
 \label{eq:F4}
 F_4(x,y) = 200 - (x^2+y-11)^2 - (x+y^2-7)^2.
 \end{equation}
-% \begin{figure}[h]
-%   \centering
-%   \includegraphics[width=0.8\linewidth]{eps/f4.eps}
-%   \caption{2D Himmelblau}
-%   \label{fig:f4}
-% \end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F4.eps}
+\caption{2D Himmelblau}
+\label{fig:f4}
+\end{figure}
 
 \item[$F_5$: Six-Hump Camel Back (2D)]\mbox{}\\
 \begin{equation}
 \label{eq:F5}
 F_5(x,y)=-4[(4-2.1x^2+\frac{x^4}{3})x^2+xy+(4y^2-4)y^2].
 \end{equation}
-% \begin{figure}[h]
-%   \centering
-%   \includegraphics[width=0.8\linewidth]{eps/f5.eps}
-%   \caption{2D Six-Hump Camel Back}
-%   \label{fig:f5}
-% \end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F5.eps}
+\caption{2D Six-Hump Camel Back}
+\label{fig:f5}
+\end{figure}
 
 \item[$F_6$: Shubert (2D)]\mbox{}\\
 \begin{equation}
 \label{eq:F6}
 F_6(x)=-\prod_{i=1}^D \sum_{j=1}^5 j\cos[(j+1)x_i+j].
 \end{equation}
-% \begin{figure}[h]
-%   \centering
-%   \includegraphics[width=0.8\linewidth]{eps/f6.eps}
-%   \caption{2D Shubert}
-%   \label{fig:f6}
-% \end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F6.eps}
+\caption{2D Shubert}
+\label{fig:f6}
+\end{figure}
 
 \end{description}
 
@@ -1808,7 +1895,7 @@ $F_6$ & 186.731 & 18 & 0 & 2 & $x_i \in [-10,10]$  \\
 \section*{謝辞}
 \addcontentsline{toc}{section}{謝辞}
 本論文の執筆並びに研究を進める上で御指導頂いた高玉圭樹教授に感謝の意を表します. 
-また, 論文執筆において校正・校閲をして頂いた博士課程の高野諒さん, 日々の研究テーマに関して助言をして頂いた佐藤寛之准教授, 並びに日々研究を共にしている研究室の皆様, 研究を支えて頂いている皆様にこの場を借りて感謝致します. 
+また, 論文執筆において校正・校閲をして頂いた博士課程の高野諒さん,上野史人さん，日々の研究テーマに関して助言をして頂いた佐藤寛之准教授, 並びに日々研究を共にしている研究室の皆様, 研究を支えて頂いている皆様にこの場を借りて感謝致します. 
 
 \clearpage
 \newpage
