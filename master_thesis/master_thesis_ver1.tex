@@ -323,9 +323,9 @@ DEは以下，いずれかの探索戦略を用いて解候補を生成する．
 \item {\bf STEP3: 交叉} \\
 解に多様性を持たせるため，ここではSTEP2で生成した解候補$v_{i,j}^{t+1}$と個体$x_i$を確率的に交叉させ，新たに解$u_{i,j}^{t+1}$を生成する．生成式は次式の通りである．
 \begin{equation}
-u_{i,j}^{t+1}=\begin{cases}
-v_{i,j}^{t+1} & {\rm if}(rand(0,1) \leq C_r) \ or \ j=D \\
-x_{i,j}^{t+1} & {\rm if}(rand(0,1) > C_r) \ and \ j \neq D
+\mbox{\boldmath $u_{i,j}^{t+1}$}=\begin{cases}
+\mbox{\boldmath $v_{i,j}^{t+1}$} & {\rm if}(rand(0,1) \leq C_r) \ or \ j=D \\
+\mbox{\boldmath $x_{i,j}^{t+1}$} & {\rm if}(rand(0,1) > C_r) \ and \ j \neq D
 \end{cases}
 \end{equation}
 ここで$C_r$は$[0,1]$の範囲内での交叉係数を表す．この交叉係数$C_r$が一様乱数以上であればSTEP2で生成した解候補$v_{i,j}^{t+1}$が採用され，一様乱数未満であれば個体$x_{i,j}$が採用される．
@@ -405,7 +405,7 @@ f_{i} =f_{min}+(f_{max}-f_{min}) \beta
 \label{eq:xi}
 \end{equation}
 個体番号を$i$とし，各個体の周波数${f_i}$は個体の速度を制限するパラメータであり，$[0, \ 1]$の区間で表される．ここでは${f_{min}=0}$，${f_{max}=1}$として設定し，$\beta$は0から1の乱数が割り当てられる．
-局所探索では，全個体の最良解（グローバルベスト）$x_*$の周辺に新しい解候${x_{loc}}$を生成する．生成式は次の通りである．
+局所探索では，全個体の最良解（グローバルベスト）\mbox{\boldmath $x_*$}の周辺に新しい解候${x_{loc}}$を生成する．生成式は次の通りである．
 \begin{equation}
 \label{eq:loc}
 \mbox{\boldmath $x_{loc}$}=\mbox{\boldmath $x_*$} + \epsilon A_i^t
@@ -415,7 +415,7 @@ f_{i} =f_{min}+(f_{max}-f_{min}) \beta
 \label{eq:rnd}
 \mbox{\boldmath $x_{rnd}$}=\mbox{\boldmath $x_{lb}$} + \mbox{\boldmath $(x_{ub}$} - \mbox{\boldmath $x_{lb})$}*rand(1,D)
 \end{equation}
-解探索空間の上限と下限をそれぞれ$\mbox{\boldmath $x_{ub}, x_{lb}$}$とし，$rand$は0から1までの乱数が入る．
+解探索空間の上限と下限をそれぞれ$x_{ub}, x_{lb}$とし，$rand$は0から1までの乱数が入る．
 以上より各個体の解候補${x_i^{t+1}}$，${x_{loc}}$，あるいは$x_{rnd}$の評価値が各個体の最良解（パーソナルベスト）$x_{i*}$より良ければ更新され，同時にラウドネス$A$とその反射波であるパルスレート$r$も以下の式に基づいて更新される．
 \begin{equation}
 \label{eq:loud}
@@ -679,29 +679,301 @@ m_i & ({\rm otherwise})
 
 \subsection{Crowding DE (CDE)}
 \label{ss:cde}
+Crowding DE (CDE) \cite{CDE} は類似個体同士を比較し，評価値の高い方を残すことで，複数解探索を行う手法である．
+
+\subsubsection{メカニズム}
+\ref{ss:DE}節で説明したDEをベースとし，Crowding \cite{Crowding} と組み合わせた手法で，生成された子集合の中から最近傍である子$u_{{i,j}_{NN}}$と親$x_{pbest_i}$を選択し，評価値の低い個体は淘汰され，評価値の高い方は次世代に引き継がれる．
+
+\subsubsection{アルゴリズム}
+\begin{algorithm}[H]
+\caption{Crowding Differential Evolution (DE/rand/1)}
+\label{code:cde}
+\begin{algorithmic}[3]
+\REQUIRE Objective Function $F(x), x=(x_1,x_2,...,x_d)$
+\STATE Initialize Population $x_i (i=1,2,...,N)$ and Velocity $v_i$
+\STATE Define crossover probability $C_r,$ and random value $F$
+
+\WHILE{t $<$ Max Iteration}
+\FOR{i=1 to N}
+\STATE Select random integer $r_1, r_2 \in \{ 1,2,..., N| r_1 \neq r_2 \neq i\}$
+\STATE Generate a candidate $v_{i,j}$  [Eq. (\ref{eq:rand1})]
+\FOR{$j=1$ to $D$}
+\IF{$rand(0, 1) \leq C_r \ or \ j=D$}
+\STATE offspring $u_{i,j} = v_{i,j}^{t+1}$
+\ELSE[$rand(0,1) > C_r \ and \ j \neq D$]
+\STATE offspring $u_{i,j} = x_{i,j}^t$
+\ENDIF
+\ENDFOR
+\IF{$F(u_{{i,j}_{NN}}^{t+1})>F(x_{pbest_i})$}
+\STATE Replace the offspring $u_{{i,j}_{NN}}$ as $x_{pbest_i}$
+\ENDIF
+\ENDFOR
+\STATE t=t+1
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{A Dynamic Archive Niching Differential Evolution (dADE)}
 \label{ss:dADE}
 
+
 \subsection{Niching the CMA-ES via Nearest-Better Clustering (NEA)}
 \label{ss:nea}
 
-
-\subsection{Covariance Matrix Self Adaptation Evolution Strategy with Repelling Subpopulations (RS-CMSA-ES)}
-\label{ss:rs-cmsa-es}
+\subsection{Parameterless-Niching-Assisted NSGAII}
+\label{ss:PNA-NSGA}
 
 \newpage
 \section{多峰性最適化問題}
 \label{sec:MOP}
-実問題を
+最適化問題において，実問題の複雑さを多峰性と見立てた評価関数を用いることが一般的である．その代表的な多峰性関数を次節で説明する．
 
-\subsection{多峰性関数}
-\label{ss:benchmark}
-本節では，多峰性最適化に用いられる一般的なベンチマーク関数について説明する．
 
-\subsection{月面着陸地点選定問題}
-\label{ss:LSM}
-実問題の一例として，進化計算シンポジウムコンペティション2018で取り上げられた月着陸における最適着陸地点選定問題 \cite{ECCompetition} が挙げられる．
+\subsection{最小化問題における評価関数}
+\label{ss:MinFunc}
+
+\begin{description}
+\item[$F_1$: Griewank (2D)]\mbox{}\\
+Griewank関数 \cite{MOP} の概形を図\ref{fig:minF1}に示し，関数式は次式で表される．
+\begin{equation}
+\label{eq:minF1}
+F_1(x)=\sum_{i=1}^D \frac{x_i}{4000}- \prod_{i=1}^D \cos(\frac{x_i}{\sqrt{i}})+1.
+\end{equation}
+解空間の探索領域は$x_i \in [-10, \ 10]$である$(i=1,2)$．最適解の座標は$x_*=[0, \ 0]$で，その評価値は$F(x_*)=0$である．局所解の座標は$\pm x \approx [6.2800, \ 8.8769], [3.1400, \ 4.4385]$, \\ $[0, \ 8.8769],$  $ [6.2800, \ 0], [9.4200, \ 4.4385]$となる．
+\begin{figure}[t]
+\centering
+\subfigure[Fitness Landscape]{
+\includegraphics[width=0.8\linewidth]{eps/3d_griewank.eps}
+\label{fig:minF1(3d)}}
+\subfigure[Contour Plot]{
+\includegraphics[width=0.8\linewidth]{eps/cont_griewank.eps}
+\label{fig:minF1(2d)}}
+\caption{Griewank}
+\label{fig:minF1}
+\end{figure}
+
+\item[$F_2$: Rastrigin (2D)]\mbox{}\\
+Rastrigin関数 \cite{MOP} の概形を図\ref{fig:minF2}に示し，関数式は次式で表される．
+\begin{equation}
+\label{eq:minF2}
+F_2(x)=10D+\sum_{i=1}^D[x_i^2-10\cos(2\pi x_i)].
+\end{equation}
+$D$は次元数であり，探索領域は$x_i \in [-5, \ 5]$である．
+\begin{figure}[t]
+\centering
+\subfigure[Fitness Landscape]{
+\includegraphics[width=0.8\linewidth]{eps/3d_rastrigin.eps}
+\label{fig:minF2(3d)}}
+\subfigure[Contour Plot]{
+\includegraphics[width=0.8\linewidth]{eps/cont_rastrigin.eps}
+\label{fig:minF2(2d)}}
+\caption{Rastrigin}
+\label{fig:minF2}
+\end{figure}
+
+\item[$F_3$: Six-Hump Camel　(2D)]\mbox{}\\
+最適解と局所解が各2個存在するSix-Hump Camel Function \cite{MOP} は以下の式で表される．
+\begin{equation}
+\label{eq:minF3}
+F_3(x_1,x_2)=(4-2.1x_1^2+ \frac{x_1^4}{3})x_1^2+x_1x_2+(-4+4x_2^2)x_2^2
+\end{equation}
+この関数における解空間の探索領域は$x_1 \in [-2, \ 2]$, \ $x_2 \in [-1, \ 1]$である．最適解の座標は$x_*=[0.0898, \ -0.7126], [-0.0898, \ 0.7126]$であり，その評価値は$F_3(x_*)=-1.0316$である．また局所解は$\pm x \approx [1.704, \ -0.7965]$に位置する．
+\begin{figure}[t]
+\centering
+\subfigure[Fitness Landscape]{
+\includegraphics[width=0.8\linewidth]{eps/3d_sixhump_camel.eps}
+\label{fig:minF3(3d)}}
+\subfigure[Contour Plot]{
+\includegraphics[width=0.8\linewidth]{eps/cont_sixhump_camel.eps}
+\label{fig:minF3(2d)}}
+\caption{Six-Hump Camel}
+\label{fig:minF3}
+\end{figure}
+
+\item[$F_4$: Michalewicz (2D)]\mbox{}\\
+Michalewicz Function \cite{MOP} の数式を以下に示す．
+\begin{equation}
+\label{eq:minF4}
+F_4(x_i)=- \sum_{i=1}^D \sin(x_i)\sin^{2m}(\frac{ix_i^2}{\pi})
+\end{equation}
+最適解$x_*=[2.20, \ 1.57]$の評価値$F_3(x_*)=-1.8013$であり，局所解は$x \approx [2.203 \ 2.7115]$である．探索領域は$x_i \in [0, \ 4]$である（$i=1,2$）．
+\begin{figure}[t]
+\centering
+\subfigure[Fitness Landscape]{
+\includegraphics[width=0.8\linewidth]{eps/3d_michalewicz.eps}
+\label{fig:minF4(3d)}}
+\subfigure[Contour Plot]{
+\includegraphics[width=0.8\linewidth]{eps/cont_michalewicz.eps}
+\label{fig:minF4(2d)}}
+\caption{Michalewicz}
+\label{fig:minF4}
+\end{figure}
+
+\item[$F_5$: Himmelblau (2D)]\mbox{}\\
+Himmelblau Function \cite{f4} の関数式は次の通りとなる．
+\begin{equation}
+\label{eq:minF5}
+F_5(x_1,x_2)=(x_1^2+x_2-11)^2+(x_1+x_2^2-7)^2
+\end{equation}
+評価関数に局所解は存在せず，最適解のみ4個持つ関数である．最適解の位置は各々$x_*=[3, \ 2]$,$[-2.805118, \ 3.283186]$,$[-3.779310,$  \ $-3.283186],$ $[3.584458, \ -1.848126]$にあり，その評価値は$F_4(x_*)=0$である．探索領域は$x_i \in [-5, \ 5]$となる($i=1,2$)．
+\begin{figure}[t]
+\centering
+\subfigure[Fitness Landscape]{
+\includegraphics[width=0.8\linewidth]{eps/3d_himmelblau.eps}
+\label{fig:minF5(3d)}}
+\subfigure[Contour Plot]{
+\includegraphics[width=0.8\linewidth]{eps/cont_himmelblau.eps}
+\label{fig:minF5(2d)}}
+\caption{Himmelblau}
+\label{fig:minF5}
+\end{figure}
+\end{description}
+
+\begin{table}[h]
+\caption{Benchmark Test Functions}
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c}
+\hline
+
+Function & $F(x*)$ & Num of & Num of & $D$ & Search Range \\
+& & goptima & loptima & & \\
+\hline
+$F_1$ & 0 & 1 & 16 &  2 & $x \in [-10,10]$  \\
+\hline
+$F_2$ & 0 & 1 & 120 & 2 & $x \in [-5,5]$  \\
+\hline
+$F_3$ & -1.0316 & 2 & 2 & 2 & $x_1 \in [-2,2]$  \\
+& & & & & $x_2 \in [-1,1]$ \\
+\hline
+$F_4$ & -1.8013 & 1 & 2 & 2 & $x,y \in [0,4]$  \\
+\hline
+$F_5$ & 0 & 4 & 0 & 2 & $x \in [-5,5]$, \\
+\hline
+\end{tabular}
+\label{tab:minMOP}
+\end{center}
+\end{table}
+
+
+\FloatBarrier
+\subsection{最大化問題における評価関数}
+\label{ss:maxFunc}
+本実験では，複数最適解を探索する手法の性能を比較するため，CEC ({\it IEEE Congress on Evolutionary Computation}) 2013 Competition on Niching Methods for Multimodal Function Optimization \cite{CEC2013} で扱われたベンチマーク関数を説明する．ベンチマーク関数の最適解の評価値$F(x_*)$と最適解数，探索領域を表\ref{tab:maxMOP}に示す．
+\begin{description}
+\item[$F_1$: Five-Uneven-Peak Trap (1D)]\mbox{}\\
+\begin{equation}
+\label{eq:maxF1}
+F_1(x)=\begin{cases}
+80(2.5-x) & {\rm for} \ 0 \leq x < 2.5, \\
+64(x-2.5) & {\rm for} \ 2.5 \leq x < 5.0, \\
+64(7.5-x) & {\rm for} \ 5.0 \leq x < 7.5, \\
+28(x-7.5) & {\rm for} \ 7.5 \leq x < 12.5, \\
+28(17.5-x) & {\rm for} \ 12.5 \leq x < 17.5, \\
+32(x-17.5) & {\rm for} \ 17.5 \leq x < 22.5, \\
+32(27.5-x) & {\rm for} \ 22.5 \leq x < 27.5, \\
+80(x-27.5) & {\rm for} \ 27.5 \leq x < 30.
+\end{cases}
+\end{equation}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F1.eps}
+\caption{Five-Uneven-Peak Trap}
+\label{fig:maxF1}
+\end{figure}
+
+\item[$F_2$: Equal Maxima (1D)]\mbox{}\\
+\begin{equation}
+\label{eq:maxF2}
+F_2(x)=\sin^6{(5\pi x)}.
+\end{equation}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F2.eps}
+\caption{Equal Maxima}
+\label{fig:maxF2}
+\end{figure}
+
+\item[$F_3$: Uneven Decreasing Maxima (1D)]\mbox{}\\
+\begin{equation}
+\label{eq:maxF3}
+F_3(x)=exp(-2log(2)(\frac{x-0.08}{0.854})^2)\sin^6{(5\pi(x^{\frac{3}{4}}-0.05))}.
+\end{equation}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F3.eps}
+\caption{Uneven Decreasing Maxima}
+\label{fig:maxF3}
+\end{figure}
+
+\item[$F_4$: Himmelblau (2D)]\mbox{}\\
+\begin{equation}
+\label{eq:maxF4}
+F_4(x,y) = 200 - (x^2+y-11)^2 - (x+y^2-7)^2.
+\end{equation}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F4.eps}
+\caption{2D Himmelblau}
+\label{fig:maxF4}
+\end{figure}
+
+\item[$F_5$: Six-Hump Camel Back (2D)]\mbox{}\\
+\begin{equation}
+\label{eq:maxF5}
+F_5(x,y)=-4[(4-2.1x^2+\frac{x^4}{3})x^2+xy+(4y^2-4)y^2].
+\end{equation}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F5.eps}
+\caption{2D Six-Hump Camel Back}
+\label{fig:maxF5}
+\end{figure}
+
+\item[$F_6$: Shubert (2D)]\mbox{}\\
+\begin{equation}
+\label{eq:maxF6}
+F_6(x)=-\prod_{i=1}^D \sum_{j=1}^5 j\cos[(j+1)x_i+j].
+\end{equation}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F6.eps}
+\caption{2D Shubert}
+\label{fig:maxF6}
+\end{figure}
+
+\end{description}
+
+\begin{table}[h]
+\caption{Benchmark Test Functions}
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c}
+\hline
+
+Function & $F(x_*)$ & Num of & $\rho$ & $D$ & Search Range \\
+& & goptima & & & \\
+\hline
+$F_1$ & 200.0 & 2 & 0.01 & 1 & $x \in [0,30]$  \\
+\hline
+$F_2$ & 1.0 & 5 & 0.01 & 1 & $x \in [0,1]$  \\
+\hline
+$F_3$ & 1.0 & 1 & 0.01 & 1 & $x \in [0,1]$  \\
+\hline
+$F_4$ & 200.0 & 4 & 0.01 & 2 & $x,y \in [-6,6]$  \\
+\hline
+$F_5$ & 1.03163 & 2 & 0.5 & 2 & $x \in [-1.9,1.9]$, \\
+& & & & & $y \in [-1.1,1.1]$ \\
+\hline
+$F_6$ & 186.731 & 18 & 0.5 & 2 & $x_i \in [-10,10]$  \\
+\hline
+% \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
+\end{tabular}
+\label{tab:maxMOP}
+\end{center}
+\end{table}
+
+% \subsection{月面着陸地点選定問題}
+% \label{ss:LSM}
+% 実問題の一例として，進化計算シンポジウムコンペティション2018で取り上げられた月着陸における最適着陸地点選定問題 \cite{ECCompetition} が挙げられる．
 
 \clearpage
 \newpage
@@ -729,18 +1001,27 @@ Novelty Search \cite{NS} は未探索領域に新たに解を生成すること�
 
 \subsection{メカニズム}
 \label{ss:NSBA-abst}
+NSBAはBAにNovelty Searchを組み込んだ複数解探索手法である．(\ref{eq:ns})式を以下のベクトル式に変更することで，密集している個体が疎な方向へ新たに解候補を生成する．
 \begin{equation}
-d_i^{t} = \frac {1}{N} \sum _{j=1}^N \frac {(x_{i*}-x_j^{t})}{|x_{i*}-x_j^{t}|^2}
+d_i^{t} = \frac {1}{N} \sum _{j=1}^N \frac {(x_{pbest}-x_j^{t})}{|x_{pbest}-x_j^{t}|^2}
 \label{eq:nd*}
 \end{equation}
 \begin{equation}
 v_i^{t+1}=v_i^{t}+d_i^{t}*f_i
 \label{eq:nsvi}
 \end{equation}
+この時，$x_{pbest}$は$i$番目の最良個体を表し，このベクトル式から速度$v_i$を更新する．
 
+局所探索では，最良個体$x_{pbest}$付近に新たに解候補を次式で生成される．
 \begin{equation}
-x_{loc}=x_{i*}+ \epsilon A^t,
+x_{loc}=x_{pbest}+ \epsilon A^t,
 \label{eq:ns_xloc}
+\end{equation}
+$\epsilon$は$[-1, \ 1]$区間におけるD次元の一様乱数を表す．
+ランダム探索では，探索空間内に新たに解候補を生成する．
+\begin{equation}
+x_{rnd} = x_{lb} + (x_{ub} - x_{lb})* rand(1, \ D)
+\label{eq:ns_rnd}
 \end{equation}
 
 \subsection{アルゴリズム}
@@ -760,7 +1041,7 @@ x_{loc}=x_{i*}+ \epsilon A^t,
 \IF{($rand>r_i$)}
 \STATE Generate a new solution ${x_{loc}}$ around the solution $x_{i}$ [Eq.(\ref{eq:ns_xloc})] 
 \ENDIF
-\STATE Generate a new solution $x_{rnd}$ randomly (or without ${x_{rnd}}$)
+\STATE Generate a new solution $x_{rnd}$ randomly (or without ${x_{rnd}}$) [Eq. (\ref{eq:ns_rnd})]
 \IF{($rand<A_i \ \& \min (F(x_i), F(x_{new}), F(x_{rnd}))<F(x_{i*})$)}
 \STATE Accept the new solution, and update pulse rate $r_i$ \\ \& loudness $A_i$ [Eqs. (\ref{eq:loud})(\ref{eq:pulse})] 
 \ENDIF
@@ -776,46 +1057,46 @@ x_{loc}=x_{i*}+ \epsilon A^t,
 
 \subsubsection{評価関数}
 \label{sss:NSBA-func}
-扱う評価関数とその概形を図\ref{fig:nsba-f1}, \ref{fig:nsba-f2}に表す．
+本実験では\ref{ss:MinFunc}節で説明した$F_1$: Griewank関数と$F_2$: Rastrigin関数を用いる．
 
-\begin{description}
-\item[$F_1$: Griewank (2D)]\mbox{}\\
-\begin{equation}
-\label{eq:nsba-F1}
-F_1(x)=\sum_{i=1}^D \frac{x_i}{4000}- \prod_{i=1}^D \cos(\frac{x_i}{\sqrt{i}})+1.
-\end{equation}
+% \begin{description}
+% \item[$F_1$: Griewank (2D)]\mbox{}\\
+% \begin{equation}
+% \label{eq:nsba-F1}
+% F_1(x)=\sum_{i=1}^D \frac{x_i}{4000}- \prod_{i=1}^D \cos(\frac{x_i}{\sqrt{i}})+1.
+% \end{equation}
 
-\begin{figure}[t]
-\centering
-\subfigure[Fitness Landscape]{
-\includegraphics[width=0.8\linewidth]{eps/IES2018/3d_griewank.eps}
-\label{fig:nsba-f1(3d)}}
-\subfigure[Contour Plot]{
-\includegraphics[width=0.8\linewidth]{eps/IES2018/cont_griewank.eps}
-\label{fig:nsba-f1(2d)}}
-\caption{Griewank関数}
-\label{fig:nsba-f1}
-\end{figure}
+% \begin{figure}[t]
+% \centering
+% \subfigure[Fitness Landscape]{
+% \includegraphics[width=0.8\linewidth]{eps/IES2018/3d_griewank.eps}
+% \label{fig:nsba-f1(3d)}}
+% \subfigure[Contour Plot]{
+% \includegraphics[width=0.8\linewidth]{eps/IES2018/cont_griewank.eps}
+% \label{fig:nsba-f1(2d)}}
+% \caption{Griewank関数}
+% \label{fig:nsba-f1}
+% \end{figure}
 
-\item[$F_2$: Rastrigin (2D)]\mbox{}\\
-\begin{equation}
-\label{eq:nsba-F2}
-F(x)=10D+\sum_{i=1}^D[x_i^2-10\cos(2\pi x_i)].
-\end{equation}
+% \item[$F_2$: Rastrigin (2D)]\mbox{}\\
+% \begin{equation}
+% \label{eq:nsba-F2}
+% F(x)=10D+\sum_{i=1}^D[x_i^2-10\cos(2\pi x_i)].
+% \end{equation}
 
-\begin{figure}[t]
-\centering
-\subfigure[Fitness Landscape]{
-\includegraphics[width=0.8\linewidth]{eps/IES2018/3d_rastrigin.eps}
-\label{fig:nsba-f2(3d)}}
-\subfigure[Contour Plot]{
-\includegraphics[width=0.8\linewidth]{eps/IES2018/cont_rastrigin.eps}
-\label{fig:nsba-f2(2d)}}
-\caption{Rastrigin関数}
-\label{fig:nsba-f2}
-\end{figure}
+% \begin{figure}[t]
+% \centering
+% \subfigure[Fitness Landscape]{
+% \includegraphics[width=0.8\linewidth]{eps/IES2018/3d_rastrigin.eps}
+% \label{fig:nsba-f2(3d)}}
+% \subfigure[Contour Plot]{
+% \includegraphics[width=0.8\linewidth]{eps/IES2018/cont_rastrigin.eps}
+% \label{fig:nsba-f2(2d)}}
+% \caption{Rastrigin関数}
+% \label{fig:nsba-f2}
+% \end{figure}
 
-\end{description}
+% \end{description}
 \FloatBarrier
 
 \subsubsection{評価基準}
@@ -966,7 +1247,7 @@ $F_2 \ (N=150)$ & 1.0 & 0 & 0.87 \% & 8.0667 & 0.7717 & 6.67 \% \\
 \subsection{メカニズム}
 \label{ss:NRBA-abst}
 \begin{itemize}
-\item {\bf 変更点1:大域探索} \\
+\item {\bf BAからの変更点1:大域探索} \\
 ここではNiche Radiusを使用し，従来であるBAの解候補の生成式(\ref{eq:vi}),(\ref{eq:xi})を次式のように変更を加えた．
 \begin{equation}
 \label{eq:nrvi}
@@ -987,7 +1268,7 @@ x_i^t & (otherwise)
   \label{fig:nr}
 \end{figure}
 
-\item {\bf 変更点2: 局所探索} \\
+\item {\bf BAからの変更点2: 局所探索} \\
 次に局所探索性能を上げるため，各個体が持つNiche Radius内の最良解${x_{NR*}}$の周辺に新しい解候補${x_{loc}}$を生成するよう変更した．生成式は次の通りである．
 \begin{equation}
 \label{eq:nrloc}
@@ -995,7 +1276,7 @@ x_{loc}=x_{NR*} + \epsilon A_i^t
 \end{equation}
 
 $\epsilon$は1 $\times$ $D$次元の配列で$[-NR, \ NR]$区間のランダムな値が割り当てられる．この変更により，個体を局所解へ収束するよう促す．
-\item {\bf 変更点3: ランダム探索} \\
+\item {\bf BAからの変更点3: ランダム探索} \\
 ランダム探索では各個体の持つNR内にランダムで解候補を以下の式のように生成する．
 \begin{equation}
 \label{eq:nrrnd}
@@ -1043,89 +1324,89 @@ $[-NR, \ NR]$区間内の1×$D$次元の配列により現在位置$x_i^t$周辺
 
 \subsubsection{評価関数}
 \label{sss:NRBA-func}
-実験で使用するベンチマーク関数の４つを図\ref{fig:nrba-f1}-\ref{fig:nrba-f4}に示す．図\ref{fig:nrba-f1(3d)}から図\ref{fig:nrba-f4(3d)}は各評価関数の概形を表す．図\ref{fig:nrba-f1(2d)}から図\ref{fig:nrba-f4(2d)}の各グラフの平面は2変数$x_1,x_2$空間を表しており，カラーバーは評価値を色濃度で表現したものとなる．本実験では最小化問題として，色濃度の濃い（評価値の低い）部分となる最適解と局所解の探索を目的とした．
+本実験で使用するベンチマーク関数は，\ref{tab:minMOP}節で説明した$F_1$: Griewank，$F_3$: Six-Hump Camel，$F_4$: Michalewicz，$F_5$: Himmelblauの4つを用いる．
 
-\begin{figure}[t]
-\centering
-\subfigure[Fitness Landscape]{
-\includegraphics[width=0.8\linewidth]{eps/SICESSI2018/3d_griewank.eps}
-\label{fig:nrba-f1(3d)}}
-\subfigure[Contour Plot]{
-\includegraphics[width=0.8\linewidth]{eps/SICESSI2018/cont_griewank.eps}
-\label{fig:nrba-f1(2d)}}
-\caption{Griewank関数}
-\label{fig:nrba-f1}
-\end{figure}
+% \begin{figure}[t]
+% \centering
+% \subfigure[Fitness Landscape]{
+% \includegraphics[width=0.8\linewidth]{eps/SICESSI2018/3d_griewank.eps}
+% \label{fig:nrba-f1(3d)}}
+% \subfigure[Contour Plot]{
+% \includegraphics[width=0.8\linewidth]{eps/SICESSI2018/cont_griewank.eps}
+% \label{fig:nrba-f1(2d)}}
+% \caption{Griewank関数}
+% \label{fig:nrba-f1}
+% \end{figure}
 
-\begin{figure}[t]
-\centering
-\subfigure[Fitness Landscape]{
-\includegraphics[width=0.8\linewidth]{eps/SICESSI2018/3d_sixhump_camel.eps}
-\label{fig:nrba-f2(3d)}}
-\subfigure[Contour Plot]{
-\includegraphics[width=0.8\linewidth]{eps/SICESSI2018/cont_sixhump_camel.eps}
-\label{fig:nrba-f2(2d)}}
-\caption{Six-Hump Camel関数}
-\label{fig:nrba-f2}
-\end{figure}
+% \begin{figure}[t]
+% \centering
+% \subfigure[Fitness Landscape]{
+% \includegraphics[width=0.8\linewidth]{eps/SICESSI2018/3d_sixhump_camel.eps}
+% \label{fig:nrba-f2(3d)}}
+% \subfigure[Contour Plot]{
+% \includegraphics[width=0.8\linewidth]{eps/SICESSI2018/cont_sixhump_camel.eps}
+% \label{fig:nrba-f2(2d)}}
+% \caption{Six-Hump Camel関数}
+% \label{fig:nrba-f2}
+% \end{figure}
 
-\begin{figure}[t]
-\centering
-\subfigure[Fitness Landscape]{
-\includegraphics[width=0.8\linewidth]{eps/SICESSI2018/3d_michalewicz.eps}
-\label{fig:nrba-f3(3d)}}
-\subfigure[Contour Plot]{
-\includegraphics[width=0.8\linewidth]{eps/SICESSI2018/cont_michalewicz.eps}
-\label{fig:nrba-f3(2d)}}
-\caption{Michalewicz関数}
-\label{fig:nrba-f3}
-\end{figure}
+% \begin{figure}[t]
+% \centering
+% \subfigure[Fitness Landscape]{
+% \includegraphics[width=0.8\linewidth]{eps/SICESSI2018/3d_michalewicz.eps}
+% \label{fig:nrba-f3(3d)}}
+% \subfigure[Contour Plot]{
+% \includegraphics[width=0.8\linewidth]{eps/SICESSI2018/cont_michalewicz.eps}
+% \label{fig:nrba-f3(2d)}}
+% \caption{Michalewicz関数}
+% \label{fig:nrba-f3}
+% \end{figure}
 
-\begin{figure}[t]
-\centering
-\subfigure[Fitness Landscape]{
-\includegraphics[width=0.8\linewidth]{eps/SICESSI2018/3d_himmelblau.eps}
-\label{fig:nrba-f4(3d)}}
-\subfigure[Contour Plot]{
-\includegraphics[width=0.8\linewidth]{eps/SICESSI2018/cont_himmelblau.eps}
-\label{fig:nrba-f4(2d)}}
-\caption{Himmelblau関数}
-\label{fig:nrba-f4}
-\end{figure}
+% \begin{figure}[t]
+% \centering
+% \subfigure[Fitness Landscape]{
+% \includegraphics[width=0.8\linewidth]{eps/SICESSI2018/3d_himmelblau.eps}
+% \label{fig:nrba-f4(3d)}}
+% \subfigure[Contour Plot]{
+% \includegraphics[width=0.8\linewidth]{eps/SICESSI2018/cont_himmelblau.eps}
+% \label{fig:nrba-f4(2d)}}
+% \caption{Himmelblau関数}
+% \label{fig:nrba-f4}
+% \end{figure}
 
-\begin{description}
-\item[Griewank Function]\mbox{}\\
-多峰性関数の一つである，16個の局所解と1つの最適解を持つGriewank Function \cite{f1f3} を用いる（Fig. \ref{fig:nrba-f1}参照）．評価関数の式は以下の通りである．
-\begin{equation}
-F_1(x_i)=\sum_{i=1}^D \frac{x_i^2}{4000}- \prod_{i=1}^D \cos( \frac{x_i}{\sqrt{i}})+1
-\end{equation}
-解空間の探索領域は$x_i \in [-10, \ 10]$である$(i=1,2)$．最適解の座標は$x_*=[0, \ 0]$で，その評価値は$F(x_*)=0$である．局所解の座標は$\pm x \approx [6.2800, \ 8.8769], [3.1400, \ 4.4385]$, \\ $[0, \ 8.8769],$  $ [6.2800, \ 0], [9.4200, \ 4.4385]$となる．
+% \begin{description}
+% \item[Griewank Function]\mbox{}\\
+% 多峰性関数の一つである，16個の局所解と1つの最適解を持つGriewank Function \cite{f1f3} を用いる（Fig. \ref{fig:nrba-f1}参照）．評価関数の式は以下の通りである．
+% \begin{equation}
+% F_1(x_i)=\sum_{i=1}^D \frac{x_i^2}{4000}- \prod_{i=1}^D \cos( \frac{x_i}{\sqrt{i}})+1
+% \end{equation}
+% 解空間の探索領域は$x_i \in [-10, \ 10]$である$(i=1,2)$．最適解の座標は$x_*=[0, \ 0]$で，その評価値は$F(x_*)=0$である．局所解の座標は$\pm x \approx [6.2800, \ 8.8769], [3.1400, \ 4.4385]$, \\ $[0, \ 8.8769],$  $ [6.2800, \ 0], [9.4200, \ 4.4385]$となる．
 
-\item[Six-Hump Camel Function]\mbox{}\\
-最適解と局所解が各2個存在するSix-Hump Camel Function\cite{f1f3}は以下の式で表される．
-\begin{equation}
-\label{eq:sixhump}
-F_2(x_1,x_2)=(4-2.1x_1^2+ \frac{x_1^4}{3})x_1^2+x_1x_2+(-4+4x_2^2)x_2^2
-\end{equation}
-この関数における解空間の探索領域は$x_1 \in [-2, \ 2]$, \ $x_2 \in [-1, \ 1]$である．最適解の座標は$x_*=[0.0898, \ -0.7126], [-0.0898, \ 0.7126]$であり，その評価値は$F_3(x_*)=-1.0316$である．また局所解は$\pm x \approx [1.704, \ -0.7965]$に位置する．
+% \item[Six-Hump Camel Function]\mbox{}\\
+% 最適解と局所解が各2個存在するSix-Hump Camel Function\cite{f1f3}は以下の式で表される．
+% \begin{equation}
+% \label{eq:sixhump}
+% F_2(x_1,x_2)=(4-2.1x_1^2+ \frac{x_1^4}{3})x_1^2+x_1x_2+(-4+4x_2^2)x_2^2
+% \end{equation}
+% この関数における解空間の探索領域は$x_1 \in [-2, \ 2]$, \ $x_2 \in [-1, \ 1]$である．最適解の座標は$x_*=[0.0898, \ -0.7126], [-0.0898, \ 0.7126]$であり，その評価値は$F_3(x_*)=-1.0316$である．また局所解は$\pm x \approx [1.704, \ -0.7965]$に位置する．
 
-\item[Michalewicz Function]\mbox{}\\
-Michalewicz Function \cite{f1f3} の数式を以下に示す．
-\begin{equation}
-\label{eq:michalewicz}
-F_3(x_i)=- \sum_{i=1}^D \sin(x_i)\sin^{2m}(\frac{ix_i^2}{\pi})
-\end{equation}
-最適解$x_*=[2.20, \ 1.57]$の評価値$F_3(x_*)=-1.8013$であり，局所解は$x \approx [2.203 \ 2.7115]$である．探索領域は$x_i \in [0, \ 4]$である（$i=1,2$）．
+% \item[Michalewicz Function]\mbox{}\\
+% Michalewicz Function \cite{f1f3} の数式を以下に示す．
+% \begin{equation}
+% \label{eq:michalewicz}
+% F_3(x_i)=- \sum_{i=1}^D \sin(x_i)\sin^{2m}(\frac{ix_i^2}{\pi})
+% \end{equation}
+% 最適解$x_*=[2.20, \ 1.57]$の評価値$F_3(x_*)=-1.8013$であり，局所解は$x \approx [2.203 \ 2.7115]$である．探索領域は$x_i \in [0, \ 4]$である（$i=1,2$）．
 
-\item[Himmelblau Function]\mbox{}\\
-Himmelblau Function \cite{f4} の関数式は次の通りとなる．
-\begin{equation}
-\label{eq:himmelblau}
-F_4(x_1,x_2)=(x_1^2+x_2-11)^2+(x_1+x_2^2-7)^2
-\end{equation}
-評価関数に局所解は存在せず，最適解のみ4個持つ関数である．最適解の位置は各々$x_*=[3, \ 2]$,$[-2.805118, \ 3.283186]$,$[-3.779310,$  \ $-3.283186],$ $[3.584458, \ -1.848126]$にあり，その評価値は$F_4(x_*)=0$である．探索領域は$x_i \in [-5, \ 5]$となる($i=1,2$)．
+% \item[Himmelblau Function]\mbox{}\\
+% Himmelblau Function \cite{f4} の関数式は次の通りとなる．
+% \begin{equation}
+% \label{eq:himmelblau}
+% F_4(x_1,x_2)=(x_1^2+x_2-11)^2+(x_1+x_2^2-7)^2
+% \end{equation}
+% 評価関数に局所解は存在せず，最適解のみ4個持つ関数である．最適解の位置は各々$x_*=[3, \ 2]$,$[-2.805118, \ 3.283186]$,$[-3.779310,$  \ $-3.283186],$ $[3.584458, \ -1.848126]$にあり，その評価値は$F_4(x_*)=0$である．探索領域は$x_i \in [-5, \ 5]$となる($i=1,2$)．
 
-\end{description}
+% \end{description}
 
 \FloatBarrier
 \subsubsection{評価基準}
@@ -1150,17 +1431,17 @@ Max Run (MR) は実験回数を表し，Found Peaks (FPs) は発見した解の�
 \subfigure[$F_1$: Griewank]{
 \includegraphics[width=0.9\linewidth]{eps/SICESSI2018/f1_ba.eps}
 \label{fig:nrba-f1_ba}}
-\subfigure[$F_2$: Six-Hump Camel]{
+\subfigure[$F_3$: Six-Hump Camel]{
 \includegraphics[width=0.9\linewidth]{eps/SICESSI2018/f2_ba.eps}
 \label{fig:nrba-f2_ba}}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\subfigure[$F_3$: Michalewicz]{
+\subfigure[$F_4$: Michalewicz]{
 \includegraphics[width=0.9\linewidth]{eps/SICESSI2018/f3_ba.eps}
 \label{fig:nrba-f3_ba}}
-\subfigure[$F_4$: Himmelblau]{
+\subfigure[$F_5$: Himmelblau]{
 \includegraphics[width=0.9\linewidth]{eps/SICESSI2018/f4_ba.eps}
 \label{fig:nrba-f4_ba}}
 \caption{BA}
@@ -1172,17 +1453,17 @@ Max Run (MR) は実験回数を表し，Found Peaks (FPs) は発見した解の�
 \subfigure[$F_1$: Griewank]{
 \includegraphics[width=0.9\linewidth]{eps/SICESSI2018/f1_nrba.eps}
 \label{fig:nrba-f1_nrba}}
-\subfigure[$F_2$: Six-Hump Camel]{
+\subfigure[$F_3$: Six-Hump Camel]{
 \includegraphics[width=0.9\linewidth]{eps/SICESSI2018/f2_nrba.eps}
 \label{fig:nrba-f2_nrba}}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\subfigure[$F_3$: Michalewicz]{
+\subfigure[$F_4$: Michalewicz]{
 \includegraphics[width=0.9\linewidth]{eps/SICESSI2018/f3_nrba.eps}
 \label{fig:nrba-f3_nrba}}
-\subfigure[$F_4$: Himmelblau]{
+\subfigure[$F_5$: Himmelblau]{
 \includegraphics[width=0.9\linewidth]{eps/SICESSI2018/f4_nrba.eps}
 \label{fig:nrba-f4_nrba}}
 \caption{NRBA}
@@ -1201,11 +1482,11 @@ Function & Mean & SD & PR & Mean & SD & PR \\
 \hline
 $F_1$ & 1.0 & 0 & 5.88 \% & 11.767 & 1.667 & 69.22 \% \\
 \hline
-$F_2$ & 1.967 & 0.180 & 49.17 \% & 3.967 & 0.180 & 99.17 \% \\
+$F_3$ & 1.967 & 0.180 & 49.17 \% & 3.967 & 0.180 & 99.17 \% \\
 \hline
-$F_3$ & 1.0 & 0 & 50.00 \% & 1.4 & 0.490 & 70.00 \% \\
+$F_4$ & 1.0 & 0 & 50.00 \% & 1.4 & 0.490 & 70.00 \% \\
 \hline
-$F_4$ & 0.967 & 0.547 & 24.17 \% & 3.433 & 0.496 & 85.83 \% \\
+$F_5$ & 0.967 & 0.547 & 24.17 \% & 3.433 & 0.496 & 85.83 \% \\
 \hline
 % \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
 \end{tabular}
@@ -1256,14 +1537,14 @@ $v_i$，$x_i$は個体の速度と位置を表し，$x_{NR*}$は$x_i$が属す�
 \mbox{\boldmath $x_i^t$} & ({\rm otherwise})
 \end{cases}
 \end{equation}
-ここでは個体の分布密度が高いほど，個体$x_i$の持つNiche Count $m_i$の範囲内にある最良個体$x_{NR*}$から遠ざかる方向へ新たに個体候補を生成する．
+ここでは個体の分布密度が高いほど，個体$x_i$の持つNiche Count $m_i$の範囲内にある最良個体$x_{NR*}$から遠ざかる方向へ新たに解候補を生成する．
 
-局所探索では(\ref{eq:mi})式で算出した最良個体$x_{NR*}$が持つ$m_i$の範囲内で個体$x_i$が新たに個体候補$x_{loc}$を生成する．
+局所探索では(\ref{eq:mi})式で算出した最良個体$x_{NR*}$が持つ$m_i$の範囲内で個体$x_i$が新たに解候補$x_{loc}$を生成する．
 \begin{equation}
 \label{eq:dnrloc}
 \mbox{\boldmath $x_{loc}$}=\mbox{\boldmath $x_{NR*}$} + A_i^t*rand(1,D,[-m_i, m_i])
 \end{equation}
-ランダム探索では，個体$x_i$の持つ$m_i$の範囲内で新たに個体候補$x_{rnd}$を生成することで，局所解への収束性能を高める．生成式は次式で表される．
+ランダム探索では，個体$x_i$の持つ$m_i$の範囲内で新たに解候補$x_{rnd}$を生成することで，局所解への収束性能を高める．生成式は次式で表される．
 \begin{equation}
 \label{eq:dnrrnd}
 \mbox{\boldmath $x_{rnd}$}=\mbox{\boldmath $x_i^t$} + rand(1,D,[-m_i, m_i])
@@ -1343,18 +1624,18 @@ F_1(x)= \sum_{i=1}^D \frac{x_{i}}{4000} - \prod_{i=1}^D \cos(\frac{x_i}{\sqrt{i}
 \end{equation}
 最適解の評価値は${F(x_*)}=0$であり，1つの最適解と16個の局所解を持つ．探索範囲は$x_1, x_2 \in [-10, \ 10]$である.
 
-\begin{figure}[h]
-\centering
-\subfigure[Fitness landscape]{
-\includegraphics[width=0.8\linewidth]{eps/ISMSI2019/3d_griewank.eps}
-\label{fig:3df1}}
-\subfigure[Contour plot]{
-\includegraphics[width=0.8\linewidth]{eps/ISMSI2019/cont_griewank.eps}
-\label{fig:cf1}}
+% \begin{figure}[h]
+% \centering
+% \subfigure[Fitness landscape]{
+% \includegraphics[width=0.8\linewidth]{eps/ISMSI2019/3d_griewank.eps}
+% \label{fig:3df1}}
+% \subfigure[Contour plot]{
+% \includegraphics[width=0.8\linewidth]{eps/ISMSI2019/cont_griewank.eps}
+% \label{fig:cf1}}
 
-\caption{$F_1$: Griewank Function}
-\label{fig:dnrba-f1}
-\end{figure}
+% \caption{$F_1$: Griewank Function}
+% \label{fig:dnrba-f1}
+% \end{figure}
 
 \item[$F_2$: Shubert Function]\mbox{}\\
 Shubert関数の概形を図\ref{fig:dnrba-f2}に示す.
@@ -1363,18 +1644,18 @@ F_2(x) = \prod_{i=1}^D \sum_{j=1}^5 j \cos[(j+1)x_i+j],
 \end{equation}
 $D$は次元数を表し，最適解の評価値は${F(x_*)=-187.731}$である.この関数では$D \cdot 3^D $個の最適解のみ存在し，2次元では18個の最適解を持つ．探索範囲は$x_i \in [-10, 10]^D$ $(i=1,2,...,D)$である.
 
-\begin{figure}[h]
-\centering
-\subfigure[Fitness landscape]{
-\includegraphics[width=0.8\linewidth]{eps/ISMSI2019/3d_shubert.eps}
-\label{fig:3df2}}
-\subfigure[Contour plot]{
-\includegraphics[width=0.8\linewidth]{eps/ISMSI2019/cont_shubert.eps}
-\label{fig:cf2}}
+% \begin{figure}[h]
+% \centering
+% \subfigure[Fitness landscape]{
+% \includegraphics[width=0.8\linewidth]{eps/ISMSI2019/3d_shubert.eps}
+% \label{fig:3df2}}
+% \subfigure[Contour plot]{
+% \includegraphics[width=0.8\linewidth]{eps/ISMSI2019/cont_shubert.eps}
+% \label{fig:cf2}}
 
-\caption{$F_2$: Shubert Function}
-\label{fig:dnrba-f2}
-\end{figure}
+% \caption{$F_2$: Shubert Function}
+% \label{fig:dnrba-f2}
+% \end{figure}
 
 \end{description}
 
@@ -1491,124 +1772,146 @@ $F_2 $ & {\bf 0.0556} $\pm$ 0.0619 & {\bf 1.8160} $\pm$ 0.4990 & 0.0426 $\pm$ 0.
 
 \subsection{複数解探索における多峰性最適化問題}
 \label{ss:cec2013}
-本実験では，複数最適解を探索する手法の性能を比較するため，CEC ({\it IEEE Congress on Evolutionary Computation}) 2013 Competition on Niching Methods for Multimodal Function Optimization \cite{CEC2013} で扱われたベンチマーク関数を用いる．使用する関数について,次節で説明する．
+% 本実験では，複数最適解を探索する手法の性能を比較するため，CEC ({\it IEEE Congress on Evolutionary Computation}) 2013 Competition on Niching Methods for Multimodal Function Optimization \cite{CEC2013} で扱われたベンチマーク関数を用いる．使用する関数について,次節で説明する．
 
-\subsubsection{ベンチマーク関数}
+\subsection{評価関数}
 \label{sss:benchmark}
-使用する20のベンチマーク関数とその概形は以下の通りである．
+使用するベンチマーク関数とその概形は以下の通りである．
 
 
-\begin{description}
-\item[$F_1$: Five-Uneven-Peak Trap (1D)]\mbox{}\\
-\begin{equation}
-\label{eq:f1}
-F_1(x)=\begin{cases}
-80(2.5-x) & {\rm for} \ 0 \leq x < 2.5, \\
-64(x-2.5) & {\rm for} \ 2.5 \leq x < 5.0, \\
-64(7.5-x) & {\rm for} \ 5.0 \leq x < 7.5, \\
-28(x-7.5) & {\rm for} \ 7.5 \leq x < 12.5, \\
-28(17.5-x) & {\rm for} \ 12.5 \leq x < 17.5, \\
-32(x-17.5) & {\rm for} \ 17.5 \leq x < 22.5, \\
-32(27.5-x) & {\rm for} \ 22.5 \leq x < 27.5, \\
-80(x-27.5) & {\rm for} \ 27.5 \leq x < 30.
-\end{cases}
-\end{equation}
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\linewidth]{eps/F1.eps}
-\caption{Five-Uneven-Peak Trap}
-\label{fig:f1}
-\end{figure}
+% \begin{description}
+% \item[$F_1$: Five-Uneven-Peak Trap (1D)]\mbox{}\\
+% \begin{equation}
+% \label{eq:f1}
+% F_1(x)=\begin{cases}
+% 80(2.5-x) & {\rm for} \ 0 \leq x < 2.5, \\
+% 64(x-2.5) & {\rm for} \ 2.5 \leq x < 5.0, \\
+% 64(7.5-x) & {\rm for} \ 5.0 \leq x < 7.5, \\
+% 28(x-7.5) & {\rm for} \ 7.5 \leq x < 12.5, \\
+% 28(17.5-x) & {\rm for} \ 12.5 \leq x < 17.5, \\
+% 32(x-17.5) & {\rm for} \ 17.5 \leq x < 22.5, \\
+% 32(27.5-x) & {\rm for} \ 22.5 \leq x < 27.5, \\
+% 80(x-27.5) & {\rm for} \ 27.5 \leq x < 30.
+% \end{cases}
+% \end{equation}
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.8\linewidth]{eps/F1.eps}
+% \caption{Five-Uneven-Peak Trap}
+% \label{fig:f1}
+% \end{figure}
 
-\item[$F_2$: Equal Maxima (1D)]\mbox{}\\
-\begin{equation}
-\label{eq:F2}
-F_2(x)=\sin^6{(5\pi x)}.
-\end{equation}
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\linewidth]{eps/F2.eps}
-\caption{Equal Maxima}
-\label{fig:f2}
-\end{figure}
+% \item[$F_2$: Equal Maxima (1D)]\mbox{}\\
+% \begin{equation}
+% \label{eq:F2}
+% F_2(x)=\sin^6{(5\pi x)}.
+% \end{equation}
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.8\linewidth]{eps/F2.eps}
+% \caption{Equal Maxima}
+% \label{fig:f2}
+% \end{figure}
 
-\item[$F_3$: Uneven Decreasing Maxima (1D)]\mbox{}\\
-\begin{equation}
-\label{eq:F3}
-F_3(x)=exp(-2log(2)(\frac{x-0.08}{0.854})^2)\sin^6{(5\pi(x^{\frac{3}{4}}-0.05))}.
-\end{equation}
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\linewidth]{eps/F3.eps}
-\caption{Uneven Decreasing Maxima}
-\label{fig:f3}
-\end{figure}
+% \item[$F_3$: Uneven Decreasing Maxima (1D)]\mbox{}\\
+% \begin{equation}
+% \label{eq:F3}
+% F_3(x)=exp(-2log(2)(\frac{x-0.08}{0.854})^2)\sin^6{(5\pi(x^{\frac{3}{4}}-0.05))}.
+% \end{equation}
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.8\linewidth]{eps/F3.eps}
+% \caption{Uneven Decreasing Maxima}
+% \label{fig:f3}
+% \end{figure}
 
-\item[$F_4$: Himmelblau (2D)]\mbox{}\\
-\begin{equation}
-\label{eq:F4}
-F_4(x,y) = 200 - (x^2+y-11)^2 - (x+y^2-7)^2.
-\end{equation}
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\linewidth]{eps/F4.eps}
-\caption{2D Himmelblau}
-\label{fig:f4}
-\end{figure}
+% \item[$F_4$: Himmelblau (2D)]\mbox{}\\
+% \begin{equation}
+% \label{eq:F4}
+% F_4(x,y) = 200 - (x^2+y-11)^2 - (x+y^2-7)^2.
+% \end{equation}
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.8\linewidth]{eps/F4.eps}
+% \caption{2D Himmelblau}
+% \label{fig:f4}
+% \end{figure}
 
-\item[$F_5$: Six-Hump Camel Back (2D)]\mbox{}\\
-\begin{equation}
-\label{eq:F5}
-F_5(x,y)=-4[(4-2.1x^2+\frac{x^4}{3})x^2+xy+(4y^2-4)y^2].
-\end{equation}
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\linewidth]{eps/F5.eps}
-\caption{2D Six-Hump Camel Back}
-\label{fig:f5}
-\end{figure}
+% \item[$F_5$: Six-Hump Camel Back (2D)]\mbox{}\\
+% \begin{equation}
+% \label{eq:F5}
+% F_5(x,y)=-4[(4-2.1x^2+\frac{x^4}{3})x^2+xy+(4y^2-4)y^2].
+% \end{equation}
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.8\linewidth]{eps/F5.eps}
+% \caption{2D Six-Hump Camel Back}
+% \label{fig:f5}
+% \end{figure}
 
-\item[$F_6$: Shubert (2D)]\mbox{}\\
-\begin{equation}
-\label{eq:F6}
-F_6(x)=-\prod_{i=1}^D \sum_{j=1}^5 j\cos[(j+1)x_i+j].
-\end{equation}
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\linewidth]{eps/F6.eps}
-\caption{2D Shubert}
-\label{fig:f6}
-\end{figure}
+% \item[$F_6$: Shubert (2D)]\mbox{}\\
+% \begin{equation}
+% \label{eq:F6}
+% F_6(x)=-\prod_{i=1}^D \sum_{j=1}^5 j\cos[(j+1)x_i+j].
+% \end{equation}
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.8\linewidth]{eps/F6.eps}
+% \caption{2D Shubert}
+% \label{fig:f6}
+% \end{figure}
 
-\end{description}
+% \end{description}
 
 \begin{table}[h]
 \caption{Benchmark Test Functions}
 \begin{center}
-\begin{tabular}{c|c|c|c|c|c|c}
+\begin{tabular}{c|c|c|c|c|c}
 \hline
 
-Function & $F(x*)$ & Num of & Num of & $\rho$ & Dimension & Search Range \\
-& & goptima & loptima & & & \\
+Function & $F(x*)$ & Num of & $\rho$ & $D$ & Search Range \\
+& & goptima & & & \\
 \hline
-$F_1$ & 200.0 & 2 & 3 & 0.01 & 1 & $x \in [0,30]$  \\
+$F_1$ & 200.0 & 2 & 0.01 & 1 & $x \in [0,30]$  \\
 \hline
-$F_2$ & 1.0 & 5 & 0 & 0.01 & 1 & $x \in [0,1]$  \\
+$F_2$ & 1.0 & 5 & 0.01 & 1 & $x \in [0,1]$  \\
 \hline
-$F_3$ & 1.0 & 1 & 4 & 0.01 & 1 & $x \in [0,1]$  \\
+$F_3$ & 1.0 & 1 & 0.01 & 1 & $x \in [0,1]$  \\
 \hline
-$F_4$ & 200.0 & 4 & 0 & 0.01 & 2 & $x,y \in [-6,6]$  \\
+$F_4$ & 200.0 & 4 & 0.01 & 2 & $x,y \in [-6,6]$  \\
 \hline
-$F_5$ & 1.03163 & 2 & 2 & 0.5 & 2 & $x \in [-1.9,1.9]$, \\
-& & & & & & $y \in [-1.1,1.1]$ \\
+$F_5$ & 1.03163 & 2 & 0.5 & 2 & $x \in [-1.9,1.9]$, \\
+& & & & & $y \in [-1.1,1.1]$ \\
 \hline
-$F_6$ & 186.731 & 18 & 0 & 0.5 & 2 & $x_i \in [-10,10]$  \\
+$F_6$ & 186.731 & 18 & 0.5 & 2 & $x_i \in [-10,10]$  \\
 \hline
 % \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
 \end{tabular}
 \label{tab:MOP}
 \end{center}
 \end{table}
+
+\subsection{評価基準}
+\label{ss:eval_criteria}
+本コンペティションではPR \cite{CEC2013} によりアルゴリズムの性能評価を行う．各評価関数で割り当てられた評価回数 (MaxFEs) と {\it accuracy level} $\varepsilon$を用いてPRは次式で表される．
+\begin{equation}
+\label{eq:PR}
+PR=\frac{\sum_{run=1}^{NR}NPF_{run}}{NKP*NR}
+\end{equation}
+$NPF_{run}$は，そのシードにおけるアルゴリズムが発見した最適解数を示し，NKPは評価関数が持つ全最適解数を示す．NRは実験の試行回数を示す．
+
+% SRは
+% \begin{equation}
+% \label{eq:SR}
+% SR=\frac{NSR}{NR}
+% \end{equation}
+
+\subsection{結果}
+\label{ss:results}
+
+% \begin{table}[h]
+% \begin{center}
+% \begin{tabular}{}
 
 \begin{figure}
 \centering
@@ -1643,15 +1946,6 @@ $F_6$ & 186.731 & 18 & 0 & 0.5 & 2 & $x_i \in [-10,10]$  \\
 \caption{$\varepsilon = 1.0E-5$}
 \label{fig:resutls_comp_E5}
 \end{figure}
-
-\subsection{評価基準}
-\label{ss:eval_criteria}
-
-
-
-\subsection{結果}
-\label{ss:results}
-
 
 % 最後に従来のXCSRと\proposed の学習回数ごとのマクロ分類子数の変化を図\ref{fig:mnist_c}に示した.
 % 薄い灰色の線が従来のXCSR, 濃い灰色の線が\proposed(圧縮ルール未使用)の結果で, 縦軸がマクロ分類子数(ユニークな分類子数), 横軸が学習回数を示している.
