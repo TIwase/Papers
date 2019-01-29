@@ -737,7 +737,7 @@ Crowding DE (CDE) \cite{CDE} は類似個体同士を比較し，評価値の高
 Griewank関数 \cite{MOP} の概形を図\ref{fig:minF1}に示し，関数式は次式で表される．
 \begin{equation}
 \label{eq:minF1}
-F_1(x)=\sum_{i=1}^D \frac{x_i}{4000}- \prod_{i=1}^D \cos(\frac{x_i}{\sqrt{i}})+1.
+F_1(x_i)=\sum_{i=1}^D \frac{x_i}{4000}- \prod_{i=1}^D \cos(\frac{x_i}{\sqrt{i}})+1.
 \end{equation}
 解空間の探索領域は$x_i \in [-10, \ 10]$である$(i=1,2)$．最適解の座標は$x_*=[0, \ 0]$で，その評価値は$F(x_*)=0$である．局所解の座標は$\pm x \approx [6.2800, \ 8.8769], [3.1400, \ 4.4385]$, \\ $[0, \ 8.8769],$  $ [6.2800, \ 0], [9.4200, \ 4.4385]$となる．
 \begin{figure}[t]
@@ -756,7 +756,7 @@ F_1(x)=\sum_{i=1}^D \frac{x_i}{4000}- \prod_{i=1}^D \cos(\frac{x_i}{\sqrt{i}})+1
 Rastrigin関数 \cite{MOP} の概形を図\ref{fig:minF2}に示し，関数式は次式で表される．
 \begin{equation}
 \label{eq:minF2}
-F_2(x)=10D+\sum_{i=1}^D[x_i^2-10\cos(2\pi x_i)].
+F_2(x_i)=10D+\sum_{i=1}^D[x_i^2-10\cos(2\pi x_i)].
 \end{equation}
 $D$は次元数であり，探索領域は$x_i \in [-5, \ 5]$である．
 \begin{figure}[t]
@@ -1106,7 +1106,8 @@ x_{rnd} = x_{lb} + (x_{ub} - x_{lb})* rand(1, \ D)
 \label{eq:PR}
 PR=\frac{\sum_{run=1}^{MR}FPs}{TP*MR}
 \end{equation}
-ここで，$TP$は評価関数の全最適解と局所解数(Total Peak)を表し，$MR$は実験回数(Max Run)を表す．$FPs$は発見した解の数(Found Peaks)を表す．
+ここで，$TP$は評価関数の全最適解と局所解数(Total Peak)を表し，$MR$は実験回数(Max Run)を表す．$FPs$は発見した解の数(Found Peaks)を表す．解発見の定義はピークとその最近傍個体とのユークリッド距離が0.1未満であった時，その解を発見したとする．
+
 \subsubsection{実験設定}
 \label{sss:nsba-setup}
 本実験では，$F_1$関数では個体数$N=50,100$，$F_2$関数では$N=100,150$とした．2つの関数において，$f_{max}=1, f_{min}=0$, ラウドネス$A^0=1$, パルスレート$r^0 \in rand[0,1]$とし，$\alpha = \gamma = 0.9$と設定した．世代数は10000，実験回数を30回とした．
@@ -1192,6 +1193,7 @@ $F_2 \ (N=150)$ & 1.0 & 0 & 0.87 \% & 8.0667 & 0.7717 & 6.67 \% \\
 \label{ss:nsba-disc}
 
 \subsubsection{個体数による影響}
+個体数の変化による影響があるか調査するため，BAとNSBAにて個体数を変えて実験を行った．表\ref{tab:nsba}より，BAのPR値は$F_1$, $F_2$関数のいずれにおいても個体数による変化がなかった．一方，NSBAは個体数が増加すると2つの関数においてPR値が増加した．NSBAは$F_1$関数において，40\%から42.75\%と探索率が上昇し，$F_2$関数においても6.56\%から6.67\%と僅かに上昇した．このことから個体数を増やすことで探索性能が向上したと考えられる．また，図\ref{fig:nsba-all_iter}からも個体数の増加により，世代数が増す中でPR値を維持していることが分かる．$F_1$関数でNSBA($N=50$)のPR値は70\%から30\%へと低下しているが，NSBA($N=100$)では6000世代付近から50\%を維持していることが分かる．
 
 \begin{figure}[t]
 \centering
@@ -1216,6 +1218,8 @@ $F_2 \ (N=150)$ & 1.0 & 0 & 0.87 \% & 8.0667 & 0.7717 & 6.67 \% \\
 \end{figure}
 
 \subsubsection{解の分布}
+図\ref{fig:nsba-all_iter}よりPR値を維持できない原因を分析するため，ここではPR値が最も高かった1000世代目の解分布に着目し，その時の分布図を図\ref{fig:nsba-results_nsba_1000}に示す．
+
 \begin{figure}[t]
 \centering
 \subfigure[$F_1 :(N=50)$]{
@@ -1251,13 +1255,13 @@ $F_2 \ (N=150)$ & 1.0 & 0 & 0.87 \% & 8.0667 & 0.7717 & 6.67 \% \\
 ここではNiche Radiusを使用し，従来であるBAの解候補の生成式(\ref{eq:vi}),(\ref{eq:xi})を次式のように変更を加えた．
 \begin{equation}
 \label{eq:nrvi}
-v_i^{t+1}=v_i^t+(x_i^t-x_{NR*})*f_i
+\mbox{\boldmath $v_i^{t+1}$}=\mbox{\boldmath $v_i^t$}+(\mbox{\boldmath $x_i^t$}-\mbox{\boldmath $x_{NR*}$})*f_i
 \end{equation}
 \begin{equation}
 \label{eq:nrxi}
-x_i^{t+1}= \begin{cases}
-x_i^t+v_i^{t+1} & (if \ d_i^t < NR) \\
-x_i^t & (otherwise)
+\mbox{\boldmath $x_i^{t+1}$}= \begin{cases}
+\mbox{\boldmath $x_i^t$}+\mbox{\boldmath $v_i^{t+1}$} & ({\rm if} \ d_i^t < NR) \\
+\mbox{\boldmath $x_i^t$} & ({\rm otherwise})
 \end{cases}
 \end{equation}
 個体移動時のイメージ図を図\ref{fig:nr}に表す．各個体はNRを半径とした円の探索領域が決まっており，個体間距離${d_i}$がNRより小さい場合において，式(\ref{eq:nrvi})にてNR内の最良解${x_{NR*}}$を中心とした円から離れる方向へ個体${x_i^t}$が速度${v_i}$で移動する．またNR内に他の個体が存在しない，あるいは最良解$x_{NR*}$は移動をせず，その場所に留まる．この変更により，個体が同じ探索領域内に留まらず分散化をはかる．
@@ -1272,7 +1276,7 @@ x_i^t & (otherwise)
 次に局所探索性能を上げるため，各個体が持つNiche Radius内の最良解${x_{NR*}}$の周辺に新しい解候補${x_{loc}}$を生成するよう変更した．生成式は次の通りである．
 \begin{equation}
 \label{eq:nrloc}
-x_{loc}=x_{NR*} + \epsilon A_i^t
+\mbox{\boldmath $x_{loc}$}=\mbox{\boldmath $x_{NR*}$} + \epsilon A_i^t
 \end{equation}
 
 $\epsilon$は1 $\times$ $D$次元の配列で$[-NR, \ NR]$区間のランダムな値が割り当てられる．この変更により，個体を局所解へ収束するよう促す．
@@ -1280,7 +1284,7 @@ $\epsilon$は1 $\times$ $D$次元の配列で$[-NR, \ NR]$区間のランダム�
 ランダム探索では各個体の持つNR内にランダムで解候補を以下の式のように生成する．
 \begin{equation}
 \label{eq:nrrnd}
-x_{rnd}=x_i^t + rand(1,D,[-NR, NR])
+\mbox{\boldmath $x_{rnd}$}=\mbox{\boldmath $x_i^t$} + rand(1,D,[-NR, NR])
 \end{equation}
 $[-NR, \ NR]$区間内の1×$D$次元の配列により現在位置$x_i^t$周辺に解候補を生成する．この変更では各個体を最適解あるいは局所解近辺へ移動させることで同じ場所に留まることを避ける．
 \end{itemize}
@@ -1472,23 +1476,22 @@ Max Run (MR) は実験回数を表し，Found Peaks (FPs) は発見した解の�
 \FloatBarrier
 
 \begin{table}[h]
-\caption{Found Peaks and Peak Ratio}
+\caption{The value of PR (averaged over 30 runs)}
 \begin{center}
-\begin{tabular}{c|c|c|c|c|c|c}
+\begin{tabular}{c|c|c|c}
 \hline
-\multicolumn{1}{c|}{} & \multicolumn{3}{c|}{BA} & \multicolumn{3}{c}{NRBA}  \\
+\multicolumn{1}{c|}{} & \multicolumn{1}{c|}{BA} & \multicolumn{1}{c|}{NSBA} & \multicolumn{1}{c}{NRBA}  \\
 \hline
-Function & Mean & SD & PR & Mean & SD & PR \\
+Function & Mean $\pm$ SD  & Mean $\pm$ SD &  Mean $\pm$ SD \\
 \hline
-$F_1$ & 1.0 & 0 & 5.88 \% & 11.767 & 1.667 & 69.22 \% \\
+$F_1$ & 0.0588 $\pm$ 0 & 0.3760 $\pm$ 0.0413 & 0.6922 $\pm$ 0.0981  \\
 \hline
-$F_3$ & 1.967 & 0.180 & 49.17 \% & 3.967 & 0.180 & 99.17 \% \\
+$F_3$ & 0.4917 $\pm$ 0.0449 & 0.5 $\pm$ 0 & 0.9917 $\pm$ 0.0449 \\
 \hline
-$F_4$ & 1.0 & 0 & 50.00 \% & 1.4 & 0.490 & 70.00 \% \\
+$F_4$ & 0.5 $\pm$ 0 & 0.5 $\pm$ 0 & 0.7 $\pm$ 0.2450 \\
 \hline
-$F_5$ & 0.967 & 0.547 & 24.17 \% & 3.433 & 0.496 & 85.83 \% \\
+$F_5$ & 0.2417 $\pm$ 0.1367 & 1 $\pm$ 0 & 0.8583 $\pm$ 0.1239 \\
 \hline
-% \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
 \end{tabular}
 \label{tab:nrba}
 \end{center}
