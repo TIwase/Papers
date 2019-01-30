@@ -320,7 +320,7 @@ DEは以下，いずれかの探索戦略を用いて解候補を生成する．
 \mbox{\boldmath $v_{i,j}^{t+1}$}=\mbox{\boldmath $x_{gbest,j}^t$}+F \cdot (\mbox{\boldmath $x_{r1,j}^t$}-\mbox{\boldmath $x_{r2,j}^t$})+F \cdot (\mbox{\boldmath $x_{r3,j}^t$}-\mbox{\boldmath $x_{r4,j}^t$})
 \end{equation}
 \end{enumerate}
-この時，$i,j$は個体番号と次元数を表し，$r_1,...,r_4$は1から$N$までの一様乱数の整数を表す．
+この時，$i,j$は個体番号と次元数を表し，$r_1,...,r_4$は1から$N$までの一様乱数の整数を表す．スケール因子$F$は解候補を生成するためのベクトルを制御するための変数で，0から1までの乱数で表される．
 「DE/rand/1」は，個体の親集団の中から3つの個体をランダムに選択し，その相対距離を用いて新たに解候補$v_{i,j}^{t+1}$を生成する．「DE/best/1」は，個体の親集団の中の最良個体と個体を2つランダムに選択し，その最良個体付近に新しい解候補$v_{i,j}^{t+1}$を生成する．「DE/current-to-best/1」は，ランダムに選択した2つの個体と，最良個体と個体自身の相対距離と用い，最良個体方向へ新たに解候補$v_{i,j}^{t+1}$を生成する．「DE/rand/2」では，親集合から5つの個体をランダムに選択し，式(\ref{eq:rand1})よりも広い探索領域内に新しく解候補$v_{i,j}^{t+1}$を生成する．「DE/best/2」も同様，式(\ref{eq:best1})よりも広い探索領域内に新しく解候補$v_{i,j}^{t+1}$を生成する．
 
 \item {\bf STEP3: 交叉} \\
@@ -345,9 +345,9 @@ DEは以下，いずれかの探索戦略を用いて解候補を生成する．
 \caption{Differential Evolution (DE/rand/1)}
 \label{code:de}
 \begin{algorithmic}[3]
-\REQUIRE Objective Function $F(x), x=(x_1,x_2,...,x_d)$
+\REQUIRE Objective Function $f(x), x=(x_1,x_2,...,x_d)$
 \STATE Initialize Population $x_i (i=1,2,...,N)$ 
-\STATE Define crossover probability $C_r,$ and random value $F$
+\STATE Define crossover probability $C_r,$ and scaling factor $F$
 
 \WHILE{t $<$ Max Iteration}
 \FOR{i=1 to N}
@@ -360,7 +360,7 @@ DEは以下，いずれかの探索戦略を用いて解候補を生成する．
 \STATE offspring $u_{i,j} = x_{i,j}^t$
 \ENDIF
 \ENDFOR
-\IF{$F(u_{i,j}^{t+1})>F(x_{pbest})$}
+\IF{$f(u_{i,j}^{t+1})>f(x_{pbest})$}
 \STATE Replace the offspring $u_{i,j}^{t+1}$ as $x_{pbest}$
 \ENDIF
 \ENDFOR
@@ -683,12 +683,12 @@ m_i & ({\rm otherwise})
 \ref{ss:DE}節で説明したDEをベースとし，Crowding \cite{Crowding} と組み合わせた手法で，生成された子集合の中から最近傍である子$u_{{i,j}_{NN}}$と親$x_{pbest_i}$を選択し，評価値の低い個体は淘汰され，評価値の高い方は次世代に引き継がれる．
 
 \begin{algorithm}[H]
-\caption{Crowding Differential Evolution (DE/rand/1)}
+\caption{CDE/rand/1)}
 \label{code:cde}
 \begin{algorithmic}[3]
-\REQUIRE Objective Function $F(x), x=(x_1,x_2,...,x_d)$
-\STATE Initialize Population $x_i (i=1,2,...,N)$ and Velocity $v_i$
-\STATE Define crossover probability $C_r,$ and random value $F$
+\REQUIRE Objective Function $f(x), x=(x_1,x_2,...,x_d)$
+\STATE Initialize Population $x_i (i=1,2,...,N)$ 
+\STATE Define crossover probability $C_r,$ and scaling factor $F$
 
 \WHILE{t $<$ Max Iteration}
 \FOR{i=1 to N}
@@ -701,7 +701,7 @@ m_i & ({\rm otherwise})
 \STATE offspring $u_{i,j} = x_{i,j}^t$
 \ENDIF
 \ENDFOR
-\IF{$F(u_{{i,j}_{NN}}^{t+1})>F(x_{pbest_i})$}
+\IF{$f(u_{{i,j}_{NN}}^{t+1})>f(x_{pbest_i})$}
 \STATE Replace the offspring $u_{{i,j}_{NN}}$ as $x_{pbest_i}$
 \ENDIF
 \ENDFOR
@@ -715,7 +715,7 @@ m_i & ({\rm otherwise})
 {\it Niching methods}は，最適解の数が多くなるほど，個体数を増やすといったアルゴリズムのパラメータチューニングが必要となる．そこで，本アルゴリズムは動的にパラメータを制御する2つのメカニズムの改良を行った．1つ目のメカニズムとして，環境に応じてパラメータの値を自動的に変化させ，2つ目のメカニズムとして未探索領域に解候補を生成するよう変更を加えた．
 
 \begin{itemize}
-\item {\bf STEP:1 最近傍個体間距離$R$の算出} \\
+\item {\bf STEP1: 最近傍個体間距離$R$の算出} \\
 DEは主に，突然変異率$C_r$とスケール因子$F$の制御によって探索を決定しているが，複数解探索を行う上では，探索領域全体を網羅するよう個体を配置させることが重要となる．ここではまず，個体の密度を算出する．
 
 \begin{equation}
@@ -743,23 +743,37 @@ dist_i=\min{||x_i^t-x_j^t||:\forall_{x_i^t, x_j^t} \in P}
 \label{eq:dADE-cr}
 \mu_{CR} = (1-c) \cdot \mu_{CR} + c \cdot {\rm mean}_A(S_{CR})
 \end{equation}
-ここで，$c$は$c \in [0, \ 1]$の係数(既定値は0.1)であり，${\rm mean_L}(\cdot)$はLehmer mean \cite{Lehmer} を指し，ここでは次式で表される．
+ここで，$c$は$c \in [0, \ 1]$の係数(既定値は0.1)であり，${\rm mean_L}(\cdot)$はLehmer mean \cite{Lehmer} を指し，次式で表される．
 \begin{equation}
 {\rm mean_L}=\frac{\sum_{F \in S_F}F^2}{\sum_{F \in S_F}F}
 \end{equation}
  ${\rm mean_A}(\cdot)$は$t$世代目の突然変異率ベクトル$S_{CR}$の平均値を示し， $\mu_{CR}$と$\mu_F$は
 
+\item {\bf STEP3: 交叉} \\
+\ref{ss:DE}節と同様，突然変異率$\mu_{CR}$に基づいて解候補$u_{i,j}$を決定する．
+
+\item {\bf STEP4: 評価と更新} \\
+最良個体と生成した解$u_{i,j}^{t+1}$を比較し，評価値の高い方を次世代に引き継ぐ．
+
+\item {\bf STEP5: Dynamic Archiveによる各個体の最良解$x_{pbest_i}$の再生成} \\
+Archiveの疑似コードをAlgorithm \ref{code:dynA}に記す．
+各個体の最良解$x_{pbest_i}$を$p$として集合$S$に格納し，$\delta$よりも評価値が良ければupdateにTRUEを返す(2-7行目)．次に，updateがTRUE，あるいは$\delta$の評価値と$p$の評価値の差分がaccuracy level: $\varepsilon$よりも小さければ(8行目)，$p$と$s$のユークリッド距離に着目し，その距離が$R$以下であれば$s$は新しく$p$として置き換えられ，foundにTRUEを返し(9-14行目)，$R$より大きければfoundにTRUEを返す(15-18行目)．最後に，foundがFALSEならば，集合$S$に$p$を追加する(21-24行目)．この手順を繰り返すことで，閾値$\varepsilon$を満たす最近傍個体同士を比較し，評価値の低い個体は新たに生成される．
+
+\item {\bf STEP6: STEP1へ戻る} \\
+終了条件を満たすまでSTEP1からSTEP5までの手順を繰り返す．
+
 \end{itemize}
+
 \begin{algorithm}[H]
 \caption{dADE/nrand/1}
 \label{code:dADE}
 \begin{algorithmic}[3]
 \STATE Initialize Population $x_i (i=1,2,...,N)$ 
-\STATE Define crossover probability $C_r,$ and random value $F$
+\STATE Define crossover probability $C_r,$ and scaling factor $F$
 \WHILE{t $<$ Max Iteration}
 \STATE Calculate the $R$ value [Eq. (\ref{eq:dADE-r})]
 \FOR{i=1 to N}
-\STATE Update parameters $\mu_F$ and $\mu_{CR}$ [Eqs. (\ref{eq:dADE-f}),(\ref{eq:dADE-cr})]
+\STATE Update parameters $CR$ and $F$ [Eqs. (\ref{eq:dADE-f}),(\ref{eq:dADE-cr})]
 \STATE Select random integer $r_1, r_2 \in \{ 1,2,..., N| r_1 \neq r_2 \neq i\}$
 \STATE Generate a candidate $v_{i,j}$  [Eq. (\ref{eq:rand1})]
 \FOR{$j=1$ to $D$}
@@ -769,7 +783,7 @@ dist_i=\min{||x_i^t-x_j^t||:\forall_{x_i^t, x_j^t} \in P}
 \STATE offspring $u_{i,j} = x_{i,j}^t$
 \ENDIF
 \ENDFOR
-\IF{$F(u_{{i,j}_{NN}}^{t+1})>F(x_{pbest_i})$}
+\IF{$f(u_{{i,j}_{NN}}^{t+1})>f(x_{pbest_i})$}
 \STATE Replace the offspring $u_{{i,j}_{NN}}$ as $x_{pbest_i}$
 \STATE Insert $x_{pbest_i}$ to Dynamic Archive [Algorithm \ref{code:dynA}]
 \IF{$x_{pbest_i}$ is already in Archive (found == TRUE)}
@@ -818,6 +832,20 @@ dist_i=\min{||x_i^t-x_j^t||:\forall_{x_i^t, x_j^t} \in P}
 
 \subsection{Niching the CMA-ES via Nearest-Better Clustering (NEA)}
 \label{ss:nea}
+
+\begin{algorithm}[H]
+\caption{Nearest-better clustering (NBC)}
+\label{code:nbc}
+\begin{algorithmic}[3]
+\STATE Calculate all search points mutual distances
+\STATE Create an empty graph with num (search points) nodes
+\FOR{the search points}
+\STATE Find nearest search point that is better, create edge to it
+\ENDFOR
+\STATE Delete edges of length $> \emptyset \cdot$ mean(length of all edges)
+\STATE Find connected components 
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Parameterless-Niching-Assisted NSGAII (PNA-NSGAII)}
 \label{ss:PNA-NSGA}
