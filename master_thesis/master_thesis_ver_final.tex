@@ -115,7 +115,7 @@ DCAXCSRの有効性を検証するため, 784次元の画像を分類するMNIST
 % 近年，多点探索アルゴリズムは最適化問題において，一般的なメタヒューリスティック手法として用いられるようになった．多点探索アルゴリズムは特に非線形な問題に対しても適用することが可能であり，魚や鳥の群れをモデルにしたParticle Swarm Optimization(PSO)\cite{PSO}や，ホタルの光強度により互いのホタルが引き寄せられるFirefly Algorithm(FA)\cite{FA}は高次元な最適化問題に対して有効であることを示している．中でもBat Algorithm(BA)は大域探索と局所探索の性能を自動で切り替えるという点で優れたアルゴリズムである\cite{BA}．しかし多峰性最適化問題における，従来の多点探索アルゴリズムは全個体の中の最良解を参照して一点へ移動するため，探索終了時に一つの最適解に収束する傾向にあるが，実環境への適用を考慮した時に最適解だけでなく局所解を探索し，保持しておくことは非常に重要な意味を持つ．応用先の一例として，災害時における被災者を解，救助ロボットを個体と見立てた時に，不特定多数の被災者を探索することは人間にとって困難であり，複数の解を同時に探索しなければならない．\\ \
 そこで本研究では，次の3つの複数解探索手法を提案し，従来のBAと他の複数解探索手法と比較して提案手法の有効性を検証するため，評価関数を用いて実験を行った．(i)未探索領域を探索可能なNovelty Searchを用い，探索範囲の自動調整が可能なBat Algorithmを組み合わせたNovelty Search-based Bat Algorithm (NSBA) \cite{NSBA}; (ii)探索空間の大きさと最適解数から算出されるNiche Radiusを用いることで，予め各個体の探索領域を決定し，その探索領域内の最良個体から遠ざかる方向へ移動し，個体同士が同じ解に留まらず，分散させるNiche Radius-based Bat Algorithm (NRBA) \cite{NRBA}; (iii)個体の分布密度が高いNiche Radius内で，評価値の低い個体をその領域から移動させるNRBAを拡張したBat Algorithm with Dynamic Niche Radius (DNRBA)．従来手法の探索アルゴリズムに対して3つの変更をした．
 
-実験の結果，
+% 実験の結果，提案手法の一つであるNSBAは最も探索性能が悪かったが，NRBA，次いでDNRBAは他の手法とほぼ同等の探索性能を示すことが可能であった．複雑な多峰性を持つ関数においてはDNRBAの方が探索性能が高いが，一般的にはNRBAのほうが探索性能が高かった．これは，局所解へ陥ってしまった個体を最適解へ移動させる機構を持つDynamic Niche Radiusが複雑な関数においては有効だが，容易な問題に対しては局所解へ陥ることがないため，NRBAの方が有効であったと考えられる．
 
 
 % \subsection{関連研究}
@@ -917,23 +917,34 @@ Nearest-better clustering (NBC) \cite{NBC} は，探索空間の個体間距離�
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Parameterless-Niching-Assisted NSGAII (PNA-NSGAII)}
-\label{ss:PNA-NSGA}
-多目的最適化問題によく用いられるNSGA-IIだが，ここでは単目的の最適化問題に対して，どのような問題に対しても適応できるノンパラメトリックなPNA-SNGAII \cite{PNA-NSGA}について説明する．
+% \subsection{Parameterless-Niching-Assisted NSGAII (PNA-NSGAII)}
+% \label{ss:PNA-NSGA}
+% 多目的最適化問題によく用いられるNSGA-IIだが，ここでは単目的の最適化問題に対して，どのような問題に対しても適応できるノンパラメトリックなPNA-SNGAII \cite{PNA-NSGA}について説明する．
 
-最適解数に対して同じ個体数を用いることが理想的であるため，ここでは次式で個体数を決定する．
-\begin{equation}
-T^D=N \Rightarrow T \simeq [e^{\frac{InN}{D}}]
-\end{equation}
+% 最適解数に対して同じ個体数を用いることが理想的であるため，ここでは次式で個体数を決定する．
+% \begin{equation}
+% T^D=N \Rightarrow T \simeq [e^{\frac{InN}{D}}]
+% \end{equation}
 
-niching distance $v_d$を次式で求める．
-\begin{equation}
-v_d=\frac{x_d^{(U)}-x_d^{(L)}}{T} \forall d=\{ 1,2,...,D\}
-\end{equation}
+% niching distance $v_d$を次式で求める．
+% \begin{equation}
+% v_d=\frac{x_d^{(U)}-x_d^{(L)}}{T} \forall d=\{ 1,2,...,D\}
+% \end{equation}
 
-\begin{equation}
-|(x_1-x_2)_d| \leq \forall d = \{1,2,...,D\}
-\end{equation}
+% \begin{equation}
+% |(x_1-x_2)_d| \leq \forall d = \{1,2,...,D\}
+% \end{equation}
+
+% \begin{equation}
+
+% \begin{cases}
+% (f_m(x_1) \leq f_m(x_2) \forall _m) \wedge (\exists_n | f_n(x_1) < f_n(x_2)), \ {\rm proximate}(x_1, x_2) = 1 & {\rm if } \  x_1 \succ x_2  \\
+% x_1 \ {\rm and} \ x_2 \ {\rm are \ non-dominated} & {\rm otherwise}
+% \end{cases}
+% \end{equation}
+
+
+
 \newpage
 \section{多峰性最適化問題}
 \label{sec:MOP}
@@ -1988,7 +1999,7 @@ PR=\frac{\sum_{run=1}^{NR}NPF_{run}}{NKP*NR}
 $NPF_{run}$は，そのシードにおけるアルゴリズムが発見した最適解数を示し，NKPは評価関数が持つ全最適解数を示す．NRは実験の試行回数を示す．
 
 \subsection{比較手法}
-\ref{sec:MA}, \ref{sec:nm}章で紹介したDEやCMA-ES, NSGAII, CDE, dADE, NEA, PNA-NSGAIIに加え，本コンペティションでは次の手法 \cite{DEs} \cite{N-VMO} と比較実験を行った．
+\ref{sec:MA}, \ref{sec:nm}章で紹介したDEやCMA-ES, NSGAII, CDE, dADE, NEAに加え，本コンペティションでは次の手法 \cite{PNA-NSGA} \cite{DEs} \cite{N-VMO} と比較実験を行った．
 
 \subsection{実験設定}
 本実験では$f_{max}=1$, $f_{min}=0$，ラウドネス$A^0=1$，パルスレート$r^0 \in [0,1]$と設定した．また$\alpha= \gamma = 0.9$とし，個体数$N=100$，世代数を$G_1$から$G_5$までは50000, $G_6$は200000とし，ランダムシードを変えた実験を50回行った．
