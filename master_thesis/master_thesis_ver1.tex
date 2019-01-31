@@ -64,9 +64,7 @@
 \setcounter{page}{1}
 \section*{概要}
 
-本論文では,大域探索と局所探索を調節可能なBat Algorithmと個体間距離に基づく動的変化を考慮したNiching schemeを組み合わせることによる多峰性最適化問題における，複数解探索アルゴリズムを構築し，その手法の有効性を検証する．
-従来の多点探索アルゴリズムは一つの最適解に収束する傾向にあるが，実問題の複雑さを多峰性で表した時，一つの最適解だけでなく複数の最適解及び局所解を探索することは，有力な解候補を選択肢として複数保持しておくという意味で非常に重要である．複数解探索を行う手法は，進化的アルゴリズムのGAに基づき，未探索領域へ解を生成するための機構であるNiching schemeを組み合わせた{\it Niching method}に関する研究が数多くなされてきたが，いずれの手法においても密接した解を除き，探索空間内にランダムに解生成するため，乱数に強く依存する傾向にある．そこで本研究では，多点探索アルゴリズムの中でも大域と局所の探索バランスに優れたBat Algortihmを採用し，各個体の探索領域を分割させるNiching scheme を用いることで最適解だけでなく，局所解も同時に探索可能な3つの複数解探索手法を提案した．(i)未探索領域へ解を生成する機構としてNovelty Searchを導入した，Novelty Search-based Bat Algorithm (NSBA); (ii)探索空間の大きさと最適解数から算出されるNiche Radiusを用いることで，予め各個体の探索領域を決定し，その探索領域内の最良個体から遠ざかる方向へ移動し，個体同士が同じ解に留まらず，分散させるNiche Radius-based Bat Algorithm (NRBA); (iii)個体の分布密度が高いNiche Radius内で，評価値の低い個体をその領域から移動させるNRBAを拡張したBat Algorithm with Dynamic Niche Radius (DNRBA)．
-従来手法と提案手法の性能を比較するため，最適解と局所解の数が異なるパターンの多峰性関数を用いてシミュレーション実験を行った結果，従来手法のBAは一つの最適解に収束していたが，提案手法では全最適解及び局所解を探索することができ，従来に対する変更点が有効であることを示した．
+本論文では,複数の多峰性を持つ関数最適化に着目し，最適解と局所解を含む解を可能な限り多く見出す多点探索アルゴリズムを考案するとともに，その有効性を検証することを目的とする．特に，従来の多点探索アルゴリズムは一つの最適解をより早くかつ正確に見出すアプローチが主流であるが，解が１つではなく複数存在する実問題では，一つの最適解だけでなく複数解(最適解及び局所解)を探索することは，有力な解候補を複数持つという意味で重要である．このような複数解探索に基づく手法として，局所解への収束を防ぐ機構であるNiching scheme と遺伝的アルゴリズムに代表される進化計算を組み合わせた Niching method が探究されているが，いずれの手法においても密接した解を除き，探索空間内にランダムに解生成するため，乱数に強く依存するという問題がある．この問題を解決するために，本研究では多点探索アルゴリズムの中でも大域探索と局所探索のバランスを調整可能なBat Algortihm を採用し，個体間距離に基づく動的変化を考慮したNiching scheme を用いることで，最適解だけでなく局所解も同時に探索可能な 3 つの複数解探索手法を提案する．具体的には，(i) 未探索領域へ解の探索を促すNovelty Searchを導入したNovelty Search-based Bat Algorithm (NSBA)，(ii) 探索空間の大きさと最適解数から算出される Niche Radius を用いることで，予め各個体の探索領域を決定し，その探索領域内の最良個体から遠ざかる方向に移動させることによって，個体同士を同じ解に留まらせないNiche Radius-based Bat Algorithm (NRBA)，(iii) 探索領域を動的に変更することで，NRBAの効果を高めたBat Algorithm with Dynamic Niche Radius (DNRBA)を考案し，最適解と局所解の数が異なる多峰性関数を用いて比較する．その結果，(1)従来手法の BA は一つの最適解に収束するのに対し，３つの提案手法は最適解及び局所解を探索することができ，(2)その中でもDNRBA，NRBA，NSBAの順で性能が良いことが明らかになった．
 
 % LCSは, 解釈性に優れた知識を生成可能な知識獲得技術であり, 状態-行動のif-thenルール(分類子)を学習する遺伝的アルゴリズムと強化学習を組み合わせたルールベースの進化的機械学習手法である.
 % LCSの特徴は,複数の入力状態にする一般的なルールを獲得(分類子の一般化)することである.
@@ -1801,7 +1799,7 @@ DNRBAの収束性能を検証するため，ここではBAと比較する．本�
 
 \subsubsection{評価関数}
 \label{sss:DNRBA-func}
-実験で使用する評価関数は以下の通りである．
+本実験では，評価関数は\ref{ss:MinFunc}節で説明した$F_1$, $F_2$関数を使用する．
 
 % \begin{description}
 % \item[$F_1$: Griewank Function]\mbox{}\\
@@ -1949,7 +1947,7 @@ $F_6 $ & {\bf 0.0556} $\pm$ 0.0619 & {\bf 1.8160} $\pm$ 0.4990 & 0.0426 $\pm$ 0.
 \label{fig:dnrba-results_nrba}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[t]
 \centering
 \subfigure[$F_1$]{
 \includegraphics[width=0.8\linewidth]{eps/ISMSI2019/f1_dnrba.eps}
@@ -1962,7 +1960,7 @@ $F_6 $ & {\bf 0.0556} $\pm$ 0.0619 & {\bf 1.8160} $\pm$ 0.4990 & 0.0426 $\pm$ 0.
 \label{fig:dnrba-results_dnrba}
 \end{figure}
 
-\subsection{まとめ}
+% \subsection{まとめ}
 
 \FloatBarrier
 \newpage
@@ -1988,13 +1986,15 @@ PR=\frac{\sum_{run=1}^{NR}NPF_{run}}{NKP*NR}
 \end{equation}
 $NPF_{run}$は，そのシードにおけるアルゴリズムが発見した最適解数を示し，NKPは評価関数が持つ全最適解数を示す．NRは実験の試行回数を示す．
 
+\subsection{比較手法}
+\ref{sec:MA}, \ref{sec:nm}章で紹介したDEやCMA-ES, NSGAII, CDE, dADE, NEA, PNA-NSGAIIに加え，本コンペティションでは次の手法 \cite{DEs} \cite{N-VMO} と比較実験を行った．
 
 \subsection{結果}
 \label{ss:results}
 
 
 \begin{table}[h]
-\caption{Overall Performance}
+\caption{Overall Performance of the PR value (averaged over 50 runs)}
 \begin{center}
 \begin{tabular}{c|c|c|c}
 \hline
