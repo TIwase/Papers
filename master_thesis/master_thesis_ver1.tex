@@ -47,7 +47,7 @@
 氏名&岩瀬拓哉 \\
 主任指導教員&\UTF{9AD9}玉圭樹教授\\
 指導教員&佐藤寛之准教授\\
-提出日&平成30年1月29日
+提出日&平成31年1月28日
 \end{tabular}
 }
 
@@ -64,10 +64,9 @@
 \setcounter{page}{1}
 \section*{概要}
 
-本論文では,大域探索と局所探索を調節可能なBat Algorithmと個体間距離に基づく動的変化を考慮したNiche Radiusを組み合わせることによる多峰性最適化問題における，複数解探索アルゴリズムを構築し，その手法の有効性を検証する．
-従来の多点探索アルゴリズムは一つの最適解に収束する傾向にあるが，実問題への適用を考慮した時に複数の最適解及び局所解を探索する必要がある．多点探索アルゴリズムの中でも大域と局所の探索バランスに優れたBat Algortihm は探索する上で全個体の最良解を参照して移動するため，最終的
-に最適解に収束することから複数解を同時に探索することは困難である．本研究では各個体の探索領域を分割させるNiche Radius を用いることで最適解だけでなく，局所解も同時に探索可能なBat Algorithm の構築をする．
-従来手法と提案手法の性能を比較するため，最適解と局所解の数が異なるパターンの多峰性関数を用いてシミュレーション実験を行った結果，全ての関数に対して従来手法は一つの最適解に収束していたが，提案手法では全最適解及び局所解を探索することができ，従来に対する変更点が有効であることを示した．
+本論文では,大域探索と局所探索を調節可能なBat Algorithmと個体間距離に基づく動的変化を考慮したNiching schemeを組み合わせることによる多峰性最適化問題における，複数解探索アルゴリズムを構築し，その手法の有効性を検証する．
+従来の多点探索アルゴリズムは一つの最適解に収束する傾向にあるが，実問題の複雑さを多峰性で表した時，一つの最適解だけでなく複数の最適解及び局所解を探索することは，有力な解候補を選択肢として複数保持しておくという意味で非常に重要である．複数解探索を行う手法は，進化的アルゴリズムのGAに基づき，未探索領域へ解を生成するための機構であるNiching schemeを組み合わせた{\it Niching method}に関する研究が数多くなされてきたが，いずれの手法においても密接した解を除き，探索空間内にランダムに解生成するため，乱数に強く依存する傾向にある．そこで本研究では，多点探索アルゴリズムの中でも大域と局所の探索バランスに優れたBat Algortihmを採用し，各個体の探索領域を分割させるNiching scheme を用いることで最適解だけでなく，局所解も同時に探索可能な3つの複数解探索手法を提案した．(i)未探索領域へ解を生成する機構としてNovelty Searchを導入した，Novelty Search-based Bat Algorithm (NSBA); (ii)探索空間の大きさと最適解数から算出されるNiche Radiusを用いることで，予め各個体の探索領域を決定し，その探索領域内の最良個体から遠ざかる方向へ移動し，個体同士が同じ解に留まらず，分散させるNiche Radius-based Bat Algorithm (NRBA); (iii)個体の分布密度が高いNiche Radius内で，評価値の低い個体をその領域から移動させるNRBAを拡張したBat Algorithm with Dynamic Niche Radius (DNRBA)．
+従来手法と提案手法の性能を比較するため，最適解と局所解の数が異なるパターンの多峰性関数を用いてシミュレーション実験を行った結果，従来手法のBAは一つの最適解に収束していたが，提案手法では全最適解及び局所解を探索することができ，従来に対する変更点が有効であることを示した．
 
 % LCSは, 解釈性に優れた知識を生成可能な知識獲得技術であり, 状態-行動のif-thenルール(分類子)を学習する遺伝的アルゴリズムと強化学習を組み合わせたルールベースの進化的機械学習手法である.
 % LCSの特徴は,複数の入力状態にする一般的なルールを獲得(分類子の一般化)することである.
@@ -119,32 +118,9 @@ DCAXCSRの有効性を検証するため, 784次元の画像を分類するMNIST
 そこで本研究では，次の3つの複数解探索手法を提案し，従来のBAと他の複数解探索手法と比較して提案手法の有効性を検証するため，評価関数を用いて実験を行った．(i)未探索領域を探索可能なNovelty Searchを用い，探索範囲の自動調整が可能なBat Algorithmを組み合わせたNovelty Search-based Bat Algorithm (NSBA) \cite{NSBA}; (ii)探索空間の大きさと最適解数から算出されるNiche Radiusを用いることで，予め各個体の探索領域を決定し，その探索領域内の最良個体から遠ざかる方向へ移動し，個体同士が同じ解に留まらず，分散させるNiche Radius-based Bat Algorithm (NRBA) \cite{NRBA}; (iii)個体の分布密度が高いNiche Radius内で，評価値の低い個体をその領域から移動させるNRBAを拡張したBat Algorithm with Dynamic Niche Radius (DNRBA)．従来手法の探索アルゴリズムに対して3つの変更をした．
 
 実験の結果，
-% (i)大域探索: 分割探索領域内の最良解を参照;(ii)局所探索: 分割探索領域内の最良解付近に解候補を生成; (iii)ランダム探索: 選択した個体の分割領域内にランダムで解候補を生成．これらの変更により，従来手法と提案手法の探索性能を比較するため，発見した最適解及び局所解の数を評価尺度として，複数の異なる峰を持つ多峰性関数を用いてシミュレーション上で実験を行う．\\ \
-% 本論文の構成はまず，2章で従来手法であるBAの概要とそのアルゴリズムについて説明し，3章にて提案手法の詳細と従来手法との変更点について述べる．4章では扱うベンチマーク関数とシミュレーション実験の内容及び，実験結果について記述し，5章で得られた結果に対して考察する．最後に6章にて，本論文の結論を述べる．
-% 現代の情報化社会において，情報システムは大規模化・複雑化し多種多様なデータが取り扱われている.
-% 今後, 人間とコンピューターの関わりがますます強くなっていくことを考えると, 人間との親和性の高いシステムの構築が重要である.
-% 人間との親和性が高く環境から汎用的な知識を獲得できる機械学習法の1つに\textbf{学習分類子システム}(Learning Classifier System: \textbf{LCS}\cite{LCS})がある.
-% LCSは\textbf{遺伝的アルゴリズム}(Genetic Algorithm: \textbf{GA})\cite{GA}と\textbf{強化学習}(Reinforcement Learning: \textbf{RL})\cite{RL}を組み合わせた機械学習である.
-% その特徴として, 知識を状態-行動のif-thenルールで表現し, それを生成・削除・更新することで学習する.
-% LCSはデータセットに存在する共通の規則を発見し, ルールの一般化を通して複数の入力状態に照合する汎用的なルールを獲得することができるため, 人間が学習結果を解釈しやすいという特徴がある. 
 
-% しかし, LCSは学習のために全状態空間を網羅するようにルールを生成する必要があるため, 高次元な入力に対しては適切に一般化されたルールの獲得が困難となり, 学習性能が著しく低下する問題がある.
- 
-% 一方で, 様々な高次元データの学習に対応している機械学習法に, \textbf{深層学習(ディープラーニング, Deep Learning: DL)}{\cite{DL}がある.
-% DLの技術によって, Deep Mindが提案したDeep Q-Network\cite{DQN}が様々なテレビゲームの試行錯誤を通してプロ顔負けのプレイが出来るようになったり, GoogleのAlphaGo\cite{AlphaGo}が戦略が難しいと言われる碁において世界一のプロ棋士を打ち破るなど, 近年複雑な状況に対して正しい選択を精度高く出来るようになってきた.
-% このようにDLは様々な高次元情報を扱う問題に対して高いパフォーマンスを得ることが出来るが, 得られた結果の理由付けが難しく, 人間が理解することは困難である.
-% 多くの場合, 得られた出力を解釈するために主成分分析\cite{PCA}などを行ってラベル付けを行う必要がある上, それらの分析法は必ずしもうまくいくとは限らない.
-% またそれらのラベル付けは, 分析する人間の主観に依存してしまう問題があるなど, DLには人間との親和性が低いという問題点がある.
 
-% 上記の問題解決のために, 本研究では解釈性と多様な入力への高次元対応性を併せ持った\textbf{\proposedJ(\proposed)}を構築するとともに, その有効性の検証を目的とする.
-% 具体的には, DLの技術によって高次元入力を圧縮し, 低次元環境においてLCSがルールを学習する.
-% 学習されたルールを元の次元に復元することで解釈性が高いルールが獲得できる.
-% ここで獲得されたルールが, DLによる次元圧縮によって必要な情報の損失によって不完全なものになってしまった場合, この不完全なルールを状態空間の絞り込みに利用し, 修正することで完全なルールを獲得可能になる.
-% これによりLCSの問題点である高次元入力の学習が困難である点とDLの問題点である出力の解釈性が乏しい点の解決を目指す.
-
-% 本論文では, 評価問題としてMNISTデータセット\cite{mnist}及びマルチプレクサ問題\cite{XCS}によって\proposed の有効性を検証する.
-
-\subsection{関連研究}
+% \subsection{関連研究}
 
 % LCSを高次元問題に対応させるという, 我々と同様の課題に取り組んでいる研究例がある.
 
@@ -166,7 +142,7 @@ DCAXCSRの有効性を検証するため, 784次元の画像を分類するMNIST
 
 \subsection{論文構成}
 本論文の構成は次の通りである.
-\ref{sec:MA}章で最適化問題において一般的に用いられるEAsについて説明し，\ref{sec:ns}章で実問題を模擬的に表した多峰性最適化問題における複数解探索手法の機構であるNiching Schemeについて説明する．\ref{sec:nm}章では，EAsとNiching Schemeを組み合わせた複数解探索手法を説明し，\ref{sec:NSBA}章から\ref{sec:DNRBA}章までは提案手法であるNSBA, NRBA及びDNRBAの説明をする．
+\ref{sec:MA}章で最適化問題において一般的に用いられるEAsについて説明し，\ref{sec:ns}章で実問題を模擬的に表した多峰性最適化問題における複数解探索手法の機構であるNiching Schemeについて説明する．\ref{sec:nm}章では，EAsとNiching Schemeを組み合わせた複数解探索手法を説明し，\ref{sec:MOP}で実験で扱う評価関数について説明する．\ref{sec:NSBA}章から\ref{sec:DNRBA}章までは提案手法であるNSBA, NRBA及びDNRBAの説明した後，\ref{sec:experiment}にて他の最先端手法の比較実験を行い，\ref{sec:END}章で本論文のまとめを行う．
 % \ref{sec:LCS}章ではLCSとその拡張システムについて説明し, \ref{sec:NN}章ではニューラルネットワークとその機械学習であるDLの説明を行う.
 % \ref{sec:DCA}章では提案システムである\proposed の圧縮器として使われるニューラルネットワークの機構であるDCAの説明をし, \ref{sec:proposed}章では学習分類子システムとDCAを組み合わせた提案システムである\proposedJ(\proposed)を説明する.
 % \ref{sec:PROBLEM}章では問題の種類と検証で用いるベンチマーク問題あるMNISTデータセットとマルチプレクサ問題を説明する.
@@ -182,7 +158,7 @@ DCAXCSRの有効性を検証するため, 784次元の画像を分類するMNIST
 % \subsection{Evolutionary Algorithms (EAs)}
 \label{sec:MA}
 
-現実問題は非常に複雑であり，その複雑さを多峰性関数として表現した問題をを最適化するためにEvolutionary Algorithms (EAs)が用いられるようになった．EAsのメカニズムとして単一の最適解を探索することを目的として設計されており，生物の生殖や突然変異，交叉，適者生存といった過程をモデルとしている．その代表的なアルゴリズムを\ref{ss:GA}節から\ref{ss:cma-es}節で紹介する．
+現実問題は非常に複雑であり，その複雑さを多峰性関数として表現した問題をを最適化するためにEvolutionary Algorithms (EAs)が用いられるようになった．EAsのメカニズムとして単一の最適解を探索することを目的として設計されており，生物の生殖や突然変異，交叉，適者生存といった過程をモデルとしている．その代表的なアルゴリズムを\ref{ss:GA}節から\ref{ss:nsga}節で紹介する．
 
 \subsection{遺伝的アルゴリズム (GA)}
 \label{ss:GA}
@@ -258,6 +234,17 @@ $N$個の個体$x_i$を初期集合として生成し，ランダムな評価値
 \end{equation}
 $x_i$，$v_i$は時刻$t$における各個体の現在位置と速度を表し，$w,c_1,c_2$は係数，$r_1, r_2$は一様乱数を表す．これらの係数が速度を制限するパラメータとなっており，$w$が時刻$t$での速度を調整し，$c_1,c_2$は値が1より小さいほど局所探索を行い，1より大きくなると最良個体を含む広い範囲を大域探索するようになる．
 PSOのアルゴリズムの疑似コードであるAlgorithm \ref{code:pso}を以下に記す．
+
+\begin{itemize}
+\item {\bf STEP1: 初期個体の生成}\\
+個体$x_i (i=1,2,...,N)$を探索空間内にランダム生成し，係数$c_1,c_2, w$を初期化する(1-3行目)．
+\item {\bf STEP2: 解候補の生成と速度の更新}\\
+速度$v_i$により新たに解候補$x_i^{t+1}$を生成を生成する(6行目)．
+\item {\bf STEP3: 評価}\\
+生成した解候補が$t$時点での最良解$x_{pbest}$よりも評価値が高ければ更新する(7-12行目)．
+\item {\bf STEP4: STEP2へ戻る}\\
+終了条件を満たすまでSTEP2へ戻る
+\end{itemize}
 
 \begin{algorithm}[H]
 \caption{Particle Swarm Optimization}
@@ -435,6 +422,21 @@ r_i^{t+1}=r_i^t[1-exp(- \gamma t)]
 解を更新する度にラウドネス$A_i$は徐々に減少し，それに比例して評価頻度を下げていく．対してパルスレート$r_i$は増加していき，探索が進むにつれて局所探索頻度が減少する．\\ \
 従来のBAの疑似コードは以下のAlgorithm \ref{code:ba}に記す．
 
+\begin{itemize}
+\item {\bf STEP1: 個体の初期化}\\
+探索空間内にランダムに個体$x_i (i=1,2,...,N)$を生成し，周波数$f_i$，ラウドネス$A_i^0$，パルスレート$r_i^0$を決定する(1-3行目)．
+\item {\bf STEP2: 速度の更新と解候補の生成}\\
+速度$v_i$により新しく解候補を生成する(6行目)．
+\item {\bf STEP3: 局所探索}\\
+全個体の最良解$x_{gbest}$近辺に新しく解候補$x_{loc}$を生成する(8行目)．
+\item {\bf STEP4: ランダム探索}\\
+探索空間内にランダムで解候補$x_{rnd}$を生成する(10行目)．
+\item {\bf STEP5: 評価と更新}\\
+${\rm rand} < A_i$を満たす，かつ3つの解候補が$t$時点での最良解$x_{pbest}$よりも評価値が高ければ解を更新する(11-13行目)．
+\item {\bf STEP6: STEP2へ戻る}\\
+終了条件を満たすまでSTEP2へ戻る．
+\end{itemize}
+
 \begin{algorithm}[H]
 \caption{Bat Algorithm}
 \label{code:ba}
@@ -452,7 +454,7 @@ r_i^{t+1}=r_i^t[1-exp(- \gamma t)]
 % \STATE Continue
 \ENDIF
 \STATE Generate a new solution $x_{rnd}$ randomly [Eq.(\ref{eq:ba-rnd})]
-\IF{($rand<A_i \& \min (F(x_i), F(x_{loc}), F(x_{rnd})>F(x_{i*})$)}
+\IF{($rand<A_i \& \min (F(x_i), F(x_{loc}), F(x_{rnd})>F(x_{pbest})$)}
 \STATE Accept the new solution, and update pulse rate $r_i$ \\ \& loudness $A_i$ [Eqs. (\ref{eq:loud})(\ref{eq:pulse})]  
 \ENDIF
 \STATE Evaluate all bats and select a best solution $x_*$ in the current solutions
@@ -572,6 +574,53 @@ c_c=\frac{4}{n+4}
 \ENDFOR
 \STATE t=t+1
 \ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{A Fast and Elitist Multi-objective Genetic Algorithm (NSGA-II)}
+\label{ss:nsga}
+NSGA-II \cite{NSGAII} は，複数の目的関数を同時に満たす解を探索する手法として一般的に用いられる代表的な手法の一つである．アルゴリズムの手順及び疑似コードを以下に記す．
+
+\begin{itemize}
+\item {\bf STEP1: 個体の初期化} \\
+初期集合$Q_i^0 (i=1,2,...,N)$の生成と次世代集合$P^t=\emptyset$を用意する．
+\item {\bf STEP2: 非優越ソート}\\
+$R^t=Q^t \cup P^t$を作成し，$R^t$の個体をランク付けし，$\mathcal{F}_i (i=1,2,...,N)$に分類する．その後，新たに$P^{t+1}=\emptyset$を作成し，$i=1$とする．
+\item {\bf STEP3: 混雑距離計算}\\
+$|P^{t+1}+|\mathcal{F}^i||\leq N$を満たすまで$P^{t+1}$に$\mathcal{F}$を追加し，混雑度ソートを行う．混雑度ソートは，$i$番目の個体に対する個体密集度に基づいて算出される．混雑度計算は次式で表される．
+\begin{equation}
+\label{eq:nsga-crowd}
+d_j = \sum_{m=1}^M \frac{f_m^{I^{m}_{j+1}}-f_m^{I^{m}_{j-1}}}{f_m^{max}-f_m^{min}}
+\end{equation}
+この時，$M$は目的関数の数を表し，$I_m$は$m$番目の目的関数においてソートされた$j$番目の個体を意味し，それ以外の全ての個体を$j=2,...,l-1$とする．
+\item {\bf STEP4: 混雑度によるトーナメント選択}\\
+混雑度トーナメント選択は次の2つの基準によって評価する個体を選択する．
+\begin{itemize}
+  \item 個体の非優越ランク: $i_{rank}$
+  \item 個体の混雑距離: $i_{distance}$
+\end{itemize}
+\end{itemize}
+
+\begin{algorithm}[H]
+\caption{Elitist Non-Dominated Sorting Genetic Algorithm (NSGA-II)}
+\label{code:nsga}
+\begin{algorithmic}[3]
+\REQUIRE Initialize Population $x_i (i=1, 2,..., N)$, $p_c$, $p_m$, $\eta_c$ and $\eta_m$
+\STATE set $t \leftarrow 0$, $Q_0=$select-cross-mutate $P^0$
+\WHILE{$t < $ MaxIteration}
+\STATE $R^t=P^t \cup Q^t$
+\STATE $\mathcal{F} = {\rm nondominated-sort}(R^t)$
+\STATE $P^{t+1}=\emptyset$ and $i \leftarrow 1$
+\WHILE{$|P^{t+1}+|\mathcal{F}^i||\leq N$}
+\STATE corwding-distance($\mathcal{F}$)
+\STATE $P^{t+1}=P^{t+1} \cup \mathcal{F}^i$
+\STATE $i \leftarrow i+1$
+\ENDWHILE
+\STATE Sort($\mathcal{F}^i \prec c$)
+\STATE $P^{t+1}=P^{t+1} \cup \mathcal{F}^i[1:(N-|P^{t+1}|)]$
+\STATE $Q^{t+1}=$select-cross-mutate ($P^{t+1}$)
+\STATE $t \leftarrow t+1$
+\ENDWHILE 
 \end{algorithmic}
 \end{algorithm}
 
@@ -842,7 +891,7 @@ CMA-ESが局所解へ収束してしまうことを防ぐため，NEA \cite{nea}
 \item {\bf STEP1: 個体の初期化} \\
 個体を探索空間内にランダムで生成する．
 \item {\bf STEP2: NBCによる個体のクラスタリング}\\
-Nearest-better clustering (NBC) \cite{NBC} は，探索空間の個体間距離に応じて各個体の探索範囲をクラスタで分割する手法である．NBCのクラスタリングのイメージを図\ref{fig:nbc}に，疑似コードをAlgorithm \ref{code:nbc}に記す．
+Nearest-better clustering (NBC) \cite{NBC} は，探索空間の個体間距離に応じて各個体の探索範囲をクラスタで分割する手法である．NBCのクラスタリングのイメージを図\ref{fig:nbc}に，疑似コードをAlgorithm \ref{code:nbc}に記す．図\ref{fig:nbc}中の四角や丸，星は初期生成後の個体$x_i (i=1,2,...,7)$を表しており，$i$番目の個体$x_i$に対してより良い評価値を持つ最近傍個体とエッジ(矢印)を繋げる．この時，エッジの平均値とパラメータ$\phi$の乗算よりもエッジが大きい場合，そのエッジ(点線の矢印)を削除し，エッジで繋がれた個体(実線の矢印)を一つのグループとして生成する．ここではクラスタ$C_1=\{x_1\}, C_2=\{x_2, x_3, x_4\}, C_3 = \{x_5, x_6\}, C_4=\{x_7\}$の４つに分類され，各クラスタの最良解(パーソナルベスト)は$x_1, x_4, x_6, x_7$であり，全個体の最良解(グローバルベスト)は$x_7$である．
 \item {\bf STEP3: CMA-ESを用いた探索} \\
 分類されたクラスタ毎にCMA-ESにより探索を開始する(探索手順は\ref{ss:cma-es}節を参照)．
 \item {\bf STEP4: STEP2へ戻る}\\
@@ -872,36 +921,21 @@ Nearest-better clustering (NBC) \cite{NBC} は，探索空間の個体間距離�
 
 \subsection{Parameterless-Niching-Assisted NSGAII (PNA-NSGAII)}
 \label{ss:PNA-NSGA}
+多目的最適化問題によく用いられるNSGA-IIだが，ここでは単目的の最適化問題に対して，どのような問題に対しても適応できるノンパラメトリックなPNA-SNGAII \cite{PNA-NSGA}について説明する．
 
-
+最適解数に対して同じ個体数を用いることが理想的であるため，ここでは次式で個体数を決定する．
 \begin{equation}
-\label{eq:nsga-dom}
-(f_m(x_1) \leq f_m(x_2) \forall_m) \wedge (\exists_n | f_n(x_1)<f_n(x_2))
+T^D=N \Rightarrow T \simeq [e^{\frac{InN}{D}}]
 \end{equation}
 
-\begin{algorithm}[H]
-\caption{Elitist Non-Dominated Sorting Genetic Algorithm (NSGA-II)}
-\label{code:nsga}
-\begin{algorithmic}[3]
-\REQUIRE Initialize Population $x_i (i=1, 2,..., N)$, $p_c$, $p_m$, $\eta_c$ and $\eta_m$
-\STATE set $t \leftarrow 0$, $Q_0=$select-cross-mutate $P^0$
-\WHILE{$t < $ MaxIteration}
-\STATE $R^t=P^t \cup Q^t$
-\STATE $\mathcal{F} = {\rm nondominated-sort}(R^t)$
-\STATE $P^{t+1}=\Phi$ and $i \leftarrow 1$
-\WHILE{$|P^{t+1}+|\mathcal{F}^i||\leq N$}
-\STATE corwding-distance($\mathcal{F}$)
-\STATE $P^{t+1}=P^{t+1} \cup \mathcal{F}^i$
-\STATE $i \leftarrow i+1$
-\ENDWHILE
-\STATE Sort($\mathcal{F}^i \prec c$)
-\STATE $P^{t+1}=P^{t+1} \cup \mathcal{F}^i[1:(N-|P^{t+1}|)]$
-\STATE $Q^{t+1}=$select-cross-mutate ($P^{t+1}$)
-\STATE $t \leftarrow t+1$
-\ENDWHILE 
-\end{algorithmic}
-\end{algorithm}
+niching distance $v_d$を次式で求める．
+\begin{equation}
+v_d=\frac{x_d^{(U)}-x_d^{(L)}}{T} \forall d=\{ 1,2,...,D\}
+\end{equation}
 
+\begin{equation}
+|(x_1-x_2)_d| \leq \forall d = \{1,2,...,D\}
+\end{equation}
 \newpage
 \section{多峰性最適化問題}
 \label{sec:MOP}
@@ -989,7 +1023,7 @@ F_4(x_i)=- \sum_{i=1}^D \sin(x_i)\sin^{2m}(\frac{ix_i^2}{\pi})
 \end{figure}
 
 \item[$F_5$: Himmelblau (2D)]\mbox{}\\
-Himmelblau Function \cite{f4} の関数式は次の通りとなる．
+Himmelblau Function \cite{himmelblau} の関数式は次の通りとなる．
 \begin{equation}
 \label{eq:minF5}
 F_5(x_1,x_2)=(x_1^2+x_2-11)^2+(x_1+x_2^2-7)^2
@@ -1059,10 +1093,10 @@ $F_6$ & -187.731 & 18 & many & 2 & $x_i \in [-10,10]$, \\
 \label{ss:maxFunc}
 本実験では，複数最適解を探索する手法の性能を比較するため，CEC ({\it IEEE Congress on Evolutionary Computation}) 2013 Competition on Niching Methods for Multimodal Function Optimization \cite{CEC2013} で扱われたベンチマーク関数を説明する．ベンチマーク関数の最適解の評価値$F(x_*)$と最適解数，探索領域を表\ref{tab:maxMOP}に示す．
 \begin{description}
-\item[$F_1$: Five-Uneven-Peak Trap (1D)]\mbox{}\\
+\item[$G_1$: Five-Uneven-Peak Trap (1D)]\mbox{}\\
 \begin{equation}
 \label{eq:maxF1}
-F_1(x)=\begin{cases}
+G_1(x)=\begin{cases}
 80(2.5-x) & {\rm for} \ 0 \leq x < 2.5, \\
 64(x-2.5) & {\rm for} \ 2.5 \leq x < 5.0, \\
 64(7.5-x) & {\rm for} \ 5.0 \leq x < 7.5, \\
@@ -1080,10 +1114,10 @@ F_1(x)=\begin{cases}
 \label{fig:maxF1}
 \end{figure}
 
-\item[$F_2$: Equal Maxima (1D)]\mbox{}\\
+\item[$G_2$: Equal Maxima (1D)]\mbox{}\\
 \begin{equation}
 \label{eq:maxF2}
-F_2(x)=\sin^6{(5\pi x)}.
+G_2(x)=\sin^6{(5\pi x)}.
 \end{equation}
 \begin{figure}[h]
 \centering
@@ -1092,10 +1126,10 @@ F_2(x)=\sin^6{(5\pi x)}.
 \label{fig:maxF2}
 \end{figure}
 
-\item[$F_3$: Uneven Decreasing Maxima (1D)]\mbox{}\\
+\item[$G_3$: Uneven Decreasing Maxima (1D)]\mbox{}\\
 \begin{equation}
 \label{eq:maxF3}
-F_3(x)=exp(-2log(2)(\frac{x-0.08}{0.854})^2)\sin^6{(5\pi(x^{\frac{3}{4}}-0.05))}.
+G_3(x)=exp(-2log(2)(\frac{x-0.08}{0.854})^2)\sin^6{(5\pi(x^{\frac{3}{4}}-0.05))}.
 \end{equation}
 \begin{figure}[h]
 \centering
@@ -1104,10 +1138,10 @@ F_3(x)=exp(-2log(2)(\frac{x-0.08}{0.854})^2)\sin^6{(5\pi(x^{\frac{3}{4}}-0.05))}
 \label{fig:maxF3}
 \end{figure}
 
-\item[$F_4$: Himmelblau (2D)]\mbox{}\\
+\item[$G_4$: Himmelblau (2D)]\mbox{}\\
 \begin{equation}
 \label{eq:maxF4}
-F_4(x,y) = 200 - (x^2+y-11)^2 - (x+y^2-7)^2.
+G_4(x,y) = 200 - (x^2+y-11)^2 - (x+y^2-7)^2.
 \end{equation}
 \begin{figure}[h]
 \centering
@@ -1116,10 +1150,10 @@ F_4(x,y) = 200 - (x^2+y-11)^2 - (x+y^2-7)^2.
 \label{fig:maxF4}
 \end{figure}
 
-\item[$F_5$: Six-Hump Camel Back (2D)]\mbox{}\\
+\item[$G_5$: Six-Hump Camel Back (2D)]\mbox{}\\
 \begin{equation}
 \label{eq:maxF5}
-F_5(x,y)=-4[(4-2.1x^2+\frac{x^4}{3})x^2+xy+(4y^2-4)y^2].
+G_5(x,y)=-4[(4-2.1x^2+\frac{x^4}{3})x^2+xy+(4y^2-4)y^2].
 \end{equation}
 \begin{figure}[h]
 \centering
@@ -1128,10 +1162,10 @@ F_5(x,y)=-4[(4-2.1x^2+\frac{x^4}{3})x^2+xy+(4y^2-4)y^2].
 \label{fig:maxF5}
 \end{figure}
 
-\item[$F_6$: Shubert (2D)]\mbox{}\\
+\item[$G_6$: Shubert (2D)]\mbox{}\\
 \begin{equation}
 \label{eq:maxF6}
-F_6(x)=-\prod_{i=1}^D \sum_{j=1}^5 j\cos[(j+1)x_i+j].
+G_6(x)=-\prod_{i=1}^D \sum_{j=1}^5 j\cos[(j+1)x_i+j].
 \end{equation}
 \begin{figure}[h]
 \centering
@@ -1148,21 +1182,21 @@ F_6(x)=-\prod_{i=1}^D \sum_{j=1}^5 j\cos[(j+1)x_i+j].
 \begin{tabular}{c|c|c|c|c|c}
 \hline
 
-Function & $F(x_*)$ & Num of & $\rho$ & $D$ & Search Range \\
+Function & $G(x_*)$ & Num of & $\rho$ & $D$ & Search Range \\
 & & goptima & & & \\
 \hline
-$F_1$ & 200.0 & 2 & 0.01 & 1 & $x \in [0,30]$  \\
+$G_1$ & 200.0 & 2 & 0.01 & 1 & $x \in [0,30]$  \\
 \hline
-$F_2$ & 1.0 & 5 & 0.01 & 1 & $x \in [0,1]$  \\
+$G_2$ & 1.0 & 5 & 0.01 & 1 & $x \in [0,1]$  \\
 \hline
-$F_3$ & 1.0 & 1 & 0.01 & 1 & $x \in [0,1]$  \\
+$G_3$ & 1.0 & 1 & 0.01 & 1 & $x \in [0,1]$  \\
 \hline
-$F_4$ & 200.0 & 4 & 0.01 & 2 & $x,y \in [-6,6]$  \\
+$G_4$ & 200.0 & 4 & 0.01 & 2 & $x,y \in [-6,6]$  \\
 \hline
-$F_5$ & 1.03163 & 2 & 0.5 & 2 & $x \in [-1.9,1.9]$, \\
+$G_5$ & 1.03163 & 2 & 0.5 & 2 & $x \in [-1.9,1.9]$, \\
 & & & & & $y \in [-1.1,1.1]$ \\
 \hline
-$F_6$ & 186.731 & 18 & 0.5 & 2 & $x_i \in [-10,10]$  \\
+$G_6$ & 186.731 & 18 & 0.5 & 2 & $x_i \in [-10,10]$  \\
 \hline
 % \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
 \end{tabular}
@@ -1226,6 +1260,22 @@ $\epsilon$は$[-1, \ 1]$区間におけるD次元の一様乱数を表す．
 \subsection{アルゴリズム}
 \label{ss:NSBA-algorithm}
 アルゴリズムの疑似コードを以下のAlgorithm \ref{code:nsba}に記す．
+
+\begin{itemize}
+\item {\bf STEP1: 個体の初期化}\\
+探索空間内にランダムに個体$x_i (i=1,2,...,N)$を生成し，周波数$f_i$，ラウドネス$A_i^0$，パルスレート$r_i^0$を決定する(1-3行目)．
+\item {\bf STEP2: 速度の更新と解候補の生成}\\
+速度$v_i$により新しく解候補を生成する(6行目)．
+\item {\bf STEP3: 局所探索}\\
+最良解$x_{pbest}$近辺に新しく解候補$x_{loc}$を生成する(8行目)．
+\item {\bf STEP4: ランダム探索}\\
+探索空間内にランダムで解候補$x_{rnd}$を生成する(10行目)．
+\item {\bf STEP5: 評価と更新}\\
+${\rm rand} < A_i$を満たす，かつ3つの解候補が$t$時点での最良解$x_{pbest}$よりも評価値が高ければ解を更新する(11-14行目)．
+\item {\bf STEP6: STEP2へ戻る}\\
+終了条件を満たすまでSTEP2へ戻る．
+\end{itemize}
+
 \begin{algorithm}[H]
 \caption{Novelty Search-based Bat Algorithm}
 \label{code:nsba}
@@ -1258,44 +1308,7 @@ $\epsilon$は$[-1, \ 1]$区間におけるD次元の一様乱数を表す．
 \label{sss:NSBA-func}
 本実験では\ref{ss:MinFunc}節で説明した$F_1$関数(Griewank)と$F_2$関数(Rastrigin)を用いる．
 
-% \begin{description}
-% \item[$F_1$: Griewank (2D)]\mbox{}\\
-% \begin{equation}
-% \label{eq:nsba-F1}
-% F_1(x)=\sum_{i=1}^D \frac{x_i}{4000}- \prod_{i=1}^D \cos(\frac{x_i}{\sqrt{i}})+1.
-% \end{equation}
 
-% \begin{figure}[t]
-% \centering
-% \subfigure[Fitness Landscape]{
-% \includegraphics[width=0.8\linewidth]{eps/IES2018/3d_griewank.eps}
-% \label{fig:nsba-f1(3d)}}
-% \subfigure[Contour Plot]{
-% \includegraphics[width=0.8\linewidth]{eps/IES2018/cont_griewank.eps}
-% \label{fig:nsba-f1(2d)}}
-% \caption{Griewank関数}
-% \label{fig:nsba-f1}
-% \end{figure}
-
-% \item[$F_2$: Rastrigin (2D)]\mbox{}\\
-% \begin{equation}
-% \label{eq:nsba-F2}
-% F(x)=10D+\sum_{i=1}^D[x_i^2-10\cos(2\pi x_i)].
-% \end{equation}
-
-% \begin{figure}[t]
-% \centering
-% \subfigure[Fitness Landscape]{
-% \includegraphics[width=0.8\linewidth]{eps/IES2018/3d_rastrigin.eps}
-% \label{fig:nsba-f2(3d)}}
-% \subfigure[Contour Plot]{
-% \includegraphics[width=0.8\linewidth]{eps/IES2018/cont_rastrigin.eps}
-% \label{fig:nsba-f2(2d)}}
-% \caption{Rastrigin関数}
-% \label{fig:nsba-f2}
-% \end{figure}
-
-% \end{description}
 \FloatBarrier
 
 \subsubsection{評価基準}
@@ -1489,6 +1502,22 @@ $[-NR, \ NR]$区間内の1×$D$次元の配列により現在位置$x_i^t$周辺
 \subsection{アルゴリズム}
 \label{ss:NRBA-algorithm}
 提案手法のNRBAのアルゴリズムの疑似コードをAlgorithm \ref{code:nrba}に記す．
+
+\begin{itemize}
+\item {\bf STEP1: 個体の初期化}\\
+探索空間内にランダムに個体$x_i (i=1,2,...,N)$を生成し，周波数$f_i$，ラウドネス$A_i^0$，パルスレート$r_i^0$を決定する(1-3行目)．
+\item {\bf STEP2: 速度の更新と解候補の生成}\\
+速度$v_i$により新しく解候補を生成する(7行目)．
+\item {\bf STEP3: 局所探索}\\
+最良解$x_{pbest}$近辺に新しく解候補$x_{loc}$を生成する(10-11行目)．
+\item {\bf STEP4: ランダム探索}\\
+探索空間内にランダムで解候補$x_{rnd}$を生成する(12行目)．
+\item {\bf STEP5: 評価と更新}\\
+${\rm rand} < A_i$を満たす，かつ3つの解候補が$t$時点での最良解$x_{pbest}$よりも評価値が高ければ解を更新する(13-15行目)．
+\item {\bf STEP6: STEP2へ戻る}\\
+終了条件を満たすまでSTEP2へ戻る．
+\end{itemize}
+
 \begin{algorithm}[H]
 \caption{Niche Radius-based Bat Algorithm (NRBA)}
 \label{code:nrba}
@@ -1499,13 +1528,15 @@ $[-NR, \ NR]$区間内の1×$D$次元の配列により現在位置$x_i^t$周辺
 \STATE Initialize pulse rates $r_i$, and loudness $A_i$
 \WHILE{($t <$ Max number of iterations)}
 \FOR{i=1 to N}
+\IF{$x_i \neq x_{NR*}$}
 \STATE Generate a new solution $x_i$ and velocity $v_i$ [Eqs.(\ref{eq:nrvi}) to (\ref{eq:nrxi})]
+\ENDIF
 \IF{($rand>r_i$)}
-\STATE Generate a new solution $x_{loc}$ around a global best solution $x_i$ [Eq.(\ref{eq:nrloc})] 
+\STATE Generate a new solution $x_{loc}$ around personal best solution $x_{NR*}$ in Niche radius [Eq.(\ref{eq:nrloc})] 
 % \ELSE
 % \STATE Continue
 \ENDIF
-\STATE Generate a new solution $x_{rnd}$ randomly [Eq.(\ref{eq:nrrnd})]
+\STATE Generate a new solution $x_{rnd}$ randomly in Niche radius [Eq.(\ref{eq:nrrnd})]
 \IF{($rand<A_i \& \min (F(x_i), F(x_{loc}), F(x_{rnd})<F(x_{i*})$)}
 \STATE Accept the new solution, and update pulse rate $r_i$ \\ \& loudness $A_i$ [Eqs. (\ref{eq:loud})(\ref{eq:pulse})]  
 \ENDIF
@@ -1690,6 +1721,24 @@ $v_i$，$x_i$は個体の速度と位置を表し，$x_{NR*}$は$x_i$が属す�
 \subsection{アルゴリズム}
 \label{sss:DNRBA-algorithm}
 DNRBAのアルゴリズムの疑似コードを以下のAlgorithm \ref{code:dnr}, \ref{code:dnrba}に記す．
+
+\begin{itemize}
+\item {\bf STEP1: 個体の初期化}\\
+探索空間内にランダムに個体$x_i (i=1,2,...,N)$を生成し，周波数$f_i$，ラウドネス$A_i^0$，パルスレート$r_i^0$を決定する(1-3行目)．
+\item {\bf STEP2: Dynamic Niche Radius算出}\\
+Algorithm \ref{code:dnr}により，各個体の持つniche count $m_i$を算出する(5行目)．
+\item {\bf STEP3: 速度の更新と解候補の生成}\\
+速度$v_i$により新しく解候補を生成する(8行目)．
+\item {\bf STEP4: 局所探索}\\
+最良解$x_{pbest}$近辺に新しく解候補$x_{loc}$を生成する(10-11行目)．
+\item {\bf STEP5: ランダム探索}\\
+探索空間内にランダムで解候補$x_{rnd}$を生成する(13行目)．
+\item {\bf STEP6: 評価と更新}\\
+${\rm rand} < A_i$を満たす，かつ3つの解候補が$t$時点での最良解$x_{pbest}$よりも評価値が高ければ解を更新する(14-16行目)．
+\item {\bf STEP6: STEP2へ戻る}\\
+終了条件を満たすまでSTEP2へ戻る．
+\end{itemize}
+
 \begin{algorithm}[h]
 \caption{Dynamic Niche Radius}
 \label{code:dnr}
@@ -1728,13 +1777,15 @@ DNRBAのアルゴリズムの疑似コードを以下のAlgorithm \ref{code:dnr}
 \WHILE{($t <$ Max number of iterations)}
 \STATE Calculate Dynamic Niche Radius (Algorithm 2)
 \FOR{i=1 to N}
+\IF{$x_i \neq x_{NR*}$}
 \STATE Generate a new solution $x_i$ and velocity $v_i$ [Eqs.(\ref{eq:dnrba-vi}) and (\ref{eq:dnrba-xi})]
+\ENDIF
 \IF{($rand>r_i$)}
-\STATE Generate a new solution $x_{loc}$ around a global best solution $x_i$ [Eq.(\ref{eq:dnrloc})] 
+\STATE Generate a new solution $x_{loc}$ around personal best solution $x_{NR*}$ in Niche radius [Eq.(\ref{eq:dnrloc})] 
 % \ELSE
 % \STATE Continue
 \ENDIF
-\STATE Generate a new solution $x_{rnd}$ randomly [Eq.(\ref{eq:dnrrnd})]
+\STATE Generate a new solution $x_{rnd}$ randomly in Niche radius [Eq.(\ref{eq:dnrrnd})]
 \IF{($rand<A_i \& \min (F(x_i), F(x_{loc}), F(x_{rnd})<F(x_{i*})$)}
 \STATE Accept the new solution, and update pulse rate $r_i$ \\ \& loudness $A_i$ [Eqs. (\ref{eq:loud}) and (\ref{eq:pulse})]  
 \ENDIF
@@ -1925,142 +1976,73 @@ $F_6 $ & {\bf 0.0556} $\pm$ 0.0619 & {\bf 1.8160} $\pm$ 0.4990 & 0.0426 $\pm$ 0.
 
 \subsection{評価関数}
 \label{sss:benchmark}
-使用するベンチマーク関数とその概形は以下の通りである．
+使用するベンチマーク関数とその概形は\ref{ss:maxFunc}節で説明した6つの評価関数を用いる．
 
-
-% \begin{description}
-% \item[$F_1$: Five-Uneven-Peak Trap (1D)]\mbox{}\\
-% \begin{equation}
-% \label{eq:f1}
-% F_1(x)=\begin{cases}
-% 80(2.5-x) & {\rm for} \ 0 \leq x < 2.5, \\
-% 64(x-2.5) & {\rm for} \ 2.5 \leq x < 5.0, \\
-% 64(7.5-x) & {\rm for} \ 5.0 \leq x < 7.5, \\
-% 28(x-7.5) & {\rm for} \ 7.5 \leq x < 12.5, \\
-% 28(17.5-x) & {\rm for} \ 12.5 \leq x < 17.5, \\
-% 32(x-17.5) & {\rm for} \ 17.5 \leq x < 22.5, \\
-% 32(27.5-x) & {\rm for} \ 22.5 \leq x < 27.5, \\
-% 80(x-27.5) & {\rm for} \ 27.5 \leq x < 30.
-% \end{cases}
-% \end{equation}
-% \begin{figure}[h]
-% \centering
-% \includegraphics[width=0.8\linewidth]{eps/F1.eps}
-% \caption{Five-Uneven-Peak Trap}
-% \label{fig:f1}
-% \end{figure}
-
-% \item[$F_2$: Equal Maxima (1D)]\mbox{}\\
-% \begin{equation}
-% \label{eq:F2}
-% F_2(x)=\sin^6{(5\pi x)}.
-% \end{equation}
-% \begin{figure}[h]
-% \centering
-% \includegraphics[width=0.8\linewidth]{eps/F2.eps}
-% \caption{Equal Maxima}
-% \label{fig:f2}
-% \end{figure}
-
-% \item[$F_3$: Uneven Decreasing Maxima (1D)]\mbox{}\\
-% \begin{equation}
-% \label{eq:F3}
-% F_3(x)=exp(-2log(2)(\frac{x-0.08}{0.854})^2)\sin^6{(5\pi(x^{\frac{3}{4}}-0.05))}.
-% \end{equation}
-% \begin{figure}[h]
-% \centering
-% \includegraphics[width=0.8\linewidth]{eps/F3.eps}
-% \caption{Uneven Decreasing Maxima}
-% \label{fig:f3}
-% \end{figure}
-
-% \item[$F_4$: Himmelblau (2D)]\mbox{}\\
-% \begin{equation}
-% \label{eq:F4}
-% F_4(x,y) = 200 - (x^2+y-11)^2 - (x+y^2-7)^2.
-% \end{equation}
-% \begin{figure}[h]
-% \centering
-% \includegraphics[width=0.8\linewidth]{eps/F4.eps}
-% \caption{2D Himmelblau}
-% \label{fig:f4}
-% \end{figure}
-
-% \item[$F_5$: Six-Hump Camel Back (2D)]\mbox{}\\
-% \begin{equation}
-% \label{eq:F5}
-% F_5(x,y)=-4[(4-2.1x^2+\frac{x^4}{3})x^2+xy+(4y^2-4)y^2].
-% \end{equation}
-% \begin{figure}[h]
-% \centering
-% \includegraphics[width=0.8\linewidth]{eps/F5.eps}
-% \caption{2D Six-Hump Camel Back}
-% \label{fig:f5}
-% \end{figure}
-
-% \item[$F_6$: Shubert (2D)]\mbox{}\\
-% \begin{equation}
-% \label{eq:F6}
-% F_6(x)=-\prod_{i=1}^D \sum_{j=1}^5 j\cos[(j+1)x_i+j].
-% \end{equation}
-% \begin{figure}[h]
-% \centering
-% \includegraphics[width=0.8\linewidth]{eps/F6.eps}
-% \caption{2D Shubert}
-% \label{fig:f6}
-% \end{figure}
-
-% \end{description}
-
-% \begin{table}[h]
-% \caption{Benchmark Test Functions}
-% \begin{center}
-% \begin{tabular}{c|c|c|c|c|c}
-% \hline
-
-% Function & $F(x*)$ & Num of & $\rho$ & $D$ & Search Range \\
-% & & goptima & & & \\
-% \hline
-% $F_1$ & 200.0 & 2 & 0.01 & 1 & $x \in [0,30]$  \\
-% \hline
-% $F_2$ & 1.0 & 5 & 0.01 & 1 & $x \in [0,1]$  \\
-% \hline
-% $F_3$ & 1.0 & 1 & 0.01 & 1 & $x \in [0,1]$  \\
-% \hline
-% $F_4$ & 200.0 & 4 & 0.01 & 2 & $x,y \in [-6,6]$  \\
-% \hline
-% $F_5$ & 1.03163 & 2 & 0.5 & 2 & $x \in [-1.9,1.9]$, \\
-% & & & & & $y \in [-1.1,1.1]$ \\
-% \hline
-% $F_6$ & 186.731 & 18 & 0.5 & 2 & $x_i \in [-10,10]$  \\
-% \hline
-% % \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
-% \end{tabular}
-% \label{tab:MOP}
-% \end{center}
-% \end{table}
 
 \subsection{評価基準}
 \label{ss:eval_criteria}
-本コンペティションではPR \cite{CEC2013} によりアルゴリズムの性能評価を行う．各評価関数で割り当てられた評価回数 (MaxFEs) と {\it accuracy level} $\varepsilon$を用いてPRは次式で表される．
+本コンペティションではPR \cite{CEC2013} によりアルゴリズムの性能評価を行う．各評価関数で割り当てられた評価回数 (MaxFEs) と accuracy level $\varepsilon$を用いてPRは次式で表される．
 \begin{equation}
 \label{eq:PR}
 PR=\frac{\sum_{run=1}^{NR}NPF_{run}}{NKP*NR}
 \end{equation}
 $NPF_{run}$は，そのシードにおけるアルゴリズムが発見した最適解数を示し，NKPは評価関数が持つ全最適解数を示す．NRは実験の試行回数を示す．
 
-% SRは
-% \begin{equation}
-% \label{eq:SR}
-% SR=\frac{NSR}{NR}
-% \end{equation}
 
 \subsection{結果}
 \label{ss:results}
 
-% \begin{table}[h]
-% \begin{center}
-% \begin{tabular}{}
+
+\begin{table}[h]
+\caption{Overall Performance}
+\begin{center}
+\begin{tabular}{c|c|c|c}
+\hline
+
+Algorithm & Median & Mean & St.D  \\
+
+\hline
+NSGAII & 0.9350 & 0.7274 & 0.0646 \\
+\hline
+CMA-ES & 1.0 & 0.9371 & 0.1423 \\
+\hline
+CDE & 1.0 & 0.8229 & 0.2087 \\
+\hline
+dADE/nrand/1 & 1.0 & 0.9663 & 0.1820 \\
+\hline
+dADE/nrand/2 & 1.0 & 0.9611 & 0.1774 \\
+DECG & 1.0 & 0.9662 & 0.1820 \\
+\hline
+DELG & 1.0 & 0.9658 & 0.1814 \\
+\hline
+DELS-aj & 1.0 & 0.9666 & 0.1825 \\
+\hline
+DE/nrand/1 & 1.0 & 0.8919 & 0.0801 \\
+\hline
+DE/nrand/2 & 1.0 & 0.9225 & 0.1221 \\
+\hline
+IPOP-CMA-ES & 0.7760 & 0.7240 & 0.0162 \\
+\hline
+NEA1 & 1.0 & 0.9166 & 0.1142 \\
+\hline
+NEA2 & 1.0 & 0.9608 & 0.1747 \\
+\hline
+N-VMO & 1.0 & 0.9540 & 0.1738 \\
+\hline
+PNA-NSGAII & 1.0 & 0.8960 & 0.0929 \\
+\hline
+NSBA & 0.1850 & 0.3358 & 0.0384 \\
+\hline
+NRBA & 0.9520 & 0.7659 & 0.1165 \\
+\hline
+DNRBA & 0.9070 & 0.7540 & 0.1519 \\
+\hline
+
+\end{tabular}
+\label{tab:MOP_results}
+\end{center}
+\end{table}
+
 
 \begin{figure}
 \centering
