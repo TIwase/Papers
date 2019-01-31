@@ -942,6 +942,7 @@ v_d=\frac{x_d^{(U)}-x_d^{(L)}}{T} \forall d=\{ 1,2,...,D\}
 
 \subsection{最小化問題における評価関数}
 \label{ss:MinFunc}
+実験で用いられる評価関数の最適解の評価値，最適解数，探索範囲を表\ref{tab:minMOP}に示す．
 
 \begin{description}
 \item[$F_1$: Griewank (2D)]\mbox{}\\
@@ -1968,8 +1969,8 @@ $F_6 $ & {\bf 0.0556} $\pm$ 0.0619 & {\bf 1.8160} $\pm$ 0.4990 & 0.0426 $\pm$ 0.
 \label{sec:experiment}
 
 
-\subsection{複数解探索における多峰性最適化問題}
-\label{ss:cec2013}
+% \subsection{複数解探索における多峰性最適化問題}
+% \label{ss:cec2013}
 % 本実験では，複数最適解を探索する手法の性能を比較するため，CEC ({\it IEEE Congress on Evolutionary Computation}) 2013 Competition on Niching Methods for Multimodal Function Optimization \cite{CEC2013} で扱われたベンチマーク関数を用いる．使用する関数について,次節で説明する．
 
 \subsection{評価関数}
@@ -1989,11 +1990,14 @@ $NPF_{run}$は，そのシードにおけるアルゴリズムが発見した最
 \subsection{比較手法}
 \ref{sec:MA}, \ref{sec:nm}章で紹介したDEやCMA-ES, NSGAII, CDE, dADE, NEA, PNA-NSGAIIに加え，本コンペティションでは次の手法 \cite{DEs} \cite{N-VMO} と比較実験を行った．
 
-\subsection{結果}
+\subsection{実験設定}
+本実験では$f_{max}=1$, $f_{min}=0$，ラウドネス$A^0=1$，パルスレート$r^0 \in [0,1]$と設定した．また$\alpha= \gamma = 0.9$とし，個体数$N=100$，世代数を$G_1$から$G_5$までは50000, $G_6$は200000とし，ランダムシードを変えた実験を50回行った．
+
+\subsection{結果と考察}
 \label{ss:results}
+図\ref{fig:resutls_comp_E1}から\ref{fig:resutls_comp_E5}はaccuracy level $\varepsilon$を変えた時のPR値をヒートマップ化したものである．$\varepsilon = 1.0E-1$では$G_1$から$G_5$関数まではNSGAIIやIPOP-CMA-ES，NSBAの探索性能が低いことが分かる．特に$G_6$関数において，IPOP-CMA-ESとNSBAが最もPR値が低く，次いでNSGAII，DE/nrand/1，NRBAが低かった．提案した3つの手法の中ではDNRBAが最もPR値が高かったが，$\varepsilon = 1.0E-2$ではNRBAとDNRBAはほぼ同等の探索性能であり，$\varepsilon=1.0E-3$では$G_4$関数においてNRBAの方がPR値が高かった．$\varepsilon=1.0E-4$では$G_4$，$G_5$関数でDNRBAよりもNRBAの方がPR値が高く，$\varepsilon = 1.0E-5$では全ての関数においてNRBAよりもDNRBAの方がPR値が高かった．また，表\ref{tab:MOP_results}は全ての関数におけるPR値の中央値と，平均及び標準偏差を示す．この結果から，提案手法の一つであるNSBAは最も探索性能が悪かったが，NRBA，次いでDNRBAは他の手法とほぼ同等の探索性能を示すことが可能であった．この結果から，全体的にNRBAの方が探索性能が高かったが，$G_6$関数のような最適解周辺の勾配が激しく難しい問題に対してはDNRBAのほうが有効であった．
 
-
-\begin{table}[h]
+\begin{table}[b]
 \caption{Overall Performance of the PR value (averaged over 50 runs)}
 \begin{center}
 \begin{tabular}{c|c|c|c}
@@ -2011,6 +2015,7 @@ CDE & 1.0 & 0.8229 & 0.2087 \\
 dADE/nrand/1 & 1.0 & 0.9663 & 0.1820 \\
 \hline
 dADE/nrand/2 & 1.0 & 0.9611 & 0.1774 \\
+\hline
 DECG & 1.0 & 0.9662 & 0.1820 \\
 \hline
 DELG & 1.0 & 0.9658 & 0.1814 \\
@@ -2224,9 +2229,9 @@ DNRBA & 0.9070 & 0.7540 & 0.1519 \\
 % なお, マルチプレクサ問題ではDCAの初期値が\proposed に大きな影響を与えるため, この実験ではDCAの乱数シードを固定して行っているが, 乱数シードも変更した結果は付録\ref{app:11mux_seed}に示した.
 % この結果から, \proposed はDCAの初期値によっては上手く学習できないことがあることがわかる.
 
-\FloatBarrier
-\subsection{考察}
-\label{ss:EXP_discussion}
+% \FloatBarrier
+% \subsection{考察}
+% \label{ss:EXP_discussion}
 % 図\ref{fig:mnist_error}, \ref{fig:mnist_accuracy}, \ref{fig:mpp_error}, \ref{fig:mpp_accuracy}から両問題について, DCAの学習は収束しており, 十分に学習が出来ていることがわかるため, DCAの学習に問題がない前提で考察する.
 
 % 表\ref{tab:exp_all}にMNISTデータセット分類問題と11-マルチプレクサ問題によるDCA, XCSR, \proposed(圧縮ルール未使用), \proposed(圧縮ルール使用)の分類精度(図\ref{fig:mnist_p}, \ref{fig:mpp_p})をまとめた.
@@ -2336,13 +2341,13 @@ DNRBA & 0.9070 & 0.7540 & 0.1519 \\
 \addcontentsline{toc}{section}{参考文献}
 \bibliography{./ref/ref}
 
-\clearpage
-\setcounter{section}{0}
-\setcounter{subsection}{0}
-\section*{付録}
-\addcontentsline{toc}{section}{付録}
-\renewcommand{\thesubsection}{\Alph{subsection}}
-\renewcommand{\thesubsubsection}{\Alph{subsection}-\arabic{subsubsection}}
+% \clearpage
+% \setcounter{section}{0}
+% \setcounter{subsection}{0}
+% \section*{付録}
+% \addcontentsline{toc}{section}{付録}
+% \renewcommand{\thesubsection}{\Alph{subsection}}
+% \renewcommand{\thesubsubsection}{\Alph{subsection}-\arabic{subsubsection}}
 
 % \subsection{DCAの復元精度と分類精度の比較}
 % \label{app:dca}
