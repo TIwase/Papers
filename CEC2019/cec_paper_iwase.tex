@@ -14,37 +14,37 @@
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{Niche Radius Adaptation in Bat Algorithm for Capturing Multiple Global Optima in Multimodal Functions\\
+\title{Niche Radius Adaptation in Bat Algorithm for Locating Multiple Optima in Multimodal Functions\\
 % {\footnotesize \textsuperscript{*}Note: Sub-titles are not captured in Xplore and
 % should not be used}
 % \thanks{Identify applicable funding agency here. If none, delete this.}
 }
 
-\author{\IEEEauthorblockN{1\textsuperscript{st} Takuya Iwase}
+\author{\IEEEauthorblockN{ Takuya Iwase}
 \IEEEauthorblockA{\textit{The Univ. of Electro-Communications} \\
 % \textit{name of organization (of Aff.)}\\
 Tokyo, Japan \\
 tanu\_iwa@cas.lab.uec.ac.jp}
 \and
-\IEEEauthorblockN{2\textsuperscript{nd} Ryo Takano}
+\IEEEauthorblockN{ Ryo Takano}
 \IEEEauthorblockA{\textit{The Univ. of Electro-Communications} \\
 % \textit{name of organization (of Aff.)}\\
 Tokyo, Japan \\
 takano@cas.lab.uec.ac.jp}
 \and
-\IEEEauthorblockN{3\textsuperscript{rd} Fumito Uwano}
+\IEEEauthorblockN{ Fumito Uwano}
 \IEEEauthorblockA{\textit{The Univ. of Electro-Communications} \\
 % \textit{name of organization (of Aff.)}\\
 Tokyo, Japan \\
 uwano@cas.lab.uec.ac.jp}
 \and
-\IEEEauthorblockN{4\textsuperscript{th} Hiroyuki Sato}
+\IEEEauthorblockN{ Hiroyuki Sato}
 \IEEEauthorblockA{\textit{The Univ. of Electro-Communications} \\
 % \textit{name of organization (of Aff.)}\\
 Tokyo, Japan \\
 h.sato@uec.ac.jp}
 \and
-\IEEEauthorblockN{5\textsuperscript{th} Keiki Takadama}
+\IEEEauthorblockN{ Keiki Takadama}
 \IEEEauthorblockA{\textit{The Univ. of Electro-Communications} \\
 % \textit{name of organization (of Aff.)}\\
 Tokyo, Japan \\
@@ -61,7 +61,7 @@ keiki@hc.uec.ac.jp}
 
 \begin{abstract}
     Evolutionary algorithms (EAs) are often used for multimodal optimization which is modeled as real-world problem. However, most EAs still not enough to find multiple local optima because of the concept of the solution movement between nearest neighbor solutions. This paper proposes the niche radius-based bat algorithm (NRBA), which is designed to find multiple local optima in multimodal optimization.
-    We focus on bat algorithm (BA) which deals with the trade-off between exploration and exploitation in the evolutionary process and extend it with niche radius which can control and modify the search space of solutions to avoid overlapping the found optima. In detail, the proposed BA consists of three search phases: (i) the movement from neighbors for avoiding overlapping the same found optima; (ii) the exploitation for searching nearby the best solution of its domain with Niche Radius; (iii) the exploration for searching randomly in all domain of the radius. In order to evaluate the performance of NRBA, this paper employs some test-bed multimodal functions and compare NRBA with BA. The experimental results suggest that NRBA is able to provide the better search performance than BA to find multiple global optima in most of best-bed multimodal functions.
+    We focus on bat algorithm (BA) which deals with the trade-off between exploration and exploitation in the evolutionary process and extend it with niche radius which can control and modify the search space of solutions to avoid overlapping the found optima. In detail, the proposed BA consists of three search phases: (i) the movement from neighbors for avoiding overlapping the same found optima; (ii) the exploitation for searching nearby the best solution of its domain with Niche Radius; (iii) the exploration for searching randomly in all domain of the radius. In order to evaluate the performance of NRBA, this paper employs some test-bed multimodal functions and compare NRBA with BA and NSBA. The experimental results suggest that NRBA is able to provide the better search performance than BA and NSBA to find multiple global optima in most of best-bed multimodal functions.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -218,7 +218,9 @@ The pseudo code of NRBA is given in Algorithm 2 and its brief summary is describ
 \STATE Initialize pulse rates $r_i$, and loudness $A_i$
 \WHILE{($t <$ Max number of iterations)}
 \FOR{i=1 to N}
+\IF{$d_i < NR$ \& $x_i \neq x_{NR*}$}
 \STATE Generate a new solution $x_i$ and velocity $v_i$ [eqs.(\ref{eq:nrvi}) to (\ref{eq:nrxi})]
+\ENDIF
 \IF{($rand>r_i$)}
 \STATE Generate a new solution $x_{loc}$ around a global best solution $x_i$ [eq.(\ref{eq:nrloc})] 
 % \ELSE
@@ -238,21 +240,22 @@ The pseudo code of NRBA is given in Algorithm 2 and its brief summary is describ
 \begin{itemize}
 \item STEP1: Population initialization of bats (line 1 to 3)\\
 The population of bats ${x_i}(i=1, 2, ..., N)$, the loudness ${A_i^0}$, the pulse rate ${r_i^0}$ are initialized as the initial values. The frequency ${f_i}$ is initialized by Eq.(\ref{eq:freq}).
-\item STEP2: New solution updates (line 6)\\
+\item STEP2: New solution updates (line 6 to 8)\\
 The new solutions ${x_i}$ is calculated by Eqs. (\ref{eq:vi})(\ref{eq:xi}).
-\item STEP3: New solution generation around global best solution ${x_*}$ (line 7 to 9)\\
+\item STEP3: New solution generation around global best solution ${x_*}$ (line 9 to 11)\\
 A new solution $x_{loc}$ is generated around $x_*$ by Eq. (\ref{eq:loc}) when the pulse emission rate $r_i$ is lower than a random value.
-\item STEP4: Random new solution generation (line 10)\\
+\item STEP4: Random new solution generation (line 12)\\
 A new solution ${x_{rnd}}$ is generated randomly by Eq. (\ref{eq:xrnd}).  
-\item STEP5: Solutions update(line 11 to 14)\\
+\item STEP5: Solutions update(line 13 to 15)\\
 When ${rand < A_i}$, the best solution is selected from $x_i$, ${x_{loc}}$, and ${x_{rnd}}$ by Eqs.(\ref{eq:A}),(\ref{eq:r})
 \item STEP6: Return to STEP2 
 \end{itemize}
 
 \section{Experimental Setup}
 To measure the number of local optima and the convergence speed, we compare with the performance of all algorithms. In this section, four multimodal functions which are considered for maximization, are employed in \textit{Congress on Evolutionary Computation (CEC) 2013} competition \cite{cec2013}. 
+
 \subsection{Benchmark Test Functions}
-In order to verify the effectiveness of our proposed algorithm, four benchmark functions that are popular in multimodal optimization are employed in this experiments. The detail of these functions which are the search space, the fitness value of known global optima and the number of known global and local optima, are summarized in Table \ref{tab1}.
+In order to verify the effectiveness of our proposed algorithm compared with conventional BA and another {\it Niching method} which is Novelty Search-based BA (NSBA) \cite{NSBA}, four benchmark functions that are popular in multimodal optimization are employed in this experiments. The detail of these functions which are the search space, the fitness value of known global optima and the number of known global and local optima, are summarized in Table \ref{tab1}.
 
 
 \begin{table*}[h]
@@ -271,6 +274,8 @@ Number of global optima & 4 & 18 & 36 & 12 \\
 \hline
 Number of local optima &  0 & many & 0 & 0  \\
 \hline
+accuracy distance $\rho$ & 0.01 & 0.5 & 0.5 & 0.01 \\
+\hline
 % \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
 \end{tabular}
 \label{tab1}
@@ -288,14 +293,14 @@ The fitness value of the global optima is ${F(x_*)}=200$. This function has 4 gl
 
 \begin{figure}[h]
 \begin{center}
-\subfigure[Fitness Landscape]{
-	\includegraphics[width=0.9\linewidth]{eps/3d_himmelblau.eps}
-	\label{fig:3d_himmelblau}
-}
-\subfigure[Contour Plot]{
-	\includegraphics[width=0.9\linewidth]{eps/cont_himmelblau.eps}
-	\label{fig:cont_himmelblau}
-}
+% \subfigure[Fitness Landscape]{
+	\includegraphics[width=0.8\linewidth]{eps/3d_himmelblau.eps}
+% 	\label{fig:3d_himmelblau}
+% }
+% \subfigure[Contour Plot]{
+% 	\includegraphics[width=0.8\linewidth]{eps/cont_himmelblau.eps}
+% 	\label{fig:cont_himmelblau}
+% }
 \caption{Himmelblau}
 \label{fig:f1}
 \end{center}
@@ -310,14 +315,14 @@ where $D$ is the number of dimension and the fitness value of the global optima 
 
 \begin{figure}[h]
 \begin{center}
-\subfigure[Fitness Landscape]{
-	\includegraphics[width=0.9\linewidth]{eps/3d_shubert.eps}
-	\label{fig:3d_shubert}
-}
-\subfigure[Contour Plot]{
-	\includegraphics[width=0.9\linewidth]{eps/cont_shubert.eps}
-	\label{fig:cont_shubert}
-}
+% \subfigure[Fitness Landscape]{
+	\includegraphics[width=0.8\linewidth]{eps/3d_shubert.eps}
+	% \label{fig:3d_shubert}
+% }
+% \subfigure[Contour Plot]{
+% 	\includegraphics[width=0.8\linewidth]{eps/cont_shubert.eps}
+% 	\label{fig:cont_shubert}
+% }
 \caption{Shubert}
 \label{fig:f2}
 \end{center}
@@ -332,14 +337,14 @@ where $D$ is the number of the dimension and the fitness value of the global opt
 
 \begin{figure}[h]
 \begin{center}
-\subfigure[Fitness Landscape]{
-	\includegraphics[width=0.9\linewidth]{eps/3d_vincent.eps}
-	\label{fig:3d_vincent}
-}
-\subfigure[Contour Plot]{
-	\includegraphics[width=0.9\linewidth]{eps/cont_vincent.eps}
-	\label{fig:cont_vincent}
-}
+% \subfigure[Fitness Landscape]{
+	\includegraphics[width=0.8\linewidth]{eps/3d_vincent.eps}
+% 	\label{fig:3d_vincent}
+% }
+% \subfigure[Contour Plot]{
+% 	\includegraphics[width=0.8\linewidth]{eps/cont_vincent.eps}
+% 	\label{fig:cont_vincent}
+% }
 \caption{Vincent}
 \label{fig:f3}
 \end{center}
@@ -354,15 +359,15 @@ where $D$ is the number of dimension and the fitness value of the global optima 
 
 \begin{figure}[h]
 \begin{center}
-\subfigure[Fitness Landscape]{
-	\includegraphics[width=0.9\linewidth]{eps/3d_rastrigin.eps}
-	\label{fig:3d_rastrigin}
-}
-\subfigure[Contour Plot]{
-	\includegraphics[width=0.9\linewidth]{eps/cont_rastrigin.eps}
-	\label{fig:cont_rastrigin}
-}
-\caption{Modified Rastrigin}
+% \subfigure[Fitness Landscape]{
+	\includegraphics[width=0.8\linewidth]{eps/3d_rastrigin.eps}
+% 	\label{fig:3d_rastrigin}
+% }
+% \subfigure[Contour Plot]{
+% 	\includegraphics[width=0.8\linewidth]{eps/cont_rastrigin.eps}
+% 	\label{fig:cont_rastrigin}
+% }
+% \caption{Modified Rastrigin}
 \label{fig:f4}
 \end{center}
 \end{figure}
@@ -370,6 +375,32 @@ where $D$ is the number of dimension and the fitness value of the global optima 
 \end{description}
 
 \subsection{Performance Measurements}
+To determine how many global optima the algorithm found, accuracy distance $\rho$ is used to calculate the distance between nearest neighbor individuals as shown in Algorithm \ref{code:foptima}. At the first step, the individuals at the final iteration are sorted by the fitness value in descending order. The next step, if the distance between the fitness of the global optimum $ph$ and the nearest neighbor individual $p$ is less than $\varepsilon$, similar nearest neighbor individuals are compared within accuracy distance $\rho$. The better fitness of individual is added to $S$.
+
+\begin{algorithm}[H]
+\caption{Calculate how many global optima the algorithm found}
+\label{code:foptima}
+\begin{algorithmic}[2]
+\REQUIRE $L_{sorted}$ a list of individuals in descending order of the fitness value
+\STATE $S = \emptyset$
+\WHILE{($not \ reaching \ the \ end \ of \ L_{sorted}$)}
+\STATE Get best unprocessed $p \in L_{sorted}$;
+\STATE $found \leftarrow$ FALSE;
+\IF{$d(ph, fit(p))\leq \varepsilon$}
+\FOR{$all \ s \in S$}
+\IF{$d(s,p) \leq \rho$}
+\STATE $found \leftarrow$ TRUE;
+\STATE break;
+\ENDIF
+\ENDFOR
+\IF{not found}
+\STATE let $s \leftarrow S \cup \{p\}$
+\ENDIF
+\ENDIF
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
 \subsubsection{Peak Ratio}
 This experiment employs Peak Ratio(PR) \cite{CDE} as the evaluation criterion in the CEC (IEEE Congress on Evolutionary Computation) 2013 competition \cite{cec2013}. The PR value measures the ratio of the found global and local optima in the total number of true peaks and it is calculated as follows: 
 \begin{equation}
@@ -414,6 +445,27 @@ To test the effectiveness of NRBA mechanism, this section investigates the peak 
 \caption{BA}
 \label{fig:results_ba}
 \end{figure}
+\begin{figure}[h]
+\centering
+\subfigure[$F_1$]{
+	\includegraphics[width=0.8\linewidth]{eps/f1_nsba.eps}
+	\label{fig:f1_nsba}
+}
+\subfigure[$F_2$]{
+	\includegraphics[width=0.8\linewidth]{eps/f2_nsba.eps}
+	\label{fig:f2_nsba}
+}
+\subfigure[$F_3$]{
+	\includegraphics[width=0.8\linewidth]{eps/f3_nsba.eps}
+	\label{fig:f3_nsba}
+}
+\subfigure[$F_4$]{
+	\includegraphics[width=0.8\linewidth]{eps/f4_nsba.eps}
+	\label{fig:f4_nsba}
+}
+\caption{NSBA}
+\label{fig:results_nsba}
+\end{figure}
 
 \begin{figure}[h]
 \centering
@@ -442,22 +494,22 @@ To test the effectiveness of NRBA mechanism, this section investigates the peak 
 \begin{table*}[h]
 \caption{Peak Ratio and Peak Accuracy of BA and NRBA (averaged over 30 runs)}
 \begin{center}
-\begin{tabular}{c|c|c|c|c}
-\multicolumn{5}{c}{$\varepsilon = 1.0$} \\
+\begin{tabular}{c|c|c|c|c|c|c}
+\multicolumn{7}{c}{ accuracy level: $\varepsilon = 1.0$} \\
 \hline
-\multicolumn{1}{c|}{} & \multicolumn{2}{c|}{BA} & \multicolumn{2}{c}{NRBA} \\
+\multicolumn{1}{c|}{} & \multicolumn{2}{c|}{BA} & \multicolumn{2}{c|}{NSBA} & \multicolumn{2}{c}{NRBA} \\
 \hline
- & PR & PA & PR & PA \\
+ & PR & PA & PR & PA & PR & PA \\
 
-Function & (Mean and SD) & (Mean and SD) & (Mean and SD) & (Mean and SD) \\
+Function & (Mean and SD) & (Mean and SD) & (Mean and SD) & (Mean and SD) & (Mean and SD) & (Mean and SD)  \\
 \hline
-$F_1 $ & {\bf 1} $\pm$ 0 & {\bf 0.0060} $\pm$ 0.0028 & {\bf 1} $\pm$ 0  & 0.0326 $\pm$ 0.017  \\
+$F_1 $ & {\bf 1} $\pm$ 0 & {\bf 0.0060} $\pm$ 0.0028 & {\bf 1} $\pm$ 0 & 0.0071 $\pm$ 0.0031 & {\bf 1} $\pm$ 0  & 0.0326 $\pm$ 0.017  \\
 \hline
-$F_2 $ & 0.5870 $\pm$ 0.0991 & {\bf 3.9272} $\pm$ 1.199 & {\bf 0.7111} $\pm$ 0.1077 & 4.765 $\pm$ 1.3987 \\
+$F_2 $ & 0.5870 $\pm$ 0.0991 & {\bf 3.9272} $\pm$ 1.199 & {\bf 0.8148} $\pm$ 0.0763 & 5.0605 $\pm$ 1.1713 &  0.7111 $\pm$ 0.1077 & 4.765 $\pm$ 1.3987 \\
 \hline
-$F_3 $ & 0.4407 $\pm$ 0.0839 & {\bf 0.0044} $\pm$ 0.0021 & {\bf 0.6685} $\pm$ 0.0699 & 0.0080 $\pm$ 0.0027 \\
+$F_3 $ & 0.4407 $\pm$ 0.0839 & {\bf 0.0044} $\pm$ 0.0021 & 0.5963 $\pm$ 0.0530 & 0.0066 $\pm$ 0.0019 & {\bf 0.6685} $\pm$ 0.0699 & 0.0080 $\pm$ 0.0027 \\
 \hline
-$F_4 $ & 0.9833 $\pm$ 0.0333  & {\bf 0.0287} $\pm$ 0.0102 & {\bf 1} $\pm$ 0 & 0.029 $\pm$ 0.0097 \\
+$F_4 $ & 0.9833 $\pm$ 0.0333  & {\bf 0.0287} $\pm$ 0.0102 & 0.0199 $\pm$ 0.0022 & 2.4686 $\pm$ 0.4510 & {\bf 1} $\pm$ 0 & 0.029 $\pm$ 0.0097 \\
 \hline
 \end{tabular}
 \label{tab2}
@@ -467,22 +519,22 @@ $F_4 $ & 0.9833 $\pm$ 0.0333  & {\bf 0.0287} $\pm$ 0.0102 & {\bf 1} $\pm$ 0 & 0.
 \begin{table*}[h]
 \caption{Peak Ratio and Peak Accuracy of BA and NRBA (averaged over 30 runs)}
 \begin{center}
-\begin{tabular}{c|c|c|c|c}
-\multicolumn{5}{c}{$\varepsilon = 1.0E-1$} \\
+\begin{tabular}{c|c|c|c|c|c|c}
+\multicolumn{7}{c}{accuracy level: $\varepsilon = 1.0E-1$} \\
 \hline
-\multicolumn{1}{c|}{} & \multicolumn{2}{c|}{BA} & \multicolumn{2}{c}{NRBA} \\
+\multicolumn{1}{c|}{} & \multicolumn{2}{c|}{BA} & \multicolumn{2}{c|}{NSBA} & \multicolumn{2}{c}{NRBA} \\
 \hline
- & PR & PA & PR & PA \\
+ & PR & PA & PR & PA & PR & PA \\
 
-Function & (Mean and St. D.) & (Mean and St. D.) & (Mean and St. D.) & (Mean and St. D.) \\
+Function & (Mean and St. D.) & (Mean and St. D.) & (Mean and St. D.) & (Mean and St. D.) & (Mean and St. D.) & (Mean and St. D.) \\
 \hline
-$F_1 $ & {\bf 1} $\pm$ 0 & {\bf 0.0060} $\pm$ 0.0028 & {\bf 1} $\pm$ 0 & 0.0326 $\pm$ 0.0170  \\
+$F_1 $ & {\bf 1} $\pm$ 0 & {\bf 0.0060} $\pm$ 0.0028 & {\bf 1} $\pm$ 0 & 0.0071 $\pm$ 0.0031 & {\bf 1} $\pm$ 0 & 0.0326 $\pm$ 0.0170  \\
 \hline
-$F_2 $ & 0.1148 $\pm$ 0.0640 & {\bf 0.0808} $\pm$ 0.0629 & {\bf 0.1185} $\pm$ 0.0821 & 0.1135 $\pm$ 0.0922 \\
+$F_2 $ & 0.1148 $\pm$ 0.0640 & {\bf 0.0808} $\pm$ 0.0629 & 0.2 $\pm$ 0.0985 & 0.1664 $\pm$ 0.0955 & {\bf 0.1185} $\pm$ 0.0821 & 0.1135 $\pm$ 0.0922 \\
 \hline
-$F_3 $ &  0.4407 $\pm$ 0.0839 & {\bf 0.0044} $\pm$ 0.0021 & {\bf 0.6685} $\pm$ 0.0699 & 0.0081 $\pm$ 0.0027\\
+$F_3 $ &  0.4407 $\pm$ 0.0839 & {\bf 0.0044} $\pm$ 0.0021 & 0.5963 $\pm$ 0.0530 & 0.0066 $\pm$ 0.0016 & {\bf 0.6685} $\pm$ 0.0699 & 0.0081 $\pm$ 0.0027\\
 \hline
-$F_4 $ & 0.9833 $\pm$ 0.0333 & {\bf 0.0287} $\pm$ 0.0102 & {\bf 1} $\pm$ 0 & 0.029 $\pm$ 0.0097 \\
+$F_4 $ & 0.9833 $\pm$ 0.0333 & {\bf 0.0287} $\pm$ 0.0102 & 0.0046 $\pm$ 0 & 0.0555 $\pm$ 0.0140 & {\bf 1} $\pm$ 0 & 0.029 $\pm$ 0.0097 \\
 \hline
 \end{tabular}
 \label{tab3}
@@ -492,22 +544,22 @@ $F_4 $ & 0.9833 $\pm$ 0.0333 & {\bf 0.0287} $\pm$ 0.0102 & {\bf 1} $\pm$ 0 & 0.0
 \begin{table*}[h]
 \caption{Peak Ratio and Peak Accuracy of BA and NRBA (averaged over 30 runs)}
 \begin{center}
-\begin{tabular}{c|c|c|c|c}
-\multicolumn{5}{c}{$\varepsilon = 1.0E-2$} \\
+\begin{tabular}{c|c|c|c|c|c|c}
+\multicolumn{7}{c}{$\varepsilon = 1.0E-2$} \\
 \hline
-\multicolumn{1}{c|}{} & \multicolumn{2}{c|}{BA} & \multicolumn{2}{c}{NRBA} \\
+\multicolumn{1}{c|}{} & \multicolumn{2}{c|}{BA} & \multicolumn{2}{c|}{NSBA} & \multicolumn{2}{c}{NRBA} \\
 \hline
- & PR & PA & PR & PA \\
+ & PR & PA & PR & PA & PR & PA \\
 
-Function & (Mean and St. D.) & (Mean and St. D.) & (Mean and St. D.) & (Mean and St. D.) \\
+Function & (Mean and St. D.) & (Mean and St. D.) & (Mean and St. D.) & (Mean and St. D.) & (Mean and St. D.) & (Mean and St. D.) \\
 \hline
-$F_1 $ & {\bf 1} $\pm$ 0 & {\bf 0.0060} $\pm$ 0.0028 & 0.6917 $\pm$ 0.3006 & 0.0127 $\pm$ 0.0076  \\
+$F_1 $ & {\bf 1} $\pm$ 0 & {\bf 0.0060} $\pm$ 0.0028 & {\bf 1} $\pm$ 0 & 0.0071 $\pm$ 0.0031 & 0.6917 $\pm$ 0.3006 & 0.0127 $\pm$ 0.0076  \\
 \hline
-$F_2 $ & {\bf 0.0315} $\pm$ 0.04223 & 0.0029 $\pm$ 0.0040 & 0.0167 $\pm$ 0.0255 & {\bf 0.0020} $\pm$ 0.0034 \\
+$F_2 $ & {\bf 0.0315} $\pm$ 0.04223 & 0.0029 $\pm$ 0.0040 & 0.0296 $\pm$ 0.0379 & 0.0026 $\pm$ 0.0044 & 0.0167 $\pm$ 0.0255 & {\bf 0.0020} $\pm$ 0.0034 \\
 \hline
-$F_3 $ & 0.4407 $\pm$ 0.0839 & {\bf 0.0044} $\pm$ 0.0021 & {\bf 0.6685} $\pm$ 0.0699 & 0.0078 $\pm$ 0.0031 \\
+$F_3 $ & 0.4407 $\pm$ 0.0839 & {\bf 0.0044} $\pm$ 0.0021 & 0.5963 $\pm$ 0.0530 & 0.0066 $\pm$ 0.0016 & {\bf 0.6685} $\pm$ 0.0699 & 0.0078 $\pm$ 0.0031 \\
 \hline
-$F_4 $ & 0.9444 $\pm$ 0.0583 & {\bf 0.0215} $\pm$ 0.0069 & {\bf 0.9806} $\pm$ 0.0352 & 0.0234 $\pm$ 0.0074 \\
+$F_4 $ & 0.9444 $\pm$ 0.0583 & {\bf 0.0215} $\pm$ 0.0069 & NaN & NaN & {\bf 0.9806} $\pm$ 0.0352 & 0.0234 $\pm$ 0.0074 \\
 \hline
 \end{tabular}
 \label{tab4}
@@ -517,13 +569,13 @@ $F_4 $ & 0.9444 $\pm$ 0.0583 & {\bf 0.0215} $\pm$ 0.0069 & {\bf 0.9806} $\pm$ 0.
 
 
 \subsection{Peak Ratio}
-From Table \ref{tab2} in the case of $\varepsilon = 1.0$, NRBA has outperformed than BA for all test functions. For $F_1$, the PR value of NRBA was the same as BA. It can see from this table, both algorithms are able to locate all global optima for all runs (as shown in Fig. \ref{fig:f1_ba} and \ref{fig:f1_nrba}. The case of $\varepsilon=1.0E-1$ from Table \ref{tab3}, the PR values of NRBA were also higher than BA. However, the values of both algorithms went down greatly from Table \ref{tab2} to \ref{tab3} because $F_2$ is extremely sharp and complex landscape compared with the other functions. Table \ref{tab4} shows that NRBA has outperformed than BA in $F_3$ and $F_4$ in the case of $\varepsilon = 1.0E-2$. The performance of NRBA gradually decreased from Table \ref{tab2} to \ref{tab4}. As it can be seen in this table, NRBA was eventually worse than BA in $F_1$ and $F_2$. 
+From Table \ref{tab2} in the case of $\varepsilon = 1.0$, NRBA has outperformed than the other algorithms for almost all test functions. For $F_1$, the PR value of NRBA was the same as the other algorithms. It can see from this table, all algorithms are able to locate all global optima for all runs (as shown in Fig. \ref{fig:f1_ba} \ref{fig:f1_nsba} and \ref{fig:f1_nrba}. The case of $\varepsilon=1.0E-1$ from Table \ref{tab3}, the PR values of NRBA were also higher than BA and NSBA. However, the values of both algorithms went down greatly from Table \ref{tab2} to \ref{tab3} because $F_2$ is extremely sharp and complex landscape compared with the other functions. Table \ref{tab4} shows that NRBA has outperformed than BA and NSBA in $F_3$ and $F_4$ in the case of $\varepsilon = 1.0E-2$. The performance of NRBA gradually decreased from Table \ref{tab2} to \ref{tab4}. As it can be seen in this table, NRBA was eventually worse than BA and NSBA in $F_1$ and $F_2$. 
 
 \subsection{Peak Accuracy}
-NRBA is worse than BA for all functions from all Table \ref{tab2}, \ref{tab3} and \ref{tab4} except for $F_2$ in $\varepsilon=1.0E-2$. As it can be seen the results, the exploit phase of BA has worked well more than NRBA regardless of the difference value of threshold $\varepsilon$ from Table \ref{tab2}, \ref{tab3} and \ref{tab4}. Furthermore, the random search phase of BA is assumed to cope with the exploitation and the exploration. However, the density distribution of the solutions is unbalanced (especially in Fig. \ref{fig:f1_ba} and \ref{fig:f3_ba}) due to promoting all solutions to exploit the global best solution. In contrast, NRBA is able to spread the solutions to multiple optima even if some global optima are located the same domain of Niche Radius.
+NRBA is worse than BA and NSBA for all functions from all Table \ref{tab2}, \ref{tab3} and \ref{tab4} except for $F_2$ in $\varepsilon=1.0E-2$. As it can be seen the results, the exploit phase of BA has worked well more than NRBA regardless of the difference value of threshold $\varepsilon$ from Table \ref{tab2}, \ref{tab3} and \ref{tab4}. Furthermore, the random search phase of BA is assumed to cope with the exploitation and the exploration. However, the density distribution of the solutions is unbalanced (especially in Fig. \ref{fig:f1_ba} and \ref{fig:f3_ba}) due to promoting all solutions to exploit the global best solution. In contrast, NRBA is able to spread the solutions to multiple optima even if some global optima are located the same domain of Niche Radius.
 
 \section{Conclusion}
-This paper proposes BA extending with Niche Radius which enables to avoid overlapping the solutions into the same peak and locate multiple global optima in several multimodal functions which are different from landscape and the number of peaks. For solving multimodal optimization, we improved the three search phases of BA: (i) the movement from neighbors for avoiding overlapping the same found optima; (ii) the exploitation for searching nearby the best solution of its domain with Niche Radius; (iii) the exploration for searching randomly in all domain of the radius. To evaluate the performance of NRBA, this algorithm were compared with BA. The results show that NRBA performed better than BA because the spatial distribution mechanism in NRBA copes with locating many multiple global optima. In contrast, BA is still better than NRBA regarding the peak accuracy which indicates how far the peaks are close to the solutions, due to the distribution mechanism of NRBA.
+This paper proposes BA extending with Niche Radius which enables to avoid overlapping the solutions into the same peak and locate multiple global optima in several multimodal functions which are different from landscape and the number of peaks. For solving multimodal optimization, we improved the three search phases of BA: (i) the movement from neighbors for avoiding overlapping the same found optima; (ii) the exploitation for searching nearby the best solution of its domain with Niche Radius; (iii) the exploration for searching randomly in all domain of the radius. To evaluate the performance of NRBA, this algorithm were compared with BA and NSBA. The results show that NRBA performed better than the other algorithms because the spatial distribution mechanism in NRBA copes with locating many multiple global optima. In contrast, BA and NSBA are still better than NRBA regarding the peak accuracy which indicates how far the peaks are close to the solutions, due to the distribution mechanism of NRBA.
 
 In the future, we will improve the algorithm performances: the exploration for searching all global optima completely, and the exploitation for locating global optima rapidly.
 % \subsection{Maintaining the Integrity of the Specifications}
@@ -769,6 +821,8 @@ O. M. Shir, T. Back: Dynamic niching in evolution strategies with covariance mat
 % \bibitem{f2}
 % H. Pohlheim, GEATbx Examples: Examples of Objective Functions (2005). Retrieved June 2013, from \url{http://www.geatbx.com/download/GEATbx_ObjFunExpl_v37.pdf.}
 
+\bibitem{NSBA}
+ T. Iwase, R. Takano, F. Uwano, H. Sato and K. Takadama, "Novelty Search-based Bat Algorithm: Adjusting Distance among Solutions for Multimodal Optimization", {\it Proceedings of The 22nd Asia Pacific Symposium on Intelligent and Evolutionary Systems (IES 2018)}, pp.29--34, 2018. 
 
 \bibitem{cec2013}
 X. Li, A. Engelbrecht, and M. G. Epitropakis, "Benchmark Functions for CEC'2013 Special Session and Competition on Niching Methods for Multimodal Function Optimization", {\it Evol. Comput.} Mach. Learn. Group, RMIT University, Melbourne, VIC, Australia, Tech. Rep., 2013.
