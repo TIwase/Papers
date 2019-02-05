@@ -85,7 +85,7 @@ Bat Algorithm(BA) \cite{BA}は群知能アルゴリズムの一つで，対象�
 \label{ss:dns}
 % \subsection{Niche Radius}
 % \label{ss:nr}
-探索空間の大きさと局所解数(あるいは個体数)に基づいて算出されるNiche Radius \cite{niche} は$\sigma=\frac{\sqrt{(x_{ub}-x_{lb})^2}}{2 \sqrt[D]{q}}$で表される．
+探索空間の大きさと局所解数(あるいは個体数)に基づいて算出されるNiche Radiusは$\sigma=\frac{\sqrt{(x_{ub}-x_{lb})^2}}{2 \sqrt[D]{q}}$で表される．
 % \begin{equation}
 % \label{eq:nr-d}
 % dist=\frac{1}{2}\sqrt{(x_{ub}-x_{lb})^2}
@@ -202,14 +202,16 @@ $NPF_{run}$は，そのシードにおけるアルゴリズムが発見した最
 本実験では$f_{max}=1$, $f_{min}=0$，ラウドネス$A^0=1$，パルスレート$r^0 \in [0,1]$と設定した．また$\alpha= \gamma = 0.9$とし，個体数$N=50$，世代数を10000とし，ランダムシードを変えた実験を30回行った．
 
 \section{結果と考察}
-% \begin{table}[h]
-% \caption{PR値の平均及び標準偏差(実験回数50試行)}
-% \begin{center}
-% \begin{tabular}{c|c|c}
-% \hline
-
-% Algorithm & Median & Mean $\pm$ St.D  \\
-
+\begin{table}[t]
+\caption{PR値の平均及び標準偏差(実験回数50試行)}
+\begin{center}
+\small
+\begin{tabular}{c|c|c|c|c}
+\hline
+ & \scalebox{0.9}{BA} & \scalebox{0.9}{NSBA} & \scalebox{0.9}{NRBA} & \scalebox{0.9}{DNRBA} \\
+ 
+\scalebox{0.9}{Func} & \scalebox{0.9}{Mean $\pm$ St.D} & \scalebox{0.9}{Mean $\pm$ St.D} & \scalebox{0.9}{Mean $\pm$ St.D} & \scalebox{0.9}{Mean $\pm$ St.D} \\
+\hline
 % \hline
 % NSGAII & 0.9350 & 0.7274 & 0.0646 \\
 % \hline
@@ -240,25 +242,26 @@ $NPF_{run}$は，そのシードにおけるアルゴリズムが発見した最
 % N-VMO & 1.0 & 0.9540 & 0.1738 \\
 % \hline
 % PNA-NSGAII & 1.0 & 0.8960 & 0.0929 \\
-% \hline
-% NSBA & 0.6990 & 0.5953 $\pm$ 0.0629 \\
-% \hline
-% NRBA & 0.9520 & 0.7659 $\pm$ 0.1165 \\
-% \hline
-% DNRBA & 0.9070 & 0.7540 $\pm$ 0.1519 \\
-% \hline
+\scalebox{0.9}{$F_1$} & \scalebox{0.9}{0.059 $\pm$ 0} & \scalebox{0.9}{0.371 $\pm$ 0.041} & \scalebox{0.9}{0.692 $\pm$ 0.098} & \scalebox{0.9}{{\bf 0.745} $\pm$ 0.061} \\
+\hline
+\scalebox{0.9}{$F_2$} & \scalebox{0.9}{0.492 $\pm$ 0} & \scalebox{0.9}{0.50 $\pm$ 0} & \scalebox{0.9}{0.992 $\pm$ 0.045} & \scalebox{0.9}{{\bf 1} $\pm$ 0} \\
+\hline
+\scalebox{0.9}{$F_3$} & \scalebox{0.9}{0.50 $\pm$ 0} & \scalebox{0.9}{0.50 $\pm$ 0} & \scalebox{0.9}{0.70 $\pm$ 0.245} & \scalebox{0.9}{{\bf 1} $\pm$ 0} \\
+\hline
+\scalebox{0.9}{$F_4$} & \scalebox{0.9}{0.242 $\pm$ 0.137} & \scalebox{0.9}{{\bf 1} $\pm$ 0} & \scalebox{0.9}{0.858 $\pm$ 0.124} & \scalebox{0.9}{0.867 $\pm$ 0.127} \\
+\hline
 
-% \end{tabular}
-% \label{tab:MOP_results}
-% \end{center}
-% \end{table}
+\end{tabular}
+\label{tab:MOP_results}
+\end{center}
+\end{table}
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=1.0\linewidth]{eps/results_comp.eps}
-\caption{$\varepsilon=0.1$におけるPRの平均値}
-\label{fig:resutls_comp_E1}
-\end{figure}
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=1.0\linewidth]{eps/results_comp.eps}
+% \caption{$\varepsilon=0.1$におけるPRの平均値}
+% \label{fig:resutls_comp_E1}
+% \end{figure}
 
 % \begin{figure}[t]
 % \begin{center}
@@ -284,8 +287,8 @@ $NPF_{run}$は，そのシードにおけるアルゴリズムが発見した最
 % \end{center}
 % \end{figure}
 
-図\ref{fig:resutls_comp_E1}は$\varepsilon=0.1$とした時のPRの平均値をヒートマップ化したものである．
-全体的に，提案した3つの手法の中ではDNRBAが最もPR値が高かったが局所解が存在しない最適解のみのHimmelblau関数ではNSBAの方が探索性能が高かった．これはNSBAの探索空間にランダムで個体生成する機構が働いたことが一つの要因であると考えられる．
+表\ref{tab:MOP_results}は$\varepsilon=0.1$とした時のPRの平均値をヒートマップ化したものである．
+全体的に，提案した3つの手法の中ではDNRBAが最もPR値が高かったが，局所解が存在しない最適解のみのHimmelblau関数ではNSBAの方が探索性能が高かった．これはDNRBAの同じ局所解への収束を避ける機構が$F_1$から$F_3$までは有効であったが，最適解のみを持つ$F_4$関数では性能がNSBAよりも劣ったと考えられる．
 
 \section{おわりに}
 本研究では最適解だけでなく，複数の局所解を同時に探索可能なDNRBAを提案した．提案手法の有効性を検証するため，評価関数を用いて，他の手法との比較実験を行った．結果，複雑な多峰性を持つ関数においてはDNRBAの方が探索性能が高く，複雑な関数において有効であることを示した．
@@ -295,7 +298,7 @@ $NPF_{run}$は，そのシードにおけるアルゴリズムが発見した最
 \begin{thebibliography}{*}
 \bibitem{BA} X. S. Yang, “A Metaheuristic Bat-Inspired Algorithm”， {\it in: Nature Inspired Cooperative Strategies for Optimization (NISCO 2010) (Eds J.R. Gonzalez et al.)}, {\it Studies in Com-putational Intelligence}, Springer Berlin, 284, Springer, 65-74 (2010).
 
-\bibitem{niche} D.Beasley, D.R. Bull, and R.R. Martin, "A sequantial niche technique for multimodal function optimization," {\it Evolutionary Computation}, vol. 1, no.2, pp. 101-125,1993.
+% \bibitem{niche} D.Beasley, D.R. Bull, and R.R. Martin, "A sequantial niche technique for multimodal function optimization," {\it Evolutionary Computation}, vol. 1, no.2, pp. 101-125,1993.
 
 \bibitem{CEC2013} X. Li, A. et.al. , "Benchmark Functions for CEC'2013 Special Session and Competition on Niching Methods for Multimodal Function Optimization", {\it Evol. Comput.} Mach. Learn. Group, RMIT University, Tech. Rep., 2013.
 
