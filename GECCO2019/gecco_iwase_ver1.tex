@@ -27,7 +27,7 @@
 \copyrightyear{2019}
 
 %\acmArticle{4}
-\acmPrice{15.00}
+% \acmPrice{15.00}
 
 % These commands are optional
 %\acmBooktitle{Transactions of the ACM Woodstock conference}
@@ -37,96 +37,100 @@
 
 
 \begin{document}
-\title{Nearest-better Clustering }
+\title{A Niching Bat Algorithm based on Nearest-better Clustering for Multimodal Optimization}
 \titlenote{Produces the permission block, and
   copyright information}
-\subtitle{Subtitle}
-\subtitlenote{The full version of the author's guide is available as
-  \texttt{acmart.pdf} document}
+% \subtitle{Subtitle}
+% \subtitlenote{The full version of the author's guide is available as
+  % \texttt{acmart.pdf} document}
 
 %%% The submitted version for review should be ANONYMOUS
-\author{Ben Trovato}
-\authornote{Dr.~Trovato insisted his name be first.}
+\author{Takuya Iwase}
+% \authornote{Dr.~Trovato insisted his name be first.}
 \orcid{1234-5678-9012}
 \affiliation{%
-  \institution{Institute for Clarity in Documentation}
-  \streetaddress{P.O. Box 1212}
-  \city{Dublin} 
-  \state{Ohio} 
-  \postcode{43017-6221}
+  \institution{The Univ. of Electro-Communications}
+  % \streetaddress{P.O. Box 1212}
+  \city{Tokyo} 
+  \country{Japan} 
+  % \postcode{43017-6221}
 }
-\email{trovato@corporation.com}
+\email{tanu\_iwa@cas.lab.uec.ac.jp}
 
-\author{G.K.M. Tobin}
-\authornote{The secretary disavows any knowledge of this author's actions.}
+\author{Ryo Takano}
+% \authornote{The secretary disavows any knowledge of this author's actions.}
 \affiliation{%
-  \institution{Institute for Clarity in Documentation}
-  \streetaddress{P.O. Box 1212}
-  \city{Dublin} 
-  \state{Ohio} 
-  \postcode{43017-6221}
+  \institution{The Univ. of Electro-Communications}
+  % \streetaddress{P.O. Box 1212}
+  \city{Tokyo} 
+  \country{Japan} 
+  % \postcode{43017-6221}
 }
-\email{webmaster@marysville-ohio.com}
+\email{takano@cas.lab.uec.ac.jp}
 
-\author{Lars Th{\o}rv{\"a}ld}
-\authornote{This author is the
-  one who did all the really hard work.}
+\author{Fumito Uwano}
+% \authornote{This author is the
+  % one who did all the really hard work.}
 \affiliation{%
-  \institution{The Th{\o}rv{\"a}ld Group}
-  \streetaddress{1 Th{\o}rv{\"a}ld Circle}
-  \city{Hekla} 
-  \country{Iceland}}
-\email{larst@affiliation.org}
+  \institution{The Univ. of Electro-Communications}
+  % \streetaddress{Tokyo}
+  \city{Tokyo} 
+  \country{Japan}}
+\email{uwano@cas.lab.uec.ac.jp}
 
-\author{Valerie B\'eranger}
+\author{Hiroyuki Sato}
 \affiliation{%
-  \institution{Inria Paris-Rocquencourt}
-  \city{Rocquencourt}
-  \country{France}
-}
-\author{Aparna Patel} 
-\affiliation{%
- \institution{Rajiv Gandhi University}
- \streetaddress{Rono-Hills}
- \city{Doimukh} 
- \state{Arunachal Pradesh}
- \country{India}}
-\author{Huifen Chan}
-\affiliation{%
-  \institution{Tsinghua University}
-  \streetaddress{30 Shuangqing Rd}
-  \city{Haidian Qu} 
-  \state{Beijing Shi}
-  \country{China}
-}
+  \institution{The Univ. of Electro-Communications}
+  \city{Tokyo}
+  \country{Japan}}
+  \email{h.sato@uec.ac.jp}
 
-\author{Charles Palmer}
+\author{Keiki Takadama} 
 \affiliation{%
-  \institution{Palmer Research Laboratories}
-  \streetaddress{8600 Datapoint Drive}
-  \city{San Antonio}
-  \state{Texas} 
-  \postcode{78229}}
-\email{cpalmer@prl.com}
+ \institution{The Univ. of Electro-Communications}
+ % \streetaddress{Rono-Hills}
+ \city{Tokyo} 
+ % \state{Arunachal Pradesh}
+ \country{Japan}}
+ \email{keiki@hc.uec.ac.jp}
+% \author{Huifen Chan}
+% \affiliation{%
+%   \institution{Tsinghua University}
+%   \streetaddress{30 Shuangqing Rd}
+%   \city{Haidian Qu} 
+%   \state{Beijing Shi}
+%   \country{China}
+% }
 
-\author{John Smith}
-\affiliation{\institution{The Th{\o}rv{\"a}ld Group}}
-\email{jsmith@affiliation.org}
+% \author{Charles Palmer}
+% \affiliation{%
+%   \institution{Palmer Research Laboratories}
+%   \streetaddress{8600 Datapoint Drive}
+%   \city{San Antonio}
+%   \state{Texas} 
+%   \postcode{78229}}
+% \email{cpalmer@prl.com}
 
-\author{Julius P.~Kumquat}
-\affiliation{\institution{The Kumquat Consortium}}
-\email{jpkumquat@consortium.net}
+% \author{John Smith}
+% \affiliation{\institution{The Th{\o}rv{\"a}ld Group}}
+% \email{jsmith@affiliation.org}
+
+% \author{Julius P.~Kumquat}
+% \affiliation{\institution{The Kumquat Consortium}}
+% \email{jpkumquat@consortium.net}
 
 % The default list of authors is too long for headers.
 \renewcommand{\shortauthors}{B. Trovato et al.}
 
 
 \begin{abstract}
-This paper provides a sample of a \LaTeX\ document which conforms,
-somewhat loosely, to the formatting guidelines for
-ACM SIG Proceedings.\footnote{This is an abstract footnote}
+% This paper provides a sample of a \LaTeX\ document which conforms,
+% somewhat loosely, to the formatting guidelines for
+% ACM SIG Proceedings.\footnote{This is an abstract footnote}
+    This paper proposes Bat Algorithm based on Nearest-better Clustering for locationg multiple global optima in multimodal landscapes. Most niching methods which are desined for finding multiple optima, are considered not parameter tuning but replacing the nearest neighbor individuals  
+    Evolutionary algorithms (EAs) are often used for multimodal optimization which is modeled as real-world problem. However, most EAs still not enough to find multiple local optima because of the concept of the solution movement between nearest neighbor solutions. This paper proposes the niche radius-based bat algorithm (NRBA), which is designed to find multiple local optima in multimodal optimization.
+    We focus on bat algorithm (BA) which deals with the trade-off between exploration and exploitation in the evolutionary process and extend it with niche radius which can control and modify the search space of solutions to avoid overlapping the found optima. In detail, the proposed BA consists of three search phases: (i) the movement from neighbors for avoiding overlapping the same found optima; (ii) the exploitation for searching nearby the best solution of its domain with Niche Radius; (iii) the exploration for searching randomly in all domain of the radius. In order to evaluate the performance of NRBA, this paper employs some test-bed multimodal functions and compare NRBA with BA and NSBA. The experimental results suggest that NRBA is able to provide the better search performance than BA and NSBA to find multiple global optima in most of best-bed multimodal functions.
 \end{abstract}
-
 %
 % The code below should be generated by the tool at
 % http://dl.acm.org/ccs.cfm
@@ -157,13 +161,13 @@ ACM SIG Proceedings.\footnote{This is an abstract footnote}
 </ccs2012>  
 \end{CCSXML}
 
-\ccsdesc[500]{Computer systems organization~Embedded systems}
-\ccsdesc[300]{Computer systems organization~Redundancy}
-\ccsdesc{Computer systems organization~Robotics}
-\ccsdesc[100]{Networks~Network reliability}
+\ccsdesc[500]{Mathematics of computing~Bio-inspired optimization}
+% \ccsdesc[300]{Computer systems organization~Redundancy}
+% \ccsdesc{Computer systems organization~Robotics}
+% \ccsdesc[100]{Networks~Network reliability}
 
 
-\keywords{ACM proceedings, \LaTeX, text tagging}
+\keywords{Bat Algorithm, Multimodal function, Niching methods}
 
 
 \maketitle

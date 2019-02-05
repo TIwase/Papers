@@ -26,18 +26,18 @@
 % 本論文では,多峰性関数の最適化問題において，最適解と局所解を含む解を探索可能なアルゴリズムの構築及び，その有効性を検証することを目的とする．
 実問題を多峰性最適化問題として捉えた時，一つの最適解だけでなく複数の局所解を探索することは，有力な解候補を選択肢として持つという意味で重要である．このような複数解探索手法として，局所解への収束を防ぐ機構であるNiching scheme と進化計算アルゴリズムを組み合わせた Niching method が探究されているが，いずれの手法においても密接した解を除き，探索空間内にランダムに解生成するため，乱数に強く依存するという問題がある．本研究では多点探索アルゴリズムの中でも大域探索と局所探索のバランスを調整可能なBat Algortihm を採用し，個体間距離に基づく動的変化を考慮したNiching scheme を用いることで，最適解だけでなく局所解も同時に探索可能な複数解探索手法を提案する．具体的には，
 % 具体的には，(i) 未探索領域へ解の探索を促すNovelty Searchを導入したNovelty Search-based Bat Algorithm (NSBA)，(ii) 探索空間の大きさと最適解数から算出される Niche Radius を用いることで，予め各個体の探索領域を決定し，その探索領域内の最良個体から遠ざかる方向に移動させることによって，個体同士を同じ解に留まらせないNiche Radius-based Bat Algorithm (NRBA)，(iii) 
-探索領域を動的に変更することで，個体同士を同じ解に留まらせないBat Algorithm with Dynamic Niche Radius (DNRBA)を考案し，最適解と局所解の数が異なる多峰性関数を用いて他の複数解探索手法と比較実験を行う．
+探索領域を動的に変更することで，個体同士を同じ局所解に留まらせないBat Algorithm with Dynamic Niche Radius (DNRBA)を考案し，最適解と局所解の数が異なる多峰性関数を用いて他の複数解探索手法と比較実験を行う．
 
 \section{Bat Algorithm}
 Bat Algorithm(BA) \cite{BA}は群知能アルゴリズムの一つで，対象物までの方向や距離を知るコウモリの特性（エコロケーション）を利用して周囲の状況を認知し，大域探索と局所探索が進むにつれて探索速度を徐々に落とし，探索性能を自動調節することが可能なアルゴリズムである．
 % ．BAにおいて，コウモリは自らの発する超音波の周波数を持ち，その周波数を調整するためのパラメータとしてラウドネス${A}$を用いる．
-各個体の周波数${f_i}$，速度${v_i}$，位置${x_i}$は以下の式で定義し，更新される．
+各個体の周波数${f_i}$，速度${v_i}$，位置${x_i}$は世代数毎に，更新される．
 ラウドネス${A}$は，コウモリが対象物に近づくと値が減少し，移動距離も比例して短くなる．
 コウモリの行動は以下３つで構成される．
 \begin{itemize}
-\item 最良解方向へ探索: 各コウモリは位置${x_i}$において，自身が発する周波数${f_i}$の反響によって対象物との距離を測り，対象物に向かって速度${v_i}$で移動する．
-\item 局所探索: 対象物近辺にコウモリを移動させる．
-\item ランダム探索: 探索領域内にコウモリをランダムで移動させる．
+\item 最良解方向へ探索: 各個体は位置${x_i}$において，自身が発する周波数${f_i}$の反響によって対象物との距離を測り，対象物に向かって速度${v_i}$で移動する．
+\item 局所探索: 対象物近辺に個体を移動させる．
+\item ランダム探索: 探索領域内に個体をランダムで移動させる．
 \end{itemize}
 
 % Bat Algorithm(BA) \cite{BA} は群知能アルゴリズムの一つで，対象物までの方向や距離を知るコウモリの特性（エコロケーション）を利用して周囲の状況を認知し，大域的な探索が進むにつれて探索速度を徐々に調節することが可能なアルゴリズムである．
@@ -85,16 +85,16 @@ Bat Algorithm(BA) \cite{BA}は群知能アルゴリズムの一つで，対象�
 \label{ss:dns}
 % \subsection{Niche Radius}
 % \label{ss:nr}
-探索空間の大きさと局所解数(あるいは個体数)に基づいて算出されるNiche Radiusは次式で表される．
+探索空間の大きさと局所解数(あるいは個体数)に基づいて算出されるNiche Radius \cite{niche} は$\sigma=\frac{\sqrt{(x_{ub}-x_{lb})^2}}{2 \sqrt[D]{q}}$で表される．
 % \begin{equation}
 % \label{eq:nr-d}
 % dist=\frac{1}{2}\sqrt{(x_{ub}-x_{lb})^2}
 % \end{equation}
-\begin{equation}
-\label{eq:nr-s}
-\sigma=\frac{\sqrt{(x_{ub}-x_{lb})^2}}{2 \sqrt[D]{q}}
-\end{equation}
-この時，$x_{ub},x_{lb}$は探索空間の上限と下限を表し，$D$は次元数を表す．$q$は解の数(あるいは個体数)が適用される．
+% \begin{equation}
+% \label{eq:nr-s}
+% \sigma=\frac{\sqrt{(x_{ub}-x_{lb})^2}}{2 \sqrt[D]{q}}
+% \end{equation}
+この時，$x_{ub},x_{lb}$は探索空間の上限と下限を表し，$D$は次元数を表す．$q$は局所解の数(あるいは個体数)が適用される．
 ここでは同じ類似度を持つ個体同士の評価値を比較するため．類似度を次式で求める．
 \begin{equation}
 \label{eq:sfunc}
@@ -103,11 +103,11 @@ sh(d_{ij})= \begin{cases}
 0 & ({\rm otherwise})
 \end{cases}
 \end{equation}
-ここで$d_{ij}$は個体$i,j$の間の距離を表し，$\alpha$は係数で$\sigma$はある恣意的な閾値(あるいはNiche radius)を表す．個体間距離が近いほど $sh(d_{ij})$の値は大きくなり，この数値を基にNiche count $m_i$を算出する．
-\begin{equation}
-\label{eq:nc}
-m_i=\sum_{j=1}^N sh(d_{ij})
-\end{equation}
+ここで$d_{ij}$は個体$i,j$の間の距離を表し，$\alpha$は係数で$\sigma$はある恣意的な閾値(あるいはNiche radius)を表す．個体間距離が近いほど $sh(d_{ij})$の値は大きくなり，この数値を基にNiche count $m_i=\sum_{j=1}^N sh(d_{ij})$を算出する．
+% \begin{equation}
+% \label{eq:nc}
+% m_i=\sum_{j=1}^N sh(d_{ij})
+% \end{equation}
 $m_i$は$i$番目の個体に対する全個体の密度を表し，この式を用いてDynamic niche sharing \cite{DNS} は次式で表される．
 \begin{equation}
 \label{eq:dns}
@@ -145,7 +145,7 @@ $v_i$，$x_i$は個体の速度と位置を表し，$x_{NR*}$は$x_i$が属す�
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.4\linewidth]{eps/SICESSI2018/niche_radius.eps}
+  \includegraphics[width=1.0\linewidth]{eps/nr.eps}
   \caption{解候補の生成}
   \label{fig:nr}
 \end{figure}
@@ -192,18 +192,14 @@ $v_i$，$x_i$は個体の速度と位置を表し，$x_{NR*}$は$x_i$が属す�
 % \subsection{解候補の生成}
 % 速度$v_i$を分割した解候補の中から最良の解を$x_i^{t+1}$として生成する．
 \section{実験}
-CEC ({\it IEEE Congress on Evolutionary Computation}) 2013 Competition 
-% on Niching Methods for Multimodal Function Optimization 
-\cite{CEC2013} で扱われたベンチマーク関数$G_1$-$G_6$を使用し，従来手法と比較することで提案手法の探索性能を検証する．
+最適解と局所解を持つベンチマーク関数$F_1:$ Griewank, $F_2:$ Six-Hump-Back-Camel, $F_3:$ Michalewiczと，局所解を持たず最適解のみ存在する$F_4:$ Himmelblauを使用し，従来手法と3つの提案手法を比較することで探索性能を調べる．
 評価尺度として発見した解探索率Peak Ratio (PR) \cite{CEC2013} を採用し，次式で表される．
 \begin{equation}
 \label{eq:PR}
 PR=\frac{\sum_{run=1}^{NR}NPF_{run}}{NKP*NR}
 \end{equation}
 $NPF_{run}$は，そのシードにおけるアルゴリズムが発見した最適解数を示し，NKPは評価関数が持つ全最適解数を示す．NRは実験の試行回数を示す．解発見の定義は最近傍個体との評価値の差分が閾値$\varepsilon$によって設定した．
-
-
-本実験では$f_{max}=1$, $f_{min}=0$，ラウドネス$A^0=1$，パルスレート$r^0 \in [0,1]$と設定した．また$\alpha= \gamma = 0.9$とし，個体数$N=100$，世代数を$G_1$から$G_5$までは50000, $G_6$は200000とし，ランダムシードを変えた実験を50回行った．
+本実験では$f_{max}=1$, $f_{min}=0$，ラウドネス$A^0=1$，パルスレート$r^0 \in [0,1]$と設定した．また$\alpha= \gamma = 0.9$とし，個体数$N=50$，世代数を10000とし，ランダムシードを変えた実験を30回行った．
 
 \section{結果と考察}
 % \begin{table}[h]
@@ -259,8 +255,8 @@ $NPF_{run}$は，そのシードにおけるアルゴリズムが発見した最
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.7\linewidth]{eps/E-1_1.eps}
-\caption{$\varepsilon=1.0E-1$におけるPRの平均値}
+\includegraphics[width=1.0\linewidth]{eps/results_comp.eps}
+\caption{$\varepsilon=0.1$におけるPRの平均値}
 \label{fig:resutls_comp_E1}
 \end{figure}
 
@@ -288,8 +284,8 @@ $NPF_{run}$は，そのシードにおけるアルゴリズムが発見した最
 % \end{center}
 % \end{figure}
 
-図\ref{fig:resutls_comp_E1}は$\varepsilon=1.0E-1$とした時のPRの平均値をヒートマップ化したものである．
-提案した3つの手法の中ではDNRBAが最もPR値が高かった．また最適解周辺の勾配が強い$G_6$関数では全ての手法で探索性能が悪化したが，中でもDNRBAは探索性能を保持することができた．これは，局所解へ陥ってしまった個体を最適解へ移動させる機構を持つDynamic Niche Radiusが複雑な関数においては有効であると考えられる．
+図\ref{fig:resutls_comp_E1}は$\varepsilon=0.1$とした時のPRの平均値をヒートマップ化したものである．
+全体的に，提案した3つの手法の中ではDNRBAが最もPR値が高かったが局所解が存在しない最適解のみのHimmelblau関数ではNSBAの方が探索性能が高かった．これはNSBAの探索空間にランダムで個体生成する機構が働いたことが一つの要因であると考えられる．
 
 \section{おわりに}
 本研究では最適解だけでなく，複数の局所解を同時に探索可能なDNRBAを提案した．提案手法の有効性を検証するため，評価関数を用いて，他の手法との比較実験を行った．結果，複雑な多峰性を持つ関数においてはDNRBAの方が探索性能が高く，複雑な関数において有効であることを示した．
@@ -299,13 +295,13 @@ $NPF_{run}$は，そのシードにおけるアルゴリズムが発見した最
 \begin{thebibliography}{*}
 \bibitem{BA} X. S. Yang, “A Metaheuristic Bat-Inspired Algorithm”， {\it in: Nature Inspired Cooperative Strategies for Optimization (NISCO 2010) (Eds J.R. Gonzalez et al.)}, {\it Studies in Com-putational Intelligence}, Springer Berlin, 284, Springer, 65-74 (2010).
 
-% \bibitem{niche} D.Beasley, D.R. Bull, and R.R. Martin, "A sequantial niche technique for multimodal function optimization," {\it Evolutionary Computation}, vol. 1, no.2, pp. 101-125,1993.
+\bibitem{niche} D.Beasley, D.R. Bull, and R.R. Martin, "A sequantial niche technique for multimodal function optimization," {\it Evolutionary Computation}, vol. 1, no.2, pp. 101-125,1993.
 
-\bibitem{CEC2013} X. Li, A. Engelbrecht, and M. G. Epitropakis, "Benchmark Functions for CEC'2013 Special Session and Competition on Niching Methods for Multimodal Function Optimization", {\it Evol. Comput.} Mach. Learn. Group, RMIT University, Melbourne, VIC, Australia, Tech. Rep., 2013.
+\bibitem{CEC2013} X. Li, A. et.al. , "Benchmark Functions for CEC'2013 Special Session and Competition on Niching Methods for Multimodal Function Optimization", {\it Evol. Comput.} Mach. Learn. Group, RMIT University, Tech. Rep., 2013.
 
 % \bibitem{FS} D. E. Goldberg, and J. Richardson, "Genetic Algorithms with Sharing for Multimodal Function Optimization", {\it in Proc. of the Second International Conference on Genetic Algorithms}, J. Grefenstette, Ed., pp.41-49, 1987.
 
-\bibitem{DNS} B. Miller, "Genetic algorithms with dynamic niche sharing for multimodal function optimization", {\it In: Proceedings of the IEEE International Conference on Evolutionary Computation}, 1996.
+\bibitem{DNS} B. Miller, "Genetic algorithms with dynamic niche sharing for multimodal function optimization", {\it IEEE International Conference on Evolutionary Computation}, 1996.
 % \bibitem{crowdingDE} R. Thomsen, "Multimodal Optimization Using Crowding-Based Differential Evolution," {\it in Proc. IEEE Congr. Evol. Comput.,} pp.1382-1389, 2004.
 \end{thebibliography}
 }
