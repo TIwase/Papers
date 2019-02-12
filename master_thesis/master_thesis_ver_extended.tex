@@ -1715,7 +1715,14 @@ $v_i$，$x_i$は個体の速度と位置を表し，$x_{NR*}$は$x_i$が属す�
 \mbox{\boldmath $x_i^t$} & ({\rm otherwise})
 \end{cases}
 \end{equation}
-ここでは個体の分布密度が高いほど，個体$x_i$の持つNiche Count $m_i$の範囲内にある最良個体$x_{NR*}$から遠ざかる方向へ新たに解候補を生成する．
+ここでは個体の分布密度が高いほど，個体$x_i$の持つNiche Count $m_i$の範囲内にある最良個体$x_{NR*}$から遠ざかる方向へ新たに解候補を生成する．探索範囲決定のイメージ図\ref{fig:dnr}に示す．
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\linewidth]{eps/dynamic_niche_radius.eps}
+\label{fig:dnr}
+\caption{Dynamic Niche Radiusのイメージ図}
+\end{figure}
 
 局所探索では(\ref{eq:mi})式で算出した最良個体$x_{NR*}$が持つ$m_i$の範囲内で個体$x_i$が新たに解候補$x_{loc}$を生成する．
 \begin{equation}
