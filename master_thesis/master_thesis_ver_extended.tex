@@ -156,21 +156,21 @@ DCAXCSRの有効性を検証するため, 784次元の画像を分類するMNIST
 % \subsection{Evolutionary Algorithms (EAs)}
 \label{sec:MA}
 
-現実問題は非常に複雑であり，その複雑さを多峰性関数として表現した問題をを最適化するためにEvolutionary Algorithms (EAs)が用いられるようになった．EAsのメカニズムとして単一の最適解を探索することを目的として設計されており，生物の生殖や突然変異，交叉，適者生存といった過程をモデルとしている．その代表的なアルゴリズムを\ref{ss:GA}節から\ref{ss:nsga}節で紹介する．
+現実問題の複雑さを多峰性関数として表現した問題を最適化するためにEvolutionary Algorithms (EAs)が用いられるようになった．EAsのメカニズムとして単一の最適解を探索することを目的として設計されており，生物の生殖や突然変異，交叉，適者生存といった過程をモデルとしている．その代表的なアルゴリズムを\ref{ss:GA}節から\ref{ss:nsga}節で紹介する．
 
 \subsection{遺伝的アルゴリズム (GA)}
 \label{ss:GA}
-遺伝的アルゴリズム(Genetic Algorithm:GA) \cite{GA} は生物の進化の過程を模擬したアルゴリズムであり，最適化問題において最も基本的なヒューリスティック手法である．生物は次の世代により良い遺伝子を持った個体を残すため，まずは親集合の中から個体を選択し，選択した個体同士を交叉させる．この時，ある一定の確率で突然変異させる．次に，交叉させて新たに生成された個体を子集合の解候補とし，親と子の個体を評価して，評価値の高い個体は次世代の個体として保存され，評価値の低い個体は淘汰される．各個体に対し，この「選択」，「交叉」，「突然変異」，「評価(淘汰)」を繰り返すことで，環境に対する適合度が高くなっていく(評価値の高い遺伝子が残る)．アルゴリズムの疑似コードは，以下のAlgorithm \ref{code:ga}に記す．
+遺伝的アルゴリズム(Genetic Algorithm:GA) \cite{GA} は生物の進化の過程を模擬したアルゴリズムであり，最適化問題において最も基本的なヒューリスティック手法である．生物は次の世代により良い遺伝子を持った個体を残すため，まずは親集合の中から個体を選択し，選択した個体同士を交叉させる．この時，ある一定の確率で突然変異させる．次に，交叉させて新たに生成された個体を子集合の解候補とし，親と子の個体を評価して，評価値の高い個体は次世代の個体として保存され，評価値の低い個体は淘汰される．各個体に対し，この「選択」，「交叉」，「突然変異」，「評価(淘汰)」を繰り返すことで，環境に対する適合度が高くなっていく(評価値の高い遺伝子が残る)．アルゴリズムの疑似コードはAlgorithm \ref{code:ga}に，その手順は以下に記す．
 
 \begin{itemize}
-\item {\bf STEP1: 個体の初期化} \\
-$N$個の個体$x_i$を初期集合として生成し，ランダムな評価値を割り当てる．また交叉率と突然変異率を定義する．(1-2行目)
-\item {\bf STEP2: 選択と交叉} \\
-選択した親同士$x_i$を交叉率$P_c$により交叉させ，子(解候補) $x_i^{new}$を生成する．(5-7行目)
-\item {\bf STEP4: 突然変異} \\
-突然変異率$P_m$により，子(解候補)の評価値を変化させる．(8-10行目)
-\item {\bf STEP5: 評価} \\
-親個体$x_i$と子個体$x_i^{new}$の評価値を比較し，評価値の高い個体を次世代に残す．(11-13行目)
+\item {\bf STEP1: 個体の初期化(1-2行目)} \\
+$N$個の個体$x_i$を初期集合として生成し，ランダムな評価値を割り当てる．また交叉率と突然変異率を定義する．
+\item {\bf STEP2: 選択と交叉(5-7行目)} \\
+選択した親同士$x_i$を交叉率$P_c$により交叉させ，子(解候補) $x_i^{new}$を生成する．
+\item {\bf STEP3: 突然変異(8-10行目)} \\
+突然変異率$P_m$により，子(解候補)の評価値を変化させる．
+\item {\bf STEP4: 評価(11-13行目)} \\
+親個体$x_i$と子個体$x_i^{new}$の評価値を比較し，評価値の高い個体を次世代に残す．
 \end{itemize}
 
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
@@ -231,7 +231,7 @@ $N$個の個体$x_i$を初期集合として生成し，ランダムな評価値
 \mbox{\boldmath $x_i^{t+1}$}=\mbox{\boldmath $x_i^t$}+\mbox{\boldmath $v_i^{t+1}$}
 \end{equation}
 $x_i$，$v_i$は時刻$t$における各個体の現在位置と速度を表し，$w,c_1,c_2$は係数，$r_1, r_2$は一様乱数を表す．これらの係数が速度を制限するパラメータとなっており，$w$が時刻$t$での速度を調整し，$c_1,c_2$は値が1より小さいほど局所探索を行い，1より大きくなると最良個体を含む広い範囲を大域探索するようになる．
-PSOのアルゴリズムの疑似コードであるAlgorithm \ref{code:pso}を以下に記す．
+PSOのアルゴリズムの疑似コードをAlgorithm \ref{code:pso}に，その手順を以下に記す．
 
 \begin{itemize}
 \item {\bf STEP1: 初期個体の生成}\\
@@ -917,31 +917,30 @@ Nearest-better clustering (NBC) \cite{NBC} は，探索空間の個体間距離�
 \end{algorithmic}
 \end{algorithm}
 
-% \subsection{Parameterless-Niching-Assisted NSGAII (PNA-NSGAII)}
-% \label{ss:PNA-NSGA}
-% 多目的最適化問題によく用いられるNSGA-IIだが，ここでは単目的の最適化問題に対して，どのような問題に対しても適応できるノンパラメトリックなPNA-SNGAII \cite{PNA-NSGA}について説明する．
+\subsection{Parameterless-Niching-Assisted NSGAII (PNA-NSGAII)}
+\label{ss:PNA-NSGA}
+多目的最適化問題によく用いられるNSGA-IIだが，ここでは単目的の最適化問題に対して，どのような問題に対しても適応できるノンパラメトリックなPNA-SNGAII \cite{PNA-NSGA}について説明する．
 
-% 最適解数に対して同じ個体数を用いることが理想的であるため，ここでは次式で個体数を決定する．
-% \begin{equation}
-% T^D=N \Rightarrow T \simeq [e^{\frac{InN}{D}}]
-% \end{equation}
+最適解数に対して同じ個体数を用いることが理想的であるため，ここでは次式で個体数を決定する．
+\begin{equation}
+T^D=N \Rightarrow T \simeq [e^{\frac{InN}{D}}]
+\end{equation}
 
-% niching distance $v_d$を次式で求める．
-% \begin{equation}
-% v_d=\frac{x_d^{(U)}-x_d^{(L)}}{T} \forall d=\{ 1,2,...,D\}
-% \end{equation}
+niching distance $v_d$を次式で求める．
+\begin{equation}
+v_d=\frac{x_d^{(U)}-x_d^{(L)}}{T} \forall d=\{ 1,2,...,D\}
+\end{equation}
 
-% \begin{equation}
-% |(x_1-x_2)_d| \leq \forall d = \{1,2,...,D\}
-% \end{equation}
+\begin{equation}
+|(x_1-x_2)_d| \leq \forall d = \{1,2,...,D\}
+\end{equation}
 
-% \begin{equation}
 
 % \begin{cases}
-% (f_m(x_1) \leq f_m(x_2) \forall _m) \wedge (\exists_n | f_n(x_1) < f_n(x_2)), \ {\rm proximate}(x_1, x_2) = 1 & {\rm if } \  x_1 \succ x_2  \\
-% x_1 \ {\rm and} \ x_2 \ {\rm are \ non-dominated} & {\rm otherwise}
+$(f_m(x_1) \leq f_m(x_2) \forall_m) \wedge (\exists_n | f_n(x_1) < f_n(x_2)), \ {\rm proximate}(x_1, x_2) = 1   {\rm if }  x_1 \succ x_2 $ \\
+$x_1 \ {\rm and} \ x_2 \ {\rm are \ non dominated}  {\rm otherwise}$
 % \end{cases}
-% \end{equation}
+
 
 
 
@@ -1244,7 +1243,14 @@ Novelty Search \cite{NS} は未探索領域に新たに解を生成すること�
 
 \subsection{メカニズム}
 \label{ss:NSBA-abst}
-NSBAはBAにNovelty Searchを組み込んだ複数解探索手法である．(\ref{eq:ns})式を以下のベクトル式に変更することで，密集している個体が疎な方向へ新たに解候補を生成する．
+NSBAはBAにNovelty Searchを組み込んだ複数解探索手法であり，BAからの変更点を図\ref{fig:nsba_table}に表す．(\ref{eq:ns})式を以下のベクトル式に変更することで，密集している個体が疎な方向へ新たに解候補を生成する．
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\linewidth]{eps/nsba_table.eps}
+  \caption{BAからの変更点}
+  \label{fig:nsba_table}
+\end{figure}
 \begin{equation}
 \mbox{\boldmath $d_i^{t}$} = \frac {1}{N} \sum _{j=1}^N \frac {(\mbox{\boldmath $x_{pbest}$}-\mbox{\boldmath $x_j^{t}$})}{|\mbox{\boldmath $x_{pbest}$}-\mbox{\boldmath $x_j^{t}$}|^2}
 \label{eq:nd*}
@@ -1470,6 +1476,14 @@ $F_2 \ (N=150)$ & 1.0 & 0 & 0.87 \% & 8.0667 & 0.7717 & 6.67 \% \\
 
 \subsection{メカニズム}
 \label{ss:NRBA-abst}
+従来手法のBAからの変更点を以下の図\ref{fig:nr_tab}に表し，その詳細を以下に示す．
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\linewidth]{eps/nr_table.eps}
+  \caption{BAからの変更点}
+  \label{fig:nr_tab}
+\end{figure}
+
 \begin{itemize}
 \item {\bf BAからの変更点1:大域探索} \\
 ここではNiche Radiusを使用し，従来であるBAの解候補の生成式(\ref{eq:ba-vi}),(\ref{eq:ba-xi})を次式のように変更を加えた．
@@ -1480,14 +1494,14 @@ $F_2 \ (N=150)$ & 1.0 & 0 & 0.87 \% & 8.0667 & 0.7717 & 6.67 \% \\
 \begin{equation}
 \label{eq:nrxi}
 \mbox{\boldmath $x_i^{t+1}$}= \begin{cases}
-\mbox{\boldmath $x_i^t$}+\mbox{\boldmath $v_i^{t+1}$} & ({\rm if} \ d_i^t < NR) \\
+\mbox{\boldmath $x_i^t$}+\mbox{\boldmath $v_i^{t+1}$} & ({\rm if} \ d_i^t < \sigma) \\
 \mbox{\boldmath $x_i^t$} & ({\rm otherwise})
 \end{cases}
 \end{equation}
 個体移動時のイメージ図を図\ref{fig:nr}に表す．各個体はNRを半径とした円の探索領域が決まっており，個体間距離${d_i}$がNRより小さい場合において，式(\ref{eq:nrvi})にてNR内の最良解${x_{NR*}}$を中心とした円から離れる方向へ個体${x_i^t}$が速度${v_i}$で移動する．またNR内に他の個体が存在しない，あるいは最良解$x_{NR*}$は移動をせず，その場所に留まる．この変更により，個体が同じ探索領域内に留まらず分散化をはかる．
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.5\linewidth]{eps/SICESSI2018/niche_radius.eps}
+  \includegraphics[width=0.7\linewidth]{eps/nr.eps}
   \caption{解候補の生成}
   \label{fig:nr}
 \end{figure}
