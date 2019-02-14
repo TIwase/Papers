@@ -66,35 +66,7 @@
 
 本論文では,複数の多峰性を持つ関数最適化に着目し，最適解と局所解を含む解を可能な限り多く見出す多点探索アルゴリズムを考案するとともに，その有効性を検証することを目的とする．特に，従来の多点探索アルゴリズムは一つの最適解をより早くかつ正確に見出すアプローチが主流であるが，解が１つではなく複数存在する実問題では，一つの最適解だけでなく複数解(最適解及び局所解)を探索することは，有力な解候補を複数持つという意味で重要である．このような複数解探索に基づく手法として，局所解への収束を防ぐ機構であるNiching scheme と遺伝的アルゴリズムに代表される進化計算を組み合わせた Niching method が探究されているが，いずれの手法においても密接した解を除き，探索空間内にランダムに解生成するため，乱数に強く依存するという問題がある．この問題を解決するために，本研究では多点探索アルゴリズムの中でも大域探索と局所探索のバランスを調整可能なBat Algortihm を採用し，個体間距離に基づく動的変化を考慮したNiching scheme を用いることで，最適解だけでなく局所解も同時に探索可能な 3 つの複数解探索手法を提案する．具体的には，(i) 未探索領域へ解の探索を促すNovelty Searchを導入したNovelty Search-based Bat Algorithm (NSBA)，(ii) 探索空間の大きさと最適解数から算出される Niche Radius を用いることで，予め各個体の探索領域を決定し，その探索領域内の最良個体から遠ざかる方向に移動させることによって，個体同士を同じ解に留まらせないNiche Radius-based Bat Algorithm (NRBA)，(iii) 探索領域を動的に変更することで，NRBAの効果を高めたBat Algorithm with Dynamic Niche Radius (DNRBA)を考案し，最適解と局所解の数が異なる多峰性関数を用いて比較する．その結果，(1)従来手法の BA は一つの最適解に収束するのに対し，３つの提案手法は最適解及び局所解を探索することができ，(2)その中でもDNRBA，NRBA，NSBAの順で性能が良いことが明らかになった．
 
-% LCSは, 解釈性に優れた知識を生成可能な知識獲得技術であり, 状態-行動のif-thenルール(分類子)を学習する遺伝的アルゴリズムと強化学習を組み合わせたルールベースの進化的機械学習手法である.
-% LCSの特徴は,複数の入力状態にする一般的なルールを獲得(分類子の一般化)することである.
-% この結果, 一般化されたルールは, データセットに存在する共通の規則を表現するため, 解釈性に優れた知識となる.
-% しかしながら, 高次元のデータセットにおいては状態空間の過大化により, LCSは適切に一般化されたルールの獲得が困難となり, 学習性能が著しく低下する問題がある.
 
-% 本研究では, 入力次元の圧縮復号器であるDeep Classification Autoencoder (DCA)をLCSに導入することで, 上記の問題の解決を図った\proposed を提案する.
-% ここでDCAは入出力の特徴を区別するための分類用ディープニューラルネットワークと入力の圧縮・復元を行うディープオートエンコーダーを組み合わせることによって圧縮・復元性能を向上させたDLに基づくニューラルネットワークである.
-
-% \proposed は, DCAを用いて圧縮された低次元入力からLCSの学習を行うことで, 高次元データを有する問題においても学習を可能にする.
-% \proposed は 1) DCAのエンコーダーを用いて入力の次元圧縮を行った後，2) 実数値表現を扱うLCS(XCSR)で学習後, 3) XCSRの出力をDCAのデコーダーを用いて圧縮されたXCSR内のif-thenルールを復号化する. この時, 復元したルールが不完全であった場合, 4) このルールをXCSRの初期値として元の次元でXCSRの学習をし直す.
-% 以上のプロセスによって, \proposed は様々な種類の高次元問題において, 人間が学習内容を明確に理解できるような手法を実現する.
-
-% \proposed の有効性を検証するため, MNISTデータセット及びマルチプレクサ問題を用いた検証実験を行った.
-% MNISTデータセットは784次元の高次元な手書き画像を分類する問題であり, マルチプレクサ問題は高次元ではないが, 画像のように均一なデータの圧縮できない難しいベンチマーク問題である.
-% 実験の結果, 1) MNISTデータセットにおいて従来のXCSRが全く学習できなかったのに対して\proposed は圧縮された入力を用いて学習が可能であり, 解釈性の高いルールが獲得できたこと, 2) マルチプレクサ問題において従来のXCSRが十分に学習が出来ていないのに対して\proposed は圧縮されたルールを利用することで学習が可能であり, 一般的なルールが獲得できたことが明らかになった.
-% これにより, \proposed は従来のXCSRが不可能だった様々な高次元な入力からの学習が可能であり, またニューラルネットワークが不可能だった解釈性の高いルールを獲得することが可能であることを示され, \proposed の有効性が実証された.
-
-\begin{comment}
-本論文では, 解釈性に優れた知識を獲得可能な学習分類子システム(Learning Classifier System: LCS)と高次元入力の学習が可能な深層学習(Deep Learning: DL)を統合し, 高い解釈性と高次元入力への対応性を併せ持った``\proposedJ(\proposed)''を構築するとともに, その有効性を検証することを目的とする.
-
-特に, 複数の入力状態に適用可能な汎用的なif-thenルール(分類子)を獲得できるLCSは, 解釈性に優れた知識を獲得できるものの, 高次元入力のデータに対しては状態空間の過大化により学習困難となる.
-そのため, DLによる圧縮復号器であるDeep Classification Autoencoder (DCA)をLCSに導入することで, 上記の問題を解決することを試みる.
-具体的には, DCAXCSRは次の２つのアプローチをとる. 一つ目は, DCAにより圧縮された低次元入力をLCSで学習することで, 高次元な問題においても学習を可能にし, 圧縮入力から得られたルールをDCAで復号化する.
-2つ目は, DCAで復号化するところまでは１つ目と同じだが, 復号化したルールが不完全であった場合, このルールをLCSの初期値として元の次元で直接学習をする.
-
-DCAXCSRの有効性を検証するため, 784次元の画像を分類するMNISTデータセット分類問題及びデータを圧縮できない11-マルチプレクサ問題へ適用したところ, 次の知見を得た.
-まず, (1) DCAXCSRは従来のLCSが学習不能な高次元の問題を学習が可能であり, (2) DLよりも高精度な学習が可能であることを明らかにした. また, (3) DCAXCSRは解釈性の高い一般的なルールを獲得可能であることが示された.
-これにより, \proposed は従来のXCSRが不可能だった様々な高次元な入力からの学習が可能であり, またニューラルネットワークが不可能だった解釈性の高いルールを獲得することが可能であることを示され, \proposed の有効性が実証された.
-\end{comment}
 \newpage
 \tableofcontents
 
@@ -117,8 +89,9 @@ DCAXCSRの有効性を検証するため, 784次元の画像を分類するMNIST
 
 % 実験の結果，提案手法の一つであるNSBAは最も探索性能が悪かったが，NRBA，次いでDNRBAは他の手法とほぼ同等の探索性能を示すことが可能であった．複雑な多峰性を持つ関数においてはDNRBAの方が探索性能が高いが，一般的にはNRBAのほうが探索性能が高かった．これは，局所解へ陥ってしまった個体を最適解へ移動させる機構を持つDynamic Niche Radiusが複雑な関数においては有効だが，容易な問題に対しては局所解へ陥ることがないため，NRBAの方が有効であったと考えられる．
 
+\subsection{関連研究}
 
-% \subsection{関連研究}
+複数解探索問題に取り組んでいる{\it Niching methods}の研究例として，Thomsenは差分進化(Differential Evolution:DE) \cite{DE} をベースとして，最近傍個体同士を評価させるCrowding \cite{Crowding} を組み合わせたCDE \cite{CDE} を提案した．EpitropakisらはDEに対し，未探索領域に新しく個体を生成させるため，環境に応じて動的に変化させるパラメータを導入したDynamic Archive Niching Differential Evolution (dADE)　\cite{dADE} を提案した．
 
 % LCSを高次元問題に対応させるという, 我々と同様の課題に取り組んでいる研究例がある.
 
@@ -137,7 +110,7 @@ DCAXCSRの有効性を検証するため, 784次元の画像を分類するMNIST
 
 % このように高次元入力において入出力の関係を明確にして人間との親和性を高める需要はあり, 様々な研究例がある.
 % 本研究ではここで挙げた手法の様々な問題点を克服した\proposed を提案する.
-
+\newpage
 \subsection{論文構成}
 本論文の構成は次の通りである.
 \ref{sec:MA}章で多峰性最適化問題における，複数解探索手法のベースとなる一般的なEAsとSIについて説明し，\ref{sec:ns}章でその複数解探索へ向けた機構であるNiching Schemeについて説明する．\ref{sec:nm}章では，EAsあるいは多点探索アルゴリズムとNiching Schemeを組み合わせた複数解探索手法を説明し，\ref{sec:MOP}章で実験で扱う最小化問題における複数解(最適解と局所解を含む)評価関数と，他の最先端手法との性能比較で扱う最大化問題における複数解探索(最適解のみ)を目的とした評価関数について説明する．\ref{sec:NSBA}章から\ref{sec:DNRBA}章までは提案手法であるNSBA, NRBA及びDNRBAの説明及び性能比較をした後，\ref{sec:experiment}章にて他の最先端手法との比較実験を行い，\ref{sec:END}章で本論文のまとめを行う．
@@ -148,10 +121,13 @@ DCAXCSRの有効性を検証するため, 784次元の画像を分類するMNIST
 % \subsection{Evolutionary Algorithms (EAs)}
 \label{sec:MA}
 
-現実問題の複雑さを多峰性関数として表現した問題を最適化するためにEAsが用いられるようになった．EAsのメカニズムとして単一の最適解を探索することを目的として設計されており，生物の生殖や突然変異，交叉，適者生存といった過程をモデルとしている．Niching methods のベースとなるEAsや多点探索アルゴリズムの代表的なアルゴリズムを\ref{ss:GA}節から\ref{ss:nsga}節で紹介する．
+現実問題の複雑さを多峰性関数として表現した問題を最適化するためにEAsが用いられるようになった．EAsのメカニズムとして単一の最適解を探索することを目的として設計されており，生物の生殖や突然変異，交叉，適者生存といった過程をモデルとしている．Niching methods のベースとなるEAsや多点探索アルゴリズムの代表的なアルゴリズムを\ref{ss:EAs}節，\ref{ss:swarm}節で紹介する．
 
-\subsection{遺伝的アルゴリズム (GA)}
-\label{ss:GA}
+\subsection{進化的アルゴリズム (Evolutionary Algorithms:EAs)}
+\label{ss:EAs}
+
+\subsubsection{遺伝的アルゴリズム (GA)}
+\label{sss:GA}
 遺伝的アルゴリズム(Genetic Algorithm:GA) \cite{GA} は生物の進化の過程を模擬したアルゴリズムであり，最適化問題において最も基本的なヒューリスティック手法である．生物は次の世代により良い遺伝子を持った個体を残すため，まずは親集合の中から個体を選択し，選択した個体同士を交叉させる．この時，ある一定の確率で突然変異させる．次に，交叉させて新たに生成された個体を子集合の解候補とし，親と子の個体を評価して，評価値の高い個体は次世代の個体として保存され，評価値の低い個体は淘汰される．各個体に対し，この「選択」，「交叉」，「突然変異」，「評価(淘汰)」を繰り返すことで，環境に対する適合度が高くなっていく(評価値の高い遺伝子が残る)．アルゴリズムの疑似コードはAlgorithm \ref{code:ga}に，その手順は以下に記す．
 
 \begin{itemize}
@@ -192,272 +168,11 @@ $N$個の個体$x_i$を初期集合として生成し，ランダムな評価値
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{進化戦略 (ES)}
-\label{ss:ES}
+\subsubsection{進化戦略 (ES)}
+\label{sss:ES}
 
-\subsection{粒子群最適化 (PSO)}
-\label{ss:PSO}
-% 数式番号に章番号を追加
-  % \makeatletter
-  % \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
-  % \@addtoreset{equation}{subsection}
-  % \makeatother
-
-  \makeatletter
-    \renewcommand{\theequation}{%
-    \thesection.\arabic{equation}}
-    \@addtoreset{equation}{section}
-  \makeatother
-% 図に章番号追加
-  \makeatletter
-    \renewcommand{\thefigure}{%
-    \thesection.\arabic{figure}}
-    \@addtoreset{figure}{section}
-  \makeatother
-
-最適化手法の一つとして粒子群最適化(Particle Swarm Optimization:PSO)がある．PSOは，ランダムに個体を初期化するという点において，遺伝的アルゴリズム(GA)に似た性質を持つ．魚や鳥の群れの動きをモデルにしたアルゴリズムであり，個体間のユークリッド距離を速度として新たに解候補を生成する．個体の速度及び生成式は以下の通りである．
-\begin{equation}
-\label{eq:pso-vi}
-\mbox{\boldmath $v_i^{t+1}$}=w\mbox{\boldmath $v_i^t$}+c_1r_1 \cdot (\mbox{\boldmath $x_{pbest}^t$}-\mbox{\boldmath $x_j^t$})+c_2r_2 \cdot (\mbox{\boldmath $x_{gbest}^t$}-\mbox{\boldmath $x_i^t$})
-\end{equation}
-\begin{equation}
-\label{eq:pso-xi}
-\mbox{\boldmath $x_i^{t+1}$}=\mbox{\boldmath $x_i^t$}+\mbox{\boldmath $v_i^{t+1}$}
-\end{equation}
-$x_i$，$v_i$は時刻$t$における各個体の現在位置と速度を表し，$w,c_1,c_2$は係数，$r_1, r_2$は一様乱数を表す．これらの係数が速度を制限するパラメータとなっており，$w$が時刻$t$での速度を調整し，$c_1,c_2$は値が1より小さいほど局所探索を行い，1より大きくなると最良個体を含む広い範囲を大域探索するようになる．
-PSOのアルゴリズムの疑似コードをAlgorithm \ref{code:pso}に，その手順を以下に記す．
-
-\begin{itemize}
-\item {\bf STEP1: 初期個体の生成 (1-3行目)}\\
-個体$x_i (i=1,2,...,N)$を探索空間内にランダム生成し，係数$c_1,c_2, w$を初期化する．
-\item {\bf STEP2: 解候補の生成と速度の更新 (6行目)}\\
-速度$v_i$により新たに解候補$x_i^{t+1}$を生成を生成する．
-\item {\bf STEP3: 評価 (7-12行目)}\\
-生成した解候補が$t$時点での最良解$x_{pbest}$よりも評価値が高ければ更新する．
-\item {\bf STEP4: STEP2へ戻る}\\
-終了条件を満たすまでSTEP2へ戻る
-\end{itemize}
-
-\begin{algorithm}[H]
-\caption{Particle Swarm Optimization}
-\label{code:pso}
-\begin{algorithmic}[2]
-\REQUIRE Objective Function $F(x), x=(x_1,x_2,...,x_d)$
-\STATE Initialize Population $x_i (i=1,2,...,N)$ and Velocity $v_i$
-\STATE $F(x_{gbest})=\max{F(x_i)}$
-\STATE Initialize $c_1,c_2,w$
-\WHILE{t $<$ Max Iteration}
-\FOR{i=1 to N}
-\STATE Generate a new solution $x_i^{t+1}$ and update $v_i$ [Eqs.(\ref{eq:pso-vi}),(\ref{eq:pso-xi})]
-\IF{$F(x_i^{t+1})>F(x_{pbest})$}
-\STATE Replace the individual $x_i^{t+1}$ as $x_{pbest}$
-\ENDIF
-\IF{$F(x_{gbest})<F(x_{pbest})$}
-\STATE $x_{gbest}=x_{pbest}$
-\ENDIF
-\ENDFOR
-\STATE t=t+1
-\ENDWHILE
-\end{algorithmic}
-\end{algorithm}
-
-\subsection{差分進化 (DE)}
-\label{ss:DE}
-
-% 数式番号に章番号を追加
-%   \makeatletter
-%   \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
-%   \@addtoreset{equation}{subsection}
-%   \makeatother
-
-差分進化(Differential Evolution:DE) \cite{DE} は進化的計算手法の一つであり，問題に応じて個体間同士の相対距離に基づいた探索戦略を用いることのできる，他のアルゴリズムとは異なる特徴を持つ．DEは以下の手順により探索を繰り返す．
-\begin{itemize}
-\item {\bf STEP1: 個体の初期化} \\
-探索領域内にランダムで個体を生成する．
-\item {\bf STEP2: 突然変異による解候補の生成} \\
-DEは以下，いずれかの探索戦略を用いて解候補を生成する．
-\begin{enumerate}
-\item{DE/rand/1}
-\begin{equation}
-\label{eq:rand1}
-\mbox{\boldmath $v_{i,j}^{t+1}$}=\mbox{\boldmath $x_{r1,j}^t$}+F \cdot (\mbox{\boldmath $x_{r2,j}^t$}-\mbox{\boldmath $x_{r3,j}^t$})
-\end{equation}
-\item{DE/best/1}
-\begin{equation}
-\label{eq:best1}
-\mbox{\boldmath $v_{i,j}^{t+1}$}=\mbox{\boldmath $x_{gbest,j}^t$}+F \cdot (\mbox{\boldmath $x_{r1,j}^t$}-\mbox{\boldmath $x_{r2,j}^t$})
-\end{equation}
-\item{DE/current-to-best/1}
-\begin{equation}
-\label{eq:cur2best1}
-\mbox{\boldmath $v_{i,j}^{t+1}$}=\mbox{\boldmath $x_{i,j}^t$}+F \cdot (\mbox{\boldmath $x_{gbest,j}^t$}-\mbox{\boldmath $x_{i,j}^t$})+F \cdot (\mbox{\boldmath $x_{r1,j}^t$}-\mbox{\boldmath $x_{r2,j}^t$})
-\end{equation}
-\item{DE/rand/2}
-\begin{equation}
-\label{eq:rand2}
-\mbox{\boldmath $v_{i,j}^{t+1}$}=\mbox{\boldmath $x_{r1,j}^t$}+F \cdot (\mbox{\boldmath $x_{r2,j}^t$}-\mbox{\boldmath $x_{r3,j}^t$})+F\cdot (\mbox{\boldmath $x_{r4,j}^t$}-\mbox{\boldmath $x_{r5,j}^t$})
-\end{equation}
-\item{DE/best/2}
-\begin{equation}
-\label{eq:best2}
-\mbox{\boldmath $v_{i,j}^{t+1}$}=\mbox{\boldmath $x_{gbest,j}^t$}+F \cdot (\mbox{\boldmath $x_{r1,j}^t$}-\mbox{\boldmath $x_{r2,j}^t$})+F \cdot (\mbox{\boldmath $x_{r3,j}^t$}-\mbox{\boldmath $x_{r4,j}^t$})
-\end{equation}
-\end{enumerate}
-この時，$i,j$は個体番号と次元数を表し，$r_1,...,r_4$は1から$N$までの一様乱数の整数を表す．スケール因子$F$は解候補を生成するためのベクトルを制御するための変数で，0から1までの乱数で表される．
-「DE/rand/1」は，個体の親集団の中から3つの個体をランダムに選択し，その相対距離を用いて新たに解候補$v_{i,j}^{t+1}$を生成する．「DE/best/1」は，個体の親集団の中の最良個体と個体を2つランダムに選択し，その最良個体付近に新しい解候補$v_{i,j}^{t+1}$を生成する．「DE/current-to-best/1」は，ランダムに選択した2つの個体と，最良個体と個体自身の相対距離と用い，最良個体方向へ新たに解候補$v_{i,j}^{t+1}$を生成する．「DE/rand/2」では，親集合から5つの個体をランダムに選択し，式(\ref{eq:rand1})よりも広い探索領域内に新しく解候補$v_{i,j}^{t+1}$を生成する．「DE/best/2」も同様，式(\ref{eq:best1})よりも広い探索領域内に新しく解候補$v_{i,j}^{t+1}$を生成する．
-
-\item {\bf STEP3: 交叉} \\
-解に多様性を持たせるため，ここではSTEP2で生成した解候補$v_{i,j}^{t+1}$と個体$x_i$を確率的に交叉させ，新たに解$u_{i,j}^{t+1}$を生成する．生成式は次式の通りである．
-\begin{equation}
-\mbox{\boldmath $u_{i,j}^{t+1}$}=\begin{cases}
-\mbox{\boldmath $v_{i,j}^{t+1}$} & {\rm if}(rand(0,1) \leq C_r) \ or \ j=D \\
-\mbox{\boldmath $x_{i,j}^{t+1}$} & {\rm if}(rand(0,1) > C_r) \ and \ j \neq D
-\end{cases}
-\end{equation}
-ここで$C_r$は$[0,1]$の範囲内での交叉係数を表す．この交叉係数$C_r$が一様乱数以上であればSTEP2で生成した解候補$v_{i,j}^{t+1}$が採用され，一様乱数未満であれば個体$x_{i,j}$が採用される．
-
-\item {\bf STEP4: 評価} \\
-最良個体と生成した解$u_{i,j}^{t+1}$を比較し，評価値の高い方を次世代に引き継ぐ．
-
-\item {\bf STEP5: 終了条件を満たすまでSTEP2へ戻る}
-\end{itemize}
-
-ここでは，一般的に用いられるDE/rand/1のアルゴリズムの疑似コードを以下のAlgorithm \ref{code:de}に記す．
-
-\begin{algorithm}[H]
-\caption{Differential Evolution (DE/rand/1)}
-\label{code:de}
-\begin{algorithmic}[3]
-\REQUIRE Objective Function $f(x), x=(x_1,x_2,...,x_d)$
-\STATE Initialize Population $x_i (i=1,2,...,N)$ 
-\STATE Define crossover probability $C_r,$ and scaling factor $F$
-
-\WHILE{t $<$ Max Iteration}
-\FOR{i=1 to N}
-\STATE Select random integer $r_1, r_2 \in \{ 1,2,..., N| r_1 \neq r_2 \neq i\}$
-\STATE Generate a candidate $v_{i,j}$  [Eq. (\ref{eq:rand1})]
-\FOR{$j=1$ to $D$}
-\IF{$rand(0, 1) \leq C_r \ or \ j=D$}
-\STATE offspring $u_{i,j} = v_{i,j}^{t+1}$
-\ELSE[$rand(0,1) > C_r \ and \ j \neq D$]
-\STATE offspring $u_{i,j} = x_{i,j}^t$
-\ENDIF
-\ENDFOR
-\IF{$f(u_{i,j}^{t+1})>f(x_{pbest})$}
-\STATE Replace the offspring $u_{i,j}^{t+1}$ as $x_{pbest}$
-\ENDIF
-\ENDFOR
-\STATE t=t+1
-\ENDWHILE
-\end{algorithmic}
-\end{algorithm}
-
-
-\subsection{Bat Algorithm (BA)}
-\label{ss:BA}
-
-% 数式番号に章番号を追加
-  % \makeatletter
-  % \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
-  % \@addtoreset{equation}{subsection}
-  % \makeatother
-
-Bat Algorithm(BA) \cite{BA}は群知能アルゴリズムの一つで，対象物までの方向や距離を知るコウモリの特性（エコロケーション）を利用して周囲の状況を認知し，大域探索と局所探索が進むにつれて探索速度を徐々に落とし，探索性能を自動調節することが可能なアルゴリズムである．
-% ．BAにおいて，コウモリは自らの発する超音波の周波数を持ち，その周波数を調整するためのパラメータとしてラウドネス${A}$を用いる．
-各個体の周波数${f_i}$，速度${v_i}$，位置${x_i}$は以下の式で定義し，更新される．
-ラウドネス${A}$は，コウモリが対象物に近づくと値が減少し，移動距離も比例して短くなる．
-コウモリの行動は以下３つで構成される．
-\begin{itemize}
-\item 大域探索: 各コウモリは位置${x_i}$において，自身が発する周波数${f_i}$の反響によって対象物との距離を測り，対象物に向かって速度${v_i}$で移動する．
-\item 局所探索: 対象物近辺にコウモリを移動させる．
-\item ランダム探索: 探索領域内にコウモリをランダムで移動させる．
-\end{itemize}
-
-BAで扱う各個体の周波数$f_i$，速度$v_i$，位置$x_i$は以下の式で定義される．
-\begin{equation}
-f_{i} =f_{min}+(f_{max}-f_{min}) \beta
-\label{eq:freq} 
-\end{equation}
-% \begin{equation}
-% d_i^{t-1}=x_*-x_i^{t-1}
-% \label{eq:d}
-% \end{equation}
-\begin{equation}
-\mbox{\boldmath $v_i^{t+1}$}=\mbox{\boldmath $v_i^{t}$}+\mbox{\boldmath $(x_*-x_i^t)$}* f_i
-\label{eq:ba-vi}
-\end{equation}
-\begin{equation}
-\mbox{\boldmath $x_i^{t+1}$}=\mbox{\boldmath $x_i^{t}$}+\mbox{\boldmath $v_i^{t+1}$}
-\label{eq:ba-xi}
-\end{equation}
-個体番号を$i$とし，各個体の周波数${f_i}$は個体の速度を制限するパラメータであり，$[0, \ 1]$の区間で表される．ここでは${f_{min}=0}$，${f_{max}=1}$として設定し，$\beta$は0から1の乱数が割り当てられる．
-局所探索では，全個体の最良解（グローバルベスト）\mbox{\boldmath $x_*$}の周辺に新しい解候${x_{loc}}$を生成する．生成式は次の通りである．
-\begin{equation}
-\label{eq:ba-loc}
-\mbox{\boldmath $x_{loc}$}=\mbox{\boldmath $x_*$} + \epsilon A_i^t
-\end{equation}
-パラメータ$\epsilon$は1 $\times$ $D$次元の配列で$[-1, \ 1]$区間のランダムな値が割り当てられる． ランダム探索では解探索空間にランダムで新たに解候補を生成する．生成式は以下の通りである．
-\begin{equation}
-\label{eq:ba-rnd}
-\mbox{\boldmath $x_{rnd}$}=\mbox{\boldmath $x_{lb}$} + \mbox{\boldmath $(x_{ub}$} - \mbox{\boldmath $x_{lb})$}*rand(1,D)
-\end{equation}
-解探索空間の上限と下限をそれぞれ$x_{ub}, x_{lb}$とし，$rand$は0から1までの乱数が入る．
-以上より各個体の解候補${x_i^{t+1}}$，${x_{loc}}$，あるいは$x_{rnd}$の評価値が各個体の最良解（パーソナルベスト）$x_{i*}$より良ければ更新され，同時にラウドネス$A$とその反射波であるパルスレート$r$も以下の式に基づいて更新される．
-\begin{equation}
-\label{eq:loud}
-A_i^{t+1}= \alpha A_i^t
-\end{equation}
-\begin{equation}
-\label{eq:pulse}
-r_i^{t+1}=r_i^t[1-exp(- \gamma t)]
-\end{equation}
-解を更新する度にラウドネス$A_i$は徐々に減少し，それに比例して評価頻度を下げていく．対してパルスレート$r_i$は増加していき，探索が進むにつれて局所探索頻度が減少する．\\ \
-従来のBAの疑似コードは以下のAlgorithm \ref{code:ba}に記す．
-
-\begin{itemize}
-\item {\bf STEP1: 個体の初期化 (1-3行目)}\\
-探索空間内にランダムに個体$x_i (i=1,2,...,N)$を生成し，周波数$f_i$，ラウドネス$A_i^0$，パルスレート$r_i^0$を決定する．
-\item {\bf STEP2: 速度の更新と解候補の生成 (6行目)}\\
-速度$v_i$により新しく解候補を生成する．
-\item {\bf STEP3: 局所探索 (8行目)}\\
-全個体の最良解$x_{gbest}$近辺に新しく解候補$x_{loc}$を生成する．
-\item {\bf STEP4: ランダム探索 (10行目)}\\
-探索空間内にランダムで解候補$x_{rnd}$を生成する．
-\item {\bf STEP5: 評価と更新 (11-13行目)}\\
-${\rm rand} < A_i$を満たす，かつ3つの解候補が$t$時点での最良解$x_{pbest}$よりも評価値が高ければ解を更新する．
-\item {\bf STEP6: STEP2へ戻る}\\
-終了条件を満たすまでSTEP2へ戻る．
-\end{itemize}
-
-\begin{algorithm}[H]
-\caption{Bat Algorithm}
-\label{code:ba}
-\begin{algorithmic}[1]
-\REQUIRE Objective\ Function\ $F(x)$
-\STATE Initialize Population $x_i(i=1,2,..., N)$ and $v_i$\\
-\STATE Define frequency $f_i$ at location $x_i$ [eq.(\ref{eq:freq})]
-\STATE Initialize pulse rates $r_i$, and loudness $A_i$
-\WHILE{($t <$ Max number of iterations)}
-\FOR{i=1 to N}
-\STATE Generate a new solution $x_i$ and velocity $v_i$ [Eqs.(\ref{eq:ba-vi}) to (\ref{eq:ba-xi})]
-\IF{($rand>r_i$)}
-\STATE Generate a new solution $x_{loc}$ around a global best solution $x_i$ [Eq.(\ref{eq:ba-loc})] 
-% \ELSE
-% \STATE Continue
-\ENDIF
-\STATE Generate a new solution $x_{rnd}$ randomly [Eq.(\ref{eq:ba-rnd})]
-\IF{($rand<A_i \& \min (F(x_i), F(x_{loc}), F(x_{rnd})>F(x_{pbest})$)}
-\STATE Accept the new solution, and update pulse rate $r_i$ \\ \& loudness $A_i$ [Eqs. (\ref{eq:loud})(\ref{eq:pulse})]  
-\ENDIF
-\STATE Evaluate all bats and select a best solution $x_*$ in the current solutions
-\ENDFOR
-\STATE t=t+1
-\ENDWHILE
-\end{algorithmic}
-\end{algorithm}
-
-\subsection{Evolution Strategies with Covariance Matrix Adaptation (CMA-ES)}
-\label{ss:cma-es}
+\subsubsection{Evolution Strategies with Covariance Matrix Adaptation (CMA-ES)}
+\label{sss:cma-es}
 % 数式番号に章番号を追加
   % \makeatletter
   % \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
@@ -569,8 +284,8 @@ c_c=\frac{4}{n+4}
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{A Fast and Elitist Multi-objective Genetic Algorithm (NSGA-II)}
-\label{ss:nsga}
+\subsubsection{A Fast and Elitist Multi-objective Genetic Algorithm (NSGA-II)}
+\label{sss:nsga}
 NSGA-II \cite{NSGAII} は，複数の目的関数を同時に満たす解を探索する手法として一般的に用いられる代表的な手法の一つである．アルゴリズムの手順及び疑似コードを以下に記す．
 
 \begin{itemize}
@@ -615,6 +330,272 @@ d_j = \sum_{m=1}^M \frac{f_m^{I^{m}_{j+1}}-f_m^{I^{m}_{j-1}}}{f_m^{max}-f_m^{min
 \ENDWHILE 
 \end{algorithmic}
 \end{algorithm}
+
+\subsection{多点探索アルゴリズム}
+\label{ss:swarm}
+
+\subsubsection{粒子群最適化 (PSO)}
+\label{sss:PSO}
+% 数式番号に章番号を追加
+  % \makeatletter
+  % \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
+  % \@addtoreset{equation}{subsection}
+  % \makeatother
+
+  \makeatletter
+    \renewcommand{\theequation}{%
+    \thesection.\arabic{equation}}
+    \@addtoreset{equation}{section}
+  \makeatother
+% 図に章番号追加
+  \makeatletter
+    \renewcommand{\thefigure}{%
+    \thesection.\arabic{figure}}
+    \@addtoreset{figure}{section}
+  \makeatother
+
+最適化手法の一つとして粒子群最適化(Particle Swarm Optimization:PSO)がある．PSOは，ランダムに個体を初期化するという点において，遺伝的アルゴリズム(GA)に似た性質を持つ．魚や鳥の群れの動きをモデルにしたアルゴリズムであり，個体間のユークリッド距離を速度として新たに解候補を生成する．個体の速度及び生成式は以下の通りである．
+\begin{equation}
+\label{eq:pso-vi}
+\mbox{\boldmath $v_i^{t+1}$}=w\mbox{\boldmath $v_i^t$}+c_1r_1 \cdot (\mbox{\boldmath $x_{pbest}^t$}-\mbox{\boldmath $x_j^t$})+c_2r_2 \cdot (\mbox{\boldmath $x_{gbest}^t$}-\mbox{\boldmath $x_i^t$})
+\end{equation}
+\begin{equation}
+\label{eq:pso-xi}
+\mbox{\boldmath $x_i^{t+1}$}=\mbox{\boldmath $x_i^t$}+\mbox{\boldmath $v_i^{t+1}$}
+\end{equation}
+$x_i$，$v_i$は時刻$t$における各個体の現在位置と速度を表し，$w,c_1,c_2$は係数，$r_1, r_2$は一様乱数を表す．これらの係数が速度を制限するパラメータとなっており，$w$が時刻$t$での速度を調整し，$c_1,c_2$は値が1より小さいほど局所探索を行い，1より大きくなると最良個体を含む広い範囲を大域探索するようになる．
+PSOのアルゴリズムの疑似コードをAlgorithm \ref{code:pso}に，その手順を以下に記す．
+
+\begin{itemize}
+\item {\bf STEP1: 初期個体の生成 (1-3行目)}\\
+個体$x_i (i=1,2,...,N)$を探索空間内にランダム生成し，係数$c_1,c_2, w$を初期化する．
+\item {\bf STEP2: 解候補の生成と速度の更新 (6行目)}\\
+速度$v_i$により新たに解候補$x_i^{t+1}$を生成を生成する．
+\item {\bf STEP3: 評価 (7-12行目)}\\
+生成した解候補が$t$時点での最良解$x_{pbest}$よりも評価値が高ければ更新する．
+\item {\bf STEP4: STEP2へ戻る}\\
+終了条件を満たすまでSTEP2へ戻る
+\end{itemize}
+
+\begin{algorithm}[H]
+\caption{Particle Swarm Optimization}
+\label{code:pso}
+\begin{algorithmic}[2]
+\REQUIRE Objective Function $F(x), x=(x_1,x_2,...,x_d)$
+\STATE Initialize Population $x_i (i=1,2,...,N)$ and Velocity $v_i$
+\STATE $F(x_{gbest})=\max{F(x_i)}$
+\STATE Initialize $c_1,c_2,w$
+\WHILE{t $<$ Max Iteration}
+\FOR{i=1 to N}
+\STATE Generate a new solution $x_i^{t+1}$ and update $v_i$ [Eqs.(\ref{eq:pso-vi}),(\ref{eq:pso-xi})]
+\IF{$F(x_i^{t+1})>F(x_{pbest})$}
+\STATE Replace the individual $x_i^{t+1}$ as $x_{pbest}$
+\ENDIF
+\IF{$F(x_{gbest})<F(x_{pbest})$}
+\STATE $x_{gbest}=x_{pbest}$
+\ENDIF
+\ENDFOR
+\STATE t=t+1
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{差分進化 (DE)}
+\label{sss:DE}
+
+% 数式番号に章番号を追加
+%   \makeatletter
+%   \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
+%   \@addtoreset{equation}{subsection}
+%   \makeatother
+
+差分進化(Differential Evolution:DE) \cite{DE} は進化的計算手法の一つであり，問題に応じて個体間同士の相対距離に基づいた探索戦略を用いることのできる，他のアルゴリズムとは異なる特徴を持つ．DEは以下の手順により探索を繰り返す．
+\begin{itemize}
+\item {\bf STEP1: 個体の初期化} \\
+探索領域内にランダムで個体を生成する．
+\item {\bf STEP2: 突然変異による解候補の生成} \\
+DEは以下，いずれかの探索戦略を用いて解候補を生成する．
+\begin{enumerate}
+\item{DE/rand/1}
+\begin{equation}
+\label{eq:rand1}
+\mbox{\boldmath $v_{i,j}^{t+1}$}=\mbox{\boldmath $x_{r1,j}^t$}+F \cdot (\mbox{\boldmath $x_{r2,j}^t$}-\mbox{\boldmath $x_{r3,j}^t$})
+\end{equation}
+\item{DE/best/1}
+\begin{equation}
+\label{eq:best1}
+\mbox{\boldmath $v_{i,j}^{t+1}$}=\mbox{\boldmath $x_{gbest,j}^t$}+F \cdot (\mbox{\boldmath $x_{r1,j}^t$}-\mbox{\boldmath $x_{r2,j}^t$})
+\end{equation}
+\item{DE/current-to-best/1}
+\begin{equation}
+\label{eq:cur2best1}
+\mbox{\boldmath $v_{i,j}^{t+1}$}=\mbox{\boldmath $x_{i,j}^t$}+F \cdot (\mbox{\boldmath $x_{gbest,j}^t$}-\mbox{\boldmath $x_{i,j}^t$})+F \cdot (\mbox{\boldmath $x_{r1,j}^t$}-\mbox{\boldmath $x_{r2,j}^t$})
+\end{equation}
+\item{DE/rand/2}
+\begin{equation}
+\label{eq:rand2}
+\mbox{\boldmath $v_{i,j}^{t+1}$}=\mbox{\boldmath $x_{r1,j}^t$}+F \cdot (\mbox{\boldmath $x_{r2,j}^t$}-\mbox{\boldmath $x_{r3,j}^t$})+F\cdot (\mbox{\boldmath $x_{r4,j}^t$}-\mbox{\boldmath $x_{r5,j}^t$})
+\end{equation}
+\item{DE/best/2}
+\begin{equation}
+\label{eq:best2}
+\mbox{\boldmath $v_{i,j}^{t+1}$}=\mbox{\boldmath $x_{gbest,j}^t$}+F \cdot (\mbox{\boldmath $x_{r1,j}^t$}-\mbox{\boldmath $x_{r2,j}^t$})+F \cdot (\mbox{\boldmath $x_{r3,j}^t$}-\mbox{\boldmath $x_{r4,j}^t$})
+\end{equation}
+\end{enumerate}
+この時，$i,j$は個体番号と次元数を表し，$r_1,...,r_4$は1から$N$までの一様乱数の整数を表す．スケール因子$F$は解候補を生成するためのベクトルを制御するための変数で，0から1までの乱数で表される．
+「DE/rand/1」は，個体の親集団の中から3つの個体をランダムに選択し，その相対距離を用いて新たに解候補$v_{i,j}^{t+1}$を生成する．「DE/best/1」は，個体の親集団の中の最良個体と個体を2つランダムに選択し，その最良個体付近に新しい解候補$v_{i,j}^{t+1}$を生成する．「DE/current-to-best/1」は，ランダムに選択した2つの個体と，最良個体と個体自身の相対距離と用い，最良個体方向へ新たに解候補$v_{i,j}^{t+1}$を生成する．「DE/rand/2」では，親集合から5つの個体をランダムに選択し，式(\ref{eq:rand1})よりも広い探索領域内に新しく解候補$v_{i,j}^{t+1}$を生成する．「DE/best/2」も同様，式(\ref{eq:best1})よりも広い探索領域内に新しく解候補$v_{i,j}^{t+1}$を生成する．
+
+\item {\bf STEP3: 交叉} \\
+解に多様性を持たせるため，ここではSTEP2で生成した解候補$v_{i,j}^{t+1}$と個体$x_i$を確率的に交叉させ，新たに解$u_{i,j}^{t+1}$を生成する．生成式は次式の通りである．
+\begin{equation}
+\mbox{\boldmath $u_{i,j}^{t+1}$}=\begin{cases}
+\mbox{\boldmath $v_{i,j}^{t+1}$} & {\rm if}(rand(0,1) \leq C_r) \ or \ j=D \\
+\mbox{\boldmath $x_{i,j}^{t+1}$} & {\rm if}(rand(0,1) > C_r) \ and \ j \neq D
+\end{cases}
+\end{equation}
+ここで$C_r$は$[0,1]$の範囲内での交叉係数を表す．この交叉係数$C_r$が一様乱数以上であればSTEP2で生成した解候補$v_{i,j}^{t+1}$が採用され，一様乱数未満であれば個体$x_{i,j}$が採用される．
+
+\item {\bf STEP4: 評価} \\
+最良個体と生成した解$u_{i,j}^{t+1}$を比較し，評価値の高い方を次世代に引き継ぐ．
+
+\item {\bf STEP5: 終了条件を満たすまでSTEP2へ戻る}
+\end{itemize}
+
+ここでは，一般的に用いられるDE/rand/1のアルゴリズムの疑似コードを以下のAlgorithm \ref{code:de}に記す．
+
+\begin{algorithm}[H]
+\caption{Differential Evolution (DE/rand/1)}
+\label{code:de}
+\begin{algorithmic}[3]
+\REQUIRE Objective Function $f(x), x=(x_1,x_2,...,x_d)$
+\STATE Initialize Population $x_i (i=1,2,...,N)$ 
+\STATE Define crossover probability $C_r,$ and scaling factor $F$
+
+\WHILE{t $<$ Max Iteration}
+\FOR{i=1 to N}
+\STATE Select random integer $r_1, r_2 \in \{ 1,2,..., N| r_1 \neq r_2 \neq i\}$
+\STATE Generate a candidate $v_{i,j}$  [Eq. (\ref{eq:rand1})]
+\FOR{$j=1$ to $D$}
+\IF{$rand(0, 1) \leq C_r \ or \ j=D$}
+\STATE offspring $u_{i,j} = v_{i,j}^{t+1}$
+\ELSE[$rand(0,1) > C_r \ and \ j \neq D$]
+\STATE offspring $u_{i,j} = x_{i,j}^t$
+\ENDIF
+\ENDFOR
+\IF{$f(u_{i,j}^{t+1})>f(x_{pbest})$}
+\STATE Replace the offspring $u_{i,j}^{t+1}$ as $x_{pbest}$
+\ENDIF
+\ENDFOR
+\STATE t=t+1
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsubsection{Bat Algorithm (BA)}
+\label{sss:BA}
+
+% 数式番号に章番号を追加
+  % \makeatletter
+  % \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
+  % \@addtoreset{equation}{subsection}
+  % \makeatother
+
+Bat Algorithm(BA) \cite{BA}は群知能アルゴリズムの一つで，対象物までの方向や距離を知るコウモリの特性（エコロケーション）を利用して周囲の状況を認知し，大域探索と局所探索が進むにつれて探索速度を徐々に落とし，探索性能を自動調節することが可能なアルゴリズムである．
+% ．BAにおいて，コウモリは自らの発する超音波の周波数を持ち，その周波数を調整するためのパラメータとしてラウドネス${A}$を用いる．
+各個体の周波数${f_i}$，速度${v_i}$，位置${x_i}$は以下の式で定義し，更新される．
+ラウドネス${A}$は，コウモリが対象物に近づくと値が減少し，移動距離も比例して短くなる．
+コウモリの行動は以下３つで構成される．
+\begin{itemize}
+\item 大域探索: 各コウモリは位置${x_i}$において，自身が発する周波数${f_i}$の反響によって対象物との距離を測り，対象物に向かって速度${v_i}$で移動する．
+\item 局所探索: 対象物近辺にコウモリを移動させる．
+\item ランダム探索: 探索領域内にコウモリをランダムで移動させる．
+\end{itemize}
+
+BAで扱う各個体の周波数$f_i$，速度$v_i$，位置$x_i$は以下の式で定義される．
+\begin{equation}
+f_{i} =f_{min}+(f_{max}-f_{min}) \beta
+\label{eq:freq} 
+\end{equation}
+% \begin{equation}
+% d_i^{t-1}=x_*-x_i^{t-1}
+% \label{eq:d}
+% \end{equation}
+\begin{equation}
+\mbox{\boldmath $v_i^{t+1}$}=\mbox{\boldmath $v_i^{t}$}+\mbox{\boldmath $(x_*-x_i^t)$}* f_i
+\label{eq:ba-vi}
+\end{equation}
+\begin{equation}
+\mbox{\boldmath $x_i^{t+1}$}=\mbox{\boldmath $x_i^{t}$}+\mbox{\boldmath $v_i^{t+1}$}
+\label{eq:ba-xi}
+\end{equation}
+個体番号を$i$とし，各個体の周波数${f_i}$は個体の速度を制限するパラメータであり，$[0, \ 1]$の区間で表される．ここでは${f_{min}=0}$，${f_{max}=1}$として設定し，$\beta$は0から1の乱数が割り当てられる．
+局所探索では，全個体の最良解（グローバルベスト）\mbox{\boldmath $x_*$}の周辺に新しい解候${x_{loc}}$を生成する．生成式は次の通りである．
+\begin{equation}
+\label{eq:ba-loc}
+\mbox{\boldmath $x_{loc}$}=\mbox{\boldmath $x_*$} + \epsilon A_i^t
+\end{equation}
+パラメータ$\epsilon$は1 $\times$ $D$次元の配列で$[-1, \ 1]$区間のランダムな値が割り当てられる． ランダム探索では解探索空間にランダムで新たに解候補を生成する．生成式は以下の通りである．
+\begin{equation}
+\label{eq:ba-rnd}
+\mbox{\boldmath $x_{rnd}$}=\mbox{\boldmath $x_{lb}$} + \mbox{\boldmath $(x_{ub}$} - \mbox{\boldmath $x_{lb})$}*rand(1,D)
+\end{equation}
+解探索空間の上限と下限をそれぞれ$x_{ub}, x_{lb}$とし，$rand$は0から1までの乱数が入る．
+以上より各個体の解候補${x_i^{t+1}}$，${x_{loc}}$，あるいは$x_{rnd}$の評価値が各個体の最良解（パーソナルベスト）$x_{i*}$より良ければ更新され，同時にラウドネス$A$とその反射波であるパルスレート$r$も以下の式に基づいて更新される．
+\begin{equation}
+\label{eq:loud}
+A_i^{t+1}= \alpha A_i^t
+\end{equation}
+\begin{equation}
+\label{eq:pulse}
+r_i^{t+1}=r_i^t[1-exp(- \gamma t)]
+\end{equation}
+解を更新する度にラウドネス$A_i$は徐々に減少し，それに比例して評価頻度を下げていく．対してパルスレート$r_i$は増加していき，探索が進むにつれて局所探索頻度が減少する．\\ \
+従来のBAの疑似コードは以下のAlgorithm \ref{code:ba}に記す．
+
+\begin{itemize}
+\item {\bf STEP1: 個体の初期化 (1-3行目)}\\
+探索空間内にランダムに個体$x_i (i=1,2,...,N)$を生成し，周波数$f_i$，ラウドネス$A_i^0$，パルスレート$r_i^0$を決定する．
+\item {\bf STEP2: 速度の更新と解候補の生成 (6行目)}\\
+速度$v_i$により新しく解候補を生成する．
+\item {\bf STEP3: 局所探索 (8行目)}\\
+全個体の最良解$x_{gbest}$近辺に新しく解候補$x_{loc}$を生成する．
+\item {\bf STEP4: ランダム探索 (10行目)}\\
+探索空間内にランダムで解候補$x_{rnd}$を生成する．
+\item {\bf STEP5: 評価と更新 (11-13行目)}\\
+${\rm rand} < A_i$を満たす，かつ3つの解候補が$t$時点での最良解$x_{pbest}$よりも評価値が高ければ解を更新する．
+\item {\bf STEP6: STEP2へ戻る}\\
+終了条件を満たすまでSTEP2へ戻る．
+\end{itemize}
+
+\begin{algorithm}[H]
+\caption{Bat Algorithm}
+\label{code:ba}
+\begin{algorithmic}[1]
+\REQUIRE Objective\ Function\ $F(x)$
+\STATE Initialize Population $x_i(i=1,2,..., N)$ and $v_i$\\
+\STATE Define frequency $f_i$ at location $x_i$ [eq.(\ref{eq:freq})]
+\STATE Initialize pulse rates $r_i$, and loudness $A_i$
+\WHILE{($t <$ Max number of iterations)}
+\FOR{i=1 to N}
+\STATE Generate a new solution $x_i$ and velocity $v_i$ [Eqs.(\ref{eq:ba-vi}) to (\ref{eq:ba-xi})]
+\IF{($rand>r_i$)}
+\STATE Generate a new solution $x_{loc}$ around a global best solution $x_i$ [Eq.(\ref{eq:ba-loc})] 
+% \ELSE
+% \STATE Continue
+\ENDIF
+\STATE Generate a new solution $x_{rnd}$ randomly [Eq.(\ref{eq:ba-rnd})]
+\IF{($rand<A_i \& \min (F(x_i), F(x_{loc}), F(x_{rnd})>F(x_{pbest})$)}
+\STATE Accept the new solution, and update pulse rate $r_i$ \\ \& loudness $A_i$ [Eqs. (\ref{eq:loud})(\ref{eq:pulse})]  
+\ENDIF
+\STATE Evaluate all bats and select a best solution $x_*$ in the current solutions
+\ENDFOR
+\STATE t=t+1
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+
 
 \newpage
 \section{Niching Scheme}
@@ -725,7 +706,7 @@ m_i & ({\rm otherwise})
 
 \subsection{Crowding DE (CDE)}
 \label{ss:cde}
-\ref{ss:DE}節で説明したDEをベースとし，Crowding \cite{Crowding} と組み合わせた手法で，生成された子集合の中から最近傍である子$u_{{i,j}_{NN}}$と親$x_{pbest_i}$を選択し，評価値の低い個体は淘汰され，評価値の高い方は次世代に引き継がれる．
+\ref{sss:DE}節で説明したDEをベースとし，Crowding \cite{Crowding} と組み合わせた手法で，生成された子集合の中から最近傍である子$u_{{i,j}_{NN}}$と親$x_{pbest_i}$を選択し，評価値の低い個体は淘汰され，評価値の高い方は次世代に引き継がれる．
 
 \begin{algorithm}[H]
 \caption{CDE/rand/1)}
@@ -795,7 +776,7 @@ dist_i=\min{||x_i^t-x_j^t||:\forall_{x_i^t, x_j^t} \in P}
  ${\rm mean_A}(\cdot)$は$t$世代目の突然変異率ベクトル$S_{CR}$の平均値を示す．
 
 \item {\bf STEP3: 交叉} \\
-\ref{ss:DE}節と同様，突然変異率$CR$に基づいて解候補$u_{i,j}$を決定する．
+\ref{sss:DE}節と同様，突然変異率$CR$に基づいて解候補$u_{i,j}$を決定する．
 
 \item {\bf STEP4: 評価と更新} \\
 最良個体と生成した解$u_{i,j}^{t+1}$を比較し，評価値の高い方を次世代に引き継ぐ．
@@ -885,7 +866,7 @@ CMA-ESが局所解へ収束してしまうことを防ぐため，NEA \cite{nea}
 \item {\bf STEP2: NBCによる個体のクラスタリング}\\
 Nearest-better clustering (NBC) \cite{NBC} は，探索空間の個体間距離に応じて各個体の探索範囲をクラスタで分割する手法である．NBCのクラスタリングのイメージを図\ref{fig:nbc}に，疑似コードをAlgorithm \ref{code:nbc}に記す．図\ref{fig:nbc}中の四角や丸，星は初期生成後の個体$x_i (i=1,2,...,7)$を表しており，$i$番目の個体$x_i$に対してより良い評価値を持つ最近傍個体とエッジ(矢印)を繋げる．この時，エッジの平均値とパラメータ$\phi$の乗算よりもエッジが大きい場合，そのエッジ(点線の矢印)を削除し，エッジで繋がれた個体(実線の矢印)を一つのグループとして生成する．ここではクラスタ$C_1=\{x_1\}, C_2=\{x_2, x_3, x_4\}, C_3 = \{x_5, x_6\}, C_4=\{x_7\}$の４つに分類され，各クラスタの最良解(パーソナルベスト)は$x_1, x_4, x_6, x_7$であり，全個体の最良解(グローバルベスト)は$x_7$である．
 \item {\bf STEP3: CMA-ESを用いた探索} \\
-分類されたクラスタ毎にCMA-ESにより探索を開始する(探索手順は\ref{ss:cma-es}節を参照)．
+分類されたクラスタ毎にCMA-ESにより探索を開始する(探索手順は\ref{sss:cma-es}節を参照)．
 \item {\bf STEP4: STEP2へ戻る}\\
 終了条件を満たすまでSTEP2,3を繰り返す．
 \end{itemize}
