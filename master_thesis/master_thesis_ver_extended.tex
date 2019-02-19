@@ -585,7 +585,7 @@ ${\rm rand} < A_i$を満たす，かつ3つの解候補が$t$時点での最良�
 % \STATE Continue
 \ENDIF
 \STATE Generate a new solution $x_{rnd}$ randomly [Eq.(\ref{eq:ba-rnd})]
-\IF{($rand<A_i \& \min (F(x_i), F(x_{loc}), F(x_{rnd})>F(x_{pbest})$)}
+\IF{($rand<A_i \& \max (F(x_i), F(x_{loc}), F(x_{rnd})>F(x_{pbest})$)}
 \STATE Accept the new solution, and update pulse rate $r_i$ \\ \& loudness $A_i$ [Eqs. (\ref{eq:loud})(\ref{eq:pulse})]  
 \ENDIF
 \STATE Evaluate all bats and select a best solution $x_*$ in the current solutions
