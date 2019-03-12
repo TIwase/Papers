@@ -113,7 +113,7 @@
 \newpage
 \subsection{論文構成}
 本論文の構成は次の通りである.
-\ref{sec:MA}章で多峰性最適化問題における，複数解探索手法のベースとなる一般的なEAsとSIについて説明し，\ref{sec:ns}章でその複数解探索へ向けた機構であるNiching Schemeについて説明する．\ref{sec:nm}章では，EAsあるいは多点探索アルゴリズムとNiching Schemeを組み合わせた複数解探索手法を説明し，\ref{sec:MOP}章で実験で扱う最小化問題における複数解(最適解と局所解を含む)評価関数と，他の最先端手法との性能比較で扱う最大化問題における複数解探索(最適解のみ)を目的とした評価関数について説明する．\ref{sec:NSBA}章から\ref{sec:DNRBA}章までは提案手法であるNSBA, NRBA及びDNRBAの説明及び性能比較をした後，\ref{sec:experiment}章にて他の最先端手法との比較実験を行い，\ref{sec:END}章で本論文のまとめを行う．
+\ref{sec:MA}章で多峰性最適化問題における，複数解探索手法のベースとなる一般的なEAsと多点探索アルゴリズムについて説明し，\ref{sec:ns}章でその複数解探索へ向けた機構であるNiching Schemeについて説明する．\ref{sec:nm}章では，EAsあるいは多点探索アルゴリズムとNiching Schemeを組み合わせた複数解探索手法を説明し，\ref{sec:MOP}章で実験で扱う最小化問題における複数解(最適解と局所解を含む)評価関数と，他の最先端手法との性能比較で扱う最大化問題における複数解探索(最適解のみ)を目的とした評価関数について説明する．\ref{sec:NSBA}章から\ref{sec:DNRBA}章までは提案手法であるNSBA, NRBA及びDNRBAの説明及び性能比較をした後，\ref{sec:experiment}章にて他の最先端手法との比較実験を行い，\ref{sec:END}章で本論文のまとめを行う．
 
 \newpage
 \section{Metaheuristic Algorithms}
@@ -169,6 +169,7 @@ $N$個の個体$x_i$を初期集合として生成し，ランダムな評価値
 \end{algorithm}
 
 \subsubsection{進化戦略 (ES)}
+進化戦略 (Evolutionary Strategy: ES) は
 \label{sss:ES}
 
 \subsubsection{Evolution Strategies with Covariance Matrix Adaptation (CMA-ES)}
@@ -697,11 +698,6 @@ m_i & ({\rm otherwise})
 \newpage
 \section{Niching Methods}
 \label{sec:nm}
-% \textbf{XCSR}(実数値表現を扱う学習分類子システム)はXCSを実数値に対応するように拡張したものである.
-% その為, 基本的にはXCSと同様のアーキテクチャーやメカニズム, アルゴリズムを持つので, この節ではXCSとXCSRの違いに焦点を当てる. 
-% まず\ref{sss:XCSR_overview}節でXCSRの特徴について説明する. 
-% \ref{sss:XCSR_CS}節でXCSR実数値の表現方法であるCS表現について説明し, XCSとXCSRのメカニズムの違いを\ref{sss:XCSR_difference}節で説明する. 
-% 最後に\ref{sss:XCSR_parameter}でXCSRのハイパーパラメーターを説明する.
 
 
 \subsection{Crowding DE (CDE)}
@@ -1197,9 +1193,7 @@ $G_6$ & 186.731 & 18 & 0.5 & 2 & $x_i \in [-10,10]$  \\
 \section{Novelty Search-based Bat Algorithm (NSBA)}
 \label{sec:NSBA}
 本章では多峰性最適化に対し，大域探索と局所探索を自動で切り替えることに優れたBat Algorithm (BA) と，未探索領域に解を生成するNovelty Searchを組み合わせたNSBA \cite{NSBA} を説明する．
-% この章では\proposed で用いるDCAの基礎となるニューラルネットワーク及びディープラーニングを扱う.
-% はじめに階層型ニューラルネットワークとその学習方法を\ref{ss:NN}{}節で説明し, その学習方法を\ref{ss:bpg}節で説明する.
-% 次にニューラルネットワークを利用した機構である自己符号化器(オートエンコーダー)\cite{AE}を\ref{ss:AE}節で説明し, 最後に深いニューラルネットワークの学習である深層学習を\ref{ss:DL}節で説明する.
+
 
 \subsection{Novelty Search}
 \label{ss:NS}
