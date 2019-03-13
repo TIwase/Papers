@@ -82,7 +82,7 @@
 \section{はじめに}
 \subsection{背景と目的}
 実問題の複雑さを多峰性最適化問題として表した時に一つの最適解だけでなく，複数の局所解を探索することは，環境変化によって解が変化した場合や複数の選択の候補解として保持しておくことは非常に重要な意味を持つ．実問題の一例として，「探査機の月面着陸地点選定問題」\cite{ECCompetition} では一つの最適解と複数の局所解が存在するが，最適解
-が着陸困難な場所であった場合，他の着陸地点(則ち局所解)を選択肢として保持しておくことで補うことが可能となる．複数解探索手法({\it Niching methods}) \cite{dADE}, \cite{nea}, \cite{CDE} は，進化的アルゴリズム(Evolutionary Algorithms:EAs) \cite{GA} や多点探索アルゴリズム \cite{CMA-ES}, \cite{PSO},\cite{DE}, \cite{BA} をベースとしたNiching schemeを組み合わせた手法として数多く研究がなされている．
+が着陸困難な場所であった場合，他の着陸地点(則ち局所解)を選択肢として保持しておくことで補うことが可能となる．複数解探索手法({\it Niching methods}) \cite{dADE}, \cite{nea}, \cite{CDE} は，進化的アルゴリズム(Evolutionary Algorithms:EAs) \cite{GA} や多点探索アルゴリズム \cite{CMA-ES}, \cite{PSO}, \cite{DE}, \cite{BA} をベースとしたNiching schemeを組み合わせた手法として数多く研究がなされている．
 しかし，複数解探索する上でいずれの手法も探索する個体が同じ局所解に留まらないための機構が組み込まれているだけであり，未探索領域への探索はランダム性に依存する傾向にある．
 
 そこで本研究では，次の3つの複数解探索手法を提案する．(i)未探索領域を探索可能なNovelty Searchを用い，探索範囲の自動調整が可能なBat Algorithmを組み合わせたNovelty Search-based Bat Algorithm (NSBA) \cite{NSBA}; (ii)探索空間の大きさと最適解数から算出されるNiche Radiusを用いることで，予め各個体の探索領域を決定し，その探索領域内の最良個体から遠ざかる方向へ移動し，個体同士が同じ解に留まらず，分散させるNiche Radius-based Bat Algorithm (NRBA) \cite{NRBA}; (iii)個体の分布密度が高いNiche Radius内で，評価値の低い個体をその領域から移動させるNRBAを拡張したBat Algorithm with Dynamic Niche Radius (DNRBA)．これら3つの提案手法の探索性能の有効性を検証するため，従来手法と各提案手法を比較する．使用する評価関数は，最適解と局所解の両方を含む関数，最適解のみ存在する関数の2つを用意し，探索性能に差異があるか調査する．
@@ -121,7 +121,7 @@
 % \subsection{Evolutionary Algorithms (EAs)}
 \label{sec:MA}
 
-現実問題の複雑さを多峰性関数として表現した問題を最適化するためにEAsが用いられるようになった．EAsのメカニズムとして単一の最適解を探索することを目的として設計されており，生物の生殖や突然変異，交叉，適者生存といった過程をモデルとしている．Niching methods のベースとなるEAsや多点探索アルゴリズムの代表的なアルゴリズムを\ref{ss:EAs}節，\ref{ss:swarm}節で紹介する．
+現実問題の複雑さを多峰性関数として表現した問題を最適化するためにEAsをはじめとした手法が用いられるようになった．EAsのメカニズムとして単一の最適解を探索することを目的として設計されており，生物の生殖や突然変異，交叉，適者生存といった過程をモデルとしている．近年ではNiching methods のベースとして多点探索アルゴリズムを組み合わせた手法 \cite{dADE}, \cite{nea}, \cite{CDE},が提案されている．本研究では，その多点探索アルゴリズムの中でも大域と局所探索を考慮したBAに着目し，局所解を保持することのできるNiching schemeを組み合わせることで複数解探索可能な手法を提案する．本章では，EAsと多点探索アルゴリズムの代表的な手法を\ref{ss:EAs}節，\ref{ss:swarm}節で紹介する．
 
 \subsection{進化的アルゴリズム (EAs)}
 \label{ss:EAs}
@@ -168,9 +168,9 @@ $N$個の個体$x_i$を初期集合として生成し，ランダムな評価値
 \end{algorithmic}
 \end{algorithm}
 
-\subsubsection{進化戦略 (ES)}
-進化戦略 (Evolutionary Strategy: ES) は
-\label{sss:ES}
+% \subsubsection{進化戦略 (ES)}
+% 進化戦略 (Evolutionary Strategy:ES) は
+% \label{sss:ES}
 
 \subsubsection{Evolution Strategies with Covariance Matrix Adaptation (CMA-ES)}
 \label{sss:cma-es}
@@ -180,9 +180,9 @@ $N$個の個体$x_i$を初期集合として生成し，ランダムな評価値
   % \@addtoreset{equation}{subsection}
   % \makeatother
 
-Evolution Strategy with Covariance Matrix Adaptation (CMA-ES)　\cite{mu-CMA-ES}\cite{CMA-ES} は多変量正規分布を用いて解候補を生成し，それらの評価値を基に算出する共分散行列から探索範囲を決定する．CMA-ESの大きな特徴として，変数間の依存度を考慮している(パラメータチューニングを必要としない)という点と，単調に増減する線形的な問題に依存しないという点が挙げられる．CMA-ESには様々な手法がある中で，ここでは一般的な$(\mu|\mu_w,\lambda)$-CMA-ES \cite{CMA-ES} を紹介する．具体的なアルゴリズムについては以下のAlgorithm \ref{code:cma-es}に示し，終了条件を満たすまで以下の手順を繰り返す．
+Evolution Strategy with Covariance Matrix Adaptation (CMA-ES)　\cite{mu-CMA-ES}, \cite{CMA-ES} は進化戦略 (Evolution Strategy:ES) \cite{ES} のアルゴリズムを基に，変数間の依存関係を共分散行列 (Covariance matrix adaptation:CMA) \cite{CMA} により新しい変数を生成するアルゴリズムである．多変量正規分布を用いて解候補を生成し，それらの評価値を基に算出する共分散行列から探索範囲を決定する．CMA-ESの大きな特徴として，変数間の依存度を考慮している(パラメータチューニングを必要としない)という点と，単調に増減する線形的な問題に依存しないという点が挙げられる．CMA-ESには様々な手法がある中で，ここでは一般的な$(\mu|\mu_w,\lambda)$-CMA-ES \cite{CMA-ES} を紹介する．具体的なアルゴリズムについては以下のAlgorithm \ref{code:cma-es}に示し，終了条件を満たすまで以下の手順を繰り返す．
 \begin{itemize}
-\item {\bf STEP1: 個体の生成} 　\\
+\item {\bf STEP1: 個体の生成 (4行目)} 　\\
 まず，正規分布$N(0,I)$の範囲で解候補$z_i (i=1,2,...,\lambda)$を独立に生成し，それを基に設計変数$x_i (i=1,2,...,\lambda)$を生成する．生成式は以下の通りである．
 \begin{equation}
 \label{eq:cmaes-yi}
@@ -195,7 +195,7 @@ Evolution Strategy with Covariance Matrix Adaptation (CMA-ES)　\cite{mu-CMA-ES}
 
 設計変数$x_i$は共分散行列$N(0,(\sigma^t)^2 C^t)$の範囲から生成される．生成後，$x_i$を評価値で降順(評価値の高い順)にソートして順位付けし，$y_i$及び$z_i$も同様に順位付けする．$C^t$は，その共分散行列の範囲の広がり度合いを$d \times d$次元で表し，$\sigma^t$はステップサイズを，$m^t$は平均値ベクトル(探索範囲の中心)を表す．初期個体生成時，$C^0=I, \sigma^0=0$とする．また，$\lambda=4+[3In(n)]$, $\mu=[\frac{\lambda}{2}]$とする．
 
-\item {\bf STEP2: $\mu$個体の荷重和を算出し，平均ベクトル$\mbox{\boldmath $m_i^t$}$を更新} \\
+\item {\bf STEP2: $\mu$個体の荷重和を算出し，平均ベクトル$\mbox{\boldmath $m_i^t$}$を更新 (8行目)} \\
 評価値で降順ソートした設計変数$\mbox{\boldmath $x_i$}$のうち，上位$\mu$個の荷重和を算出し，次式に従って平均値ベクトル$m$を更新する．
 \begin{equation}
 \label{eq:cmaes-mi}
@@ -208,7 +208,7 @@ w_i=In(\frac{\lambda+1}{2})-In(i)
 \end{equation}
 重み$w$は$w_1 \geq w_2 \geq ... \geq w_\mu > 0$であり，$\sum_{i=1}^{\mu}w_i=1$を満たす．
 
-\item {\bf STEP3: ステップサイズ$\sigma$の更新} \\
+\item {\bf STEP3: ステップサイズ$\sigma$の更新 (9行目)} \\
 次式に従って進化パス$p_{\sigma}$及びステップサイズ$\sigma$を更新する．
 \begin{equation}
 \label{eq:cmaes-ps}
@@ -237,7 +237,7 @@ d_{\sigma}=\frac{1}{c_{\sigma}}+1
 \end{equation}
 ここで$n$は最適化する数を表す．
 
-\item {\bf STEP4: 共分散行列$C$の更新} \\
+\item {\bf STEP4: 共分散行列$C$の更新 (9行目)} \\
 共分散行列$C$及びその進化パス$p_c$は次式で更新される．
 \begin{equation}
 \label{eq:cmaes-pc}
@@ -277,7 +277,7 @@ c_c=\frac{4}{n+4}
 \ENDFOR
 \STATE Evaluate and sort solution $x_i$
 \FOR{i=1 to N}
-\STATE Update $m_i$ by $w_i$ [Eqs. (\ref{eq:cmaes-w}),(\ref{eq:cmaes-mi})]
+\STATE Update $m_i$ by $w_i$ [Eqs. (\ref{eq:cmaes-mi}),(\ref{eq:cmaes-w})]
 \STATE Update step size $\sigma$ and covariance matrix $C$ by the evolution path $p_{\sigma}$ and $p_c$ [Eqs. (\ref{eq:cmaes-ps}),(\ref{eq:cmaes-s}),(\ref{eq:cmaes-pc}),(\ref{eq:cmaes-c})]
 \ENDFOR
 \STATE t=t+1
@@ -290,18 +290,18 @@ c_c=\frac{4}{n+4}
 NSGA-II \cite{NSGAII} は，複数の目的関数を同時に満たす解を探索する手法として一般的に用いられる代表的な手法の一つである．アルゴリズムの手順及び疑似コードを以下に記す．
 
 \begin{itemize}
-\item {\bf STEP1: 個体の初期化} \\
+\item {\bf STEP1: 個体の初期化 (1行目)} \\
 初期集合$Q_i^0 (i=1,2,...,N)$の生成と次世代集合$P^t=\emptyset$を用意する．
-\item {\bf STEP2: 非優越ソート}\\
+\item {\bf STEP2: 非優越ソート (3-4行目)}\\
 $R^t=Q^t \cup P^t$を作成し，$R^t$の個体をランク付けし，$\mathcal{F}_i (i=1,2,...,N)$に分類する．その後，新たに$P^{t+1}=\emptyset$を作成し，$i=1$とする．
-\item {\bf STEP3: 混雑距離計算}\\
+\item {\bf STEP3: 混雑距離計算 (6-10行目)}\\
 $|P^{t+1}+|\mathcal{F}^i||\leq N$を満たすまで$P^{t+1}$に$\mathcal{F}$を追加し，混雑度ソートを行う．混雑度ソートは，$i$番目の個体に対する個体密集度に基づいて算出される．混雑度計算は次式で表される．
 \begin{equation}
 \label{eq:nsga-crowd}
 d_j = \sum_{m=1}^M \frac{f_m^{I^{m}_{j+1}}-f_m^{I^{m}_{j-1}}}{f_m^{max}-f_m^{min}}
 \end{equation}
 この時，$M$は目的関数の数を表し，$I_m$は$m$番目の目的関数においてソートされた$j$番目の個体を意味し，それ以外の全ての個体を$j=2,...,l-1$とする．
-\item {\bf STEP4: 混雑度によるトーナメント選択}\\
+\item {\bf STEP4: 混雑度によるトーナメント選択 (11-13行目)}\\
 混雑度トーナメント選択は次の2つの基準によって評価する個体を選択する．
 \begin{itemize}
   \item 個体の非優越ランク: $i_{rank}$
@@ -601,7 +601,7 @@ ${\rm rand} < A_i$を満たす，かつ3つの解候補が$t$時点での最良�
 \newpage
 \section{Niching Scheme}
 \label{sec:ns}
-この章では，多峰性最適化問題において，EAsを拡張させて複数の最適解及び局所解探索を行うための機構であるNiching Schemeについて説明する．EAsは一つの最適解を探索することを目的とした設計であるため，複数の局所解を探索し，保持するには限界がある．この問題を解決するために導入したNiching Schemeについて\ref{ss:Crowding}節から\ref{ss:dns}節で紹介する．
+この章では，多峰性最適化問題において，EAsを拡張させて複数の最適解及び局所解探索を行うための機構であるNiching Schemeについて説明する．EAsは一つの最適解を探索することを目的とした設計であるため，複数の局所解を探索し，保持するには限界がある．この問題を解決するために導入した代表的なNiching Schemeのメカニズムについて\ref{ss:Crowding}節から\ref{ss:dns}節で紹介する．
 
 \subsection{Crowding}
 \label{ss:Crowding}
@@ -698,14 +698,14 @@ m_i & ({\rm otherwise})
 \newpage
 \section{Niching Methods}
 \label{sec:nm}
-
+本章では，前述したMetaheuristic Algorithmに対し，Niching schemeを組み合わせた複数解探索手法について説明する．
 
 \subsection{Crowding DE (CDE)}
 \label{ss:cde}
 \ref{sss:DE}節で説明したDEをベースとし，Crowding \cite{Crowding} と組み合わせた手法で，生成された子集合の中から最近傍である子$u_{{i,j}_{NN}}$と親$x_{pbest_i}$を選択し，評価値の低い個体は淘汰され，評価値の高い方は次世代に引き継がれる．
 
 \begin{algorithm}[H]
-\caption{CDE/rand/1)}
+\caption{CDE/rand/1}
 \label{code:cde}
 \begin{algorithmic}[3]
 \REQUIRE Objective Function $f(x), x=(x_1,x_2,...,x_d)$
@@ -2344,7 +2344,7 @@ DNRBA & 0.9070 & 0.7540 & 0.1519 \\
 \section*{謝辞}
 \addcontentsline{toc}{section}{謝辞}
 本論文の執筆並びに研究を進める上で御指導頂いた高玉圭樹教授に感謝の意を表します. 
-また, 論文執筆において校正・校閲をして頂いた博士課程の高野諒さん,上野史人さん，日々の研究テーマに関して助言をして頂いた佐藤寛之准教授, 並びに日々研究を共にしている研究室の皆様, 研究を支えて頂いている皆様にこの場を借りて感謝致します. 
+また, 論文執筆において校正・校閲をして頂いた博士課程の高野諒さん,上野史さん，日々の研究テーマに関して助言をして頂いた佐藤寛之准教授, 並びに日々研究を共にしている研究室の皆様, 研究を支えて頂いている皆様にこの場を借りて感謝致します. 
 
 \clearpage
 \newpage

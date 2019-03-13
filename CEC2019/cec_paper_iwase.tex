@@ -61,7 +61,7 @@ keiki@hc.uec.ac.jp}
 
 \begin{abstract}
     Evolutionary algorithms (EAs) are often used for multimodal optimization which is modeled as real-world problem. However, most EAs still not enough to find multiple local optima because of the concept of the solution movement between nearest neighbor solutions. This paper proposes the niche radius-based bat algorithm (NRBA), which is designed to find multiple local optima in multimodal optimization.
-    We focus on bat algorithm (BA) which deals with the trade-off between exploration and exploitation in the evolutionary process and extend it with niche radius which can control and modify the search space of solutions to avoid overlapping the found optima. In detail, the proposed BA consists of three search phases: (i) the movement from neighbors for avoiding overlapping the same found optima; (ii) the exploitation for searching nearby the best solution of its domain with Niche Radius; (iii) the exploration for searching randomly in all domain of the radius. In order to evaluate the performance of NRBA, this paper employs some test-bed multimodal functions and compare NRBA with BA and NSBA. The experimental results suggest that NRBA is able to provide the better search performance than BA and NSBA to find multiple global optima in most of best-bed multimodal functions.
+    We focus on bat algorithm (BA) which deals with the trade-off between exploration and exploitation in the evolutionary process and extend it with niche radius which can control and modify the search space of solutions to avoid overlapping the found optima. In detail, the proposed BA consists of three search phases: (i) the movement from neighbors for avoiding overlapping the same found optima; (ii) the exploitation for searching nearby the best solution of its domain with Niche Radius; (iii) the exploration for searching randomly in all domain of the radius. In order to evaluate the performance of NRBA, this paper employs some test-bed multimodal functions and compare NRBA with BA and NSBA. The experimental results suggest that NRBA is able to provide the better search performance than BA and NSBA to find multiple global optima in most of benchmark functions.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -251,10 +251,11 @@ When ${rand < A_i}$, the best solution is selected from $x_i$, ${x_{loc}}$, and 
 \item STEP6: Return to STEP2 
 \end{itemize}
 
-\section{Experimental Setup}
+\section{Experiment}
 To measure the number of local optima and the convergence speed, we compare with the performance of all algorithms. In this section, four multimodal functions which are considered for maximization, are employed in \textit{Congress on Evolutionary Computation (CEC) 2013} competition \cite{cec2013}. 
 
-\subsection{Benchmark Test Functions}
+\subsection{Experimental setup}
+\subsubsection{Benchmark Test Functions}
 In order to verify the effectiveness of our proposed algorithm compared with conventional BA and another {\it Niching method} which is Novelty Search-based BA (NSBA) \cite{NSBA}, four benchmark functions that are popular in multimodal optimization are employed in this experiments. The detail of these functions which are the search space, the fitness value of known global optima and the number of known global and local optima, are summarized in Table \ref{tab1}.
 
 
@@ -374,7 +375,7 @@ where $D$ is the number of dimension and the fitness value of the global optima 
 
 \end{description}
 
-\subsection{Performance Measurements}
+\subsubsection{Performance Measurements}
 To determine how many global optima the algorithm found, accuracy distance $\rho$ is used to calculate the distance between nearest neighbor individuals as shown in Algorithm \ref{code:foptima}. At the first step, the individuals at the final iteration are sorted by the fitness value in descending order. The next step, if the distance between the fitness of the global optimum $ph$ and the nearest neighbor individual $p$ is less than $\varepsilon$, similar nearest neighbor individuals are compared within accuracy distance $\rho$. The better fitness of individual is added to $S$.
 
 \begin{algorithm}[H]
@@ -401,7 +402,8 @@ To determine how many global optima the algorithm found, accuracy distance $\rho
 \end{algorithmic}
 \end{algorithm}
 
-\subsubsection{Peak Ratio}
+\begin{description}
+\item Peak Ratio\\
 This experiment employs Peak Ratio(PR) \cite{CDE} as the evaluation criterion in the CEC (IEEE Congress on Evolutionary Computation) 2013 competition \cite{cec2013}. The PR value measures the ratio of the found global and local optima in the total number of true peaks and it is calculated as follows: 
 \begin{equation}
 \label{eq:PR}
@@ -409,19 +411,20 @@ PR=\frac{\sum_{run=1}^{MR}FPs}{TP*MR}
 \end{equation}
  where ${MR}$ indicates the maximum run, ${FPs}$ indicates indicates the number of peaks found by the optimization algorithm. ${TP}$ indicates the number of all known peaks of the function. We define that the peak is found when the Euclid distance between the all known peaks and the nearest solution calculated by the optimization algorithm is less than the thresholds $\varepsilon = \{1.0, 1.0E-1, 1.0E-2\}$.
 
-\subsubsection{Peak Accuracy}
+\item Peak Accuracy\\
 To measure how far solutions are close to the peaks, we employ Peak Accuracy (PA) \cite{CDE} calculated as follows:
 \begin{equation}
 PA=\sum_{j=1}^{TP}|F(s_j)-F(x_{NN_j})|,
 \end{equation}
 where $s_j$ and $x_{NN_j}$ denote the each known peak and the nearest neighbor solution. As the closest distance between both of them is short, the value of PA is close to 0.  
+\end{description}
 
- \subsection{Experimental Parameters}
+ \subsubsection{Experimental Parameters}
 All experiments employ the parameters as follows: frequency ${f_{max}=1, f_{min}=0}$, loudness ${A^0}=1$, parse rate ${r^0} \in [0, \ 1]$ with ${\alpha =\gamma = 0.9}$. The population size ${N=100}$. This experiments are simulated 30 runs with different random seeds and 10000 evaluations as the termination condition for each run.
 
 % \subsection{Comparison to other Algorithms}
 
-\section{Results and Analysis}
+\subsection{Results and Analysis}
 To test the effectiveness of NRBA mechanism, this section investigates the peak ratio (PR) and the peak accuracy (PA) of each benchmark test function. Table \ref{tab2}, \ref{tab3}, and \ref{tab4} show the results that the PR and the PA values of two algorithms based on the settings of averaged over 30 individual runs at the final iteration. Fig. \ref{fig:results_ba} and \ref{fig:results_nrba} show that the solutions relocating and exploiting at the final iteration for all functions.
 
 \begin{figure}[h]

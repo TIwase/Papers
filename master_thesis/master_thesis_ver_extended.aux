@@ -19,6 +19,9 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.1}背景と目的}{1}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.2}関連研究}{1}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.3}論文構成}{2}}
+\citation{dADE}
+\citation{nea}
+\citation{CDE}
 \citation{GA}
 \@writefile{toc}{\contentsline {section}{\numberline {2}Metaheuristic Algorithms}{3}}
 \newlabel{sec:MA}{{2}{3}}
@@ -28,13 +31,13 @@
 \newlabel{sss:GA}{{2.1.1}{3}}
 \citation{mu-CMA-ES}
 \citation{CMA-ES}
+\citation{ES}
+\citation{CMA}
 \citation{CMA-ES}
 \@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Genetic Algorithm}}{4}}
 \newlabel{code:ga}{{1}{4}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.2}進化戦略 (ES)}{4}}
-\newlabel{sss:ES}{{2.1.2}{4}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.3}Evolution Strategies with Covariance Matrix Adaptation (CMA-ES)}{4}}
-\newlabel{sss:cma-es}{{2.1.3}{4}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.2}Evolution Strategies with Covariance Matrix Adaptation (CMA-ES)}{4}}
+\newlabel{sss:cma-es}{{2.1.2}{4}}
 \newlabel{eq:cmaes-yi}{{1}{4}}
 \newlabel{eq:cmaes-xi}{{2}{4}}
 \newlabel{eq:cmaes-mi}{{3}{5}}
@@ -46,16 +49,16 @@
 \newlabel{eq:cmaes-d}{{9}{5}}
 \newlabel{eq:cmaes-chi}{{10}{5}}
 \newlabel{eq:cmaes-pc}{{11}{5}}
+\newlabel{eq:cmaes-c}{{12}{5}}
 \citation{NSGAII}
-\newlabel{eq:cmaes-c}{{12}{6}}
 \newlabel{eq:cmaes-c1}{{13}{6}}
 \newlabel{eq:cmaes-cmu}{{14}{6}}
 \newlabel{eq:cmaes-cc}{{15}{6}}
 \@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces CMA-ES}}{6}}
 \newlabel{code:cma-es}{{2}{6}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.4}A Fast and Elitist Multi-objective Genetic Algorithm (NSGA-II)}{6}}
-\newlabel{sss:nsga}{{2.1.4}{6}}
-\newlabel{eq:nsga-crowd}{{16}{7}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.3}A Fast and Elitist Multi-objective Genetic Algorithm (NSGA-II)}{6}}
+\newlabel{sss:nsga}{{2.1.3}{6}}
+\newlabel{eq:nsga-crowd}{{16}{6}}
 \@writefile{loa}{\contentsline {algorithm}{\numberline {3}{\ignorespaces Elitist Non-Dominated Sorting Genetic Algorithm (NSGA-II)}}{7}}
 \newlabel{code:nsga}{{3}{7}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}多点探索アルゴリズム}{7}}
@@ -63,8 +66,8 @@
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.1}粒子群最適化 (PSO)}{7}}
 \newlabel{sss:PSO}{{2.2.1}{7}}
 \newlabel{eq:pso-vi}{{2.17}{7}}
+\newlabel{eq:pso-xi}{{2.18}{7}}
 \citation{DE}
-\newlabel{eq:pso-xi}{{2.18}{8}}
 \@writefile{loa}{\contentsline {algorithm}{\numberline {4}{\ignorespaces Particle Swarm Optimization}}{8}}
 \newlabel{code:pso}{{4}{8}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.2}差分進化 (DE)}{8}}
@@ -79,7 +82,7 @@
 \newlabel{code:de}{{5}{10}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.3}Bat Algorithm (BA)}{10}}
 \newlabel{sss:BA}{{2.2.3}{10}}
-\newlabel{eq:freq}{{2.25}{11}}
+\newlabel{eq:freq}{{2.25}{10}}
 \newlabel{eq:ba-vi}{{2.26}{11}}
 \newlabel{eq:ba-xi}{{2.27}{11}}
 \newlabel{eq:ba-loc}{{2.28}{11}}
@@ -113,7 +116,7 @@
 \newlabel{sec:nm}{{4}{15}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Crowding DE (CDE)}{15}}
 \newlabel{ss:cde}{{4.1}{15}}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {7}{\ignorespaces CDE/rand/1)}}{15}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {7}{\ignorespaces CDE/rand/1}}{15}}
 \newlabel{code:cde}{{7}{15}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}A Dynamic Archive Niching Differential Evolution (dADE)}{15}}
 \newlabel{ss:dADE}{{4.2}{15}}
@@ -497,28 +500,30 @@
 \@writefile{toc}{\contentsline {section}{謝辞}{72}}
 \bibdata{./ref/ref}
 \bibcite{PNA-NSGA}{1}
-\bibcite{N-VMO}{2}
-\bibcite{Crowding}{3}
+\bibcite{NSGAII}{2}
+\bibcite{dADE}{3}
 \bibcite{FS}{4}
-\bibcite{mu-CMA-ES}{5}
-\bibcite{CMA-ES}{6}
-\bibcite{GA}{7}
-\bibcite{NSGAII}{8}
-\bibcite{PSO}{9}
-\bibcite{NS}{10}
-\bibcite{himmelblau}{11}
-\bibcite{dADE}{12}
-\bibcite{NBC}{13}
+\bibcite{CMA}{5}
+\bibcite{mu-CMA-ES}{6}
+\bibcite{CMA-ES}{7}
+\bibcite{GA}{8}
+\bibcite{NSBA}{9}
+\bibcite{Crowding}{10}
+\bibcite{PSO}{11}
+\bibcite{NS}{12}
+\bibcite{CEC2013}{13}
 \@writefile{toc}{\contentsline {section}{参考文献}{73}}
-\bibcite{DNS}{14}
-\bibcite{MOP}{15}
-\bibcite{nea}{16}
-\bibcite{DE}{17}
-\bibcite{DEs}{18}
-\bibcite{NSBA}{19}
-\bibcite{CDE}{20}
-\bibcite{CEC2013}{21}
-\bibcite{BA}{22}
-\bibcite{Lehmer}{23}
-\bibcite{NRBA}{24}
-\bibcite{ECCompetition}{25}
+\bibcite{himmelblau}{14}
+\bibcite{DNS}{15}
+\bibcite{N-VMO}{16}
+\bibcite{MOP}{17}
+\bibcite{nea}{18}
+\bibcite{NBC}{19}
+\bibcite{DEs}{20}
+\bibcite{ES}{21}
+\bibcite{DE}{22}
+\bibcite{CDE}{23}
+\bibcite{BA}{24}
+\bibcite{Lehmer}{25}
+\bibcite{NRBA}{26}
+\bibcite{ECCompetition}{27}

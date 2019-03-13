@@ -6,23 +6,29 @@ S.~Bandaru and K.~Deb.
   optimization.
 \newblock {\em in Proc. Congr. Evol. Comput.(CEC)}, pp. 95--102, 2013.
 
-\bibitem{N-VMO}
-R.~Bello D.~Molina, A.~Puris and F.~Herrera.
-\newblock Variable mesh optimization for the 2013 cec special session niching
-  methods for multimodal optimization.
-\newblock {\em inProc. Congr. Evol. Comput. (CEC)}, pp. 87--94, 2013.
+\bibitem{NSGAII}
+K.~Deb, S.~Agarwal, A.~Pratap, and T.~Meyarivan.
+\newblock A fast and elitist multi-objective genetic algorithm: Nsga-ii.
+\newblock {\em IEEE Transactions on Evolutionary Computation}, Vol.~6, No.~2,
+  pp. 182--197, 2002.
 
-\bibitem{Crowding}
-A.~Kenneth De~John.
-\newblock {\em An Analysis of the Behavior of a Class of Genetic Adaptive
-  Systems}, Vol.~36.
-\newblock University of Michigan Ann Arbor, MI, USA, 1975.
+\bibitem{dADE}
+M.~G. Epitropakis, X.~Li, and E.~K. Burke.
+\newblock A dynamic archive niching differential evolution algorithm for
+  multimodal optimization.
+\newblock {\em inProc.Congr. Evol. Comput. (CEC)}, pp. 79--86, 2013.
 
 \bibitem{FS}
 D.~E. Goldberg and J.~Richardson.
 \newblock Genetic algorithms with sharing for multimodal function optimization.
 \newblock {\em in Proc. of the Second International Conference on Genetic
   Algorithms}, pp. 41--49, 1987.
+
+\bibitem{CMA}
+N.~Hansen and A.~Ostermeier.
+\newblock Adapting arbitrary normal mutation distributions in evolution
+  strategies: The covariance matrix adaptation.
+\newblock {\em IEEE Congress on Evolutionary Computation}, pp. 312--317, 1996.
 
 \bibitem{mu-CMA-ES}
 N.~Hansen and A.~Ostermeier.
@@ -41,11 +47,18 @@ J.~H. Holland.
 \newblock Adaptation in natural and artificial systems.
 \newblock {\em University of Michigan Press, Ann Arbor, MI}, 1975.
 
-\bibitem{NSGAII}
-A.~Pratap K.~Deb, S.~Agarwal and T.~Meyarivan.
-\newblock A fast and elitist multi-objective genetic algorithm: Nsga-ii.
-\newblock {\em IEEE Transactions on Evolutionary Computation}, Vol.~6, No.~2,
-  pp. 182--197, 2002.
+\bibitem{NSBA}
+T.~Iwase, R.~Takano, F.~Uwano, H.~Sato, and K.~Takadama.
+\newblock Novelty search-based bat algorithm: Adjusting distance among
+  solutions for multimodal optimization.
+\newblock {\em Proceedings of The 22nd Asia Pacific Symposium on Intelligent
+  and Evolutionary Systems (IES 2018)}, pp. 29--34, 2018.
+
+\bibitem{Crowding}
+De~John and A.~Kenneth.
+\newblock {\em An Analysis of the Behavior of a Class of Genetic Adaptive
+  Systems}, Vol.~36.
+\newblock University of Michigan Ann Arbor, MI, USA, 1975.
 
 \bibitem{PSO}
 J.~Kennedy and R.~Eberhart.
@@ -59,6 +72,12 @@ J.~Lehman and K.~O. Stanley.
   novelty.
 \newblock {\em In ALIFE}, pp. 329--336, 2008.
 
+\bibitem{CEC2013}
+X.~Li, A.~Engelbrecht, and M.~G. Epitropakis.
+\newblock Benchmark functions for cec’2013 special session and competition on
+  niching methods for multimodal function optimization.
+\newblock {\em Evol. Comput.}, 2013.
+
 \bibitem{himmelblau}
 D.~Hocaog lu and A.~C. Sanderson.
 \newblock Multimodal function optimization using minimal representation size
@@ -66,24 +85,18 @@ D.~Hocaog lu and A.~C. Sanderson.
 \newblock {\em in Documentation for Genetic and Evolutionary Algorithms for use
   with MATLAB:GEATbx version 3.7}, Vol.~5, No.~1, pp. 81--104, 1997.
 
-\bibitem{dADE}
-X.~Li M.~G.~Epitropakis and E.~K. Burke.
-\newblock A dynamic archive niching differential evolution algorithm for
-  multimodal optimization.
-\newblock {\em inProc.Congr. Evol. Comput. (CEC)}, pp. 79--86, 2013.
-
-\bibitem{NBC}
-L.~Sch$\ddot{o}$nemann M.~Preuss and M.~Emmerich.
-\newblock Counteracting genetic drift and disruptive recombination in ($μ + /,
-  \lambda$)-ea on multimodal fitness landscapes.
-\newblock {\em In Proceedings of Genetic and Evolutionary Computation}.
-
 \bibitem{DNS}
 B.~Miller.
 \newblock Genetic algorithms with dynamic niche sharing for multimodal function
   optimization.
 \newblock In: Proceedings of the 1996 IEEE International Conference on
   Evolutionary Computation (ICEC’96), 1996.
+
+\bibitem{N-VMO}
+D.~Molina, A.~Puris, R.~Bello, and F.~Herrera.
+\newblock Variable mesh optimization for the 2013 cec special session niching
+  methods for multimodal optimization.
+\newblock {\em inProc. Congr. Evol. Comput. (CEC)}, pp. 87--94, 2013.
 
 \bibitem{MOP}
 H.~Pohlheim.
@@ -98,11 +111,11 @@ M.~Preuss.
 \newblock {\em In Proceedings of the 12th annual conference companion on
   Genetic and evolutionary computation}, pp. 1711--1718, 2010.
 
-\bibitem{DE}
-K.~Price R.~Storn.
-\newblock Differential evolution – a simple and efficient heuristic for
-  global optimization over continuous spacesy.
-\newblock {\em International computer science institute}, Vol.~46, No.~2, 1995.
+\bibitem{NBC}
+M.~Preuss, L.~Sch$\ddot{o}$nemann, and M.~Emmerich.
+\newblock Counteracting genetic drift and disruptive recombination in ($μ + /,
+  \lambda$)-ea on multimodal fitness landscapes.
+\newblock {\em In Proceedings of Genetic and Evolutionary Computation}.
 
 \bibitem{DEs}
 J.~Ronkkonen.
@@ -110,24 +123,22 @@ J.~Ronkkonen.
   evolution-based methods.
 \newblock 2009.
 
-\bibitem{NSBA}
-F.~Uwano H.~Sato T.~Iwase, R.~Takano and K.~Takadama.
-\newblock Novelty search-based bat algorithm: Adjusting distance among
-  solutions for multimodal optimization.
-\newblock {\em Proceedings of The 22nd Asia Pacific Symposium on Intelligent
-  and Evolutionary Systems (IES 2018)}, pp. 29--34, 2018.
+\bibitem{ES}
+Hans-Paul Schewefel.
+\newblock Numerical optimization of computer models.
+\newblock {\em Wiley, Chichester}, 1981.
+
+\bibitem{DE}
+R.~Storn and K.~Price.
+\newblock Differential evolution – a simple and efficient heuristic for
+  global optimization over continuous spacesy.
+\newblock {\em International computer science institute}, Vol.~46, No.~2, 1995.
 
 \bibitem{CDE}
 R.~Thomsen.
 \newblock Multimodal optimization using crowding-based differential evolution.
 \newblock {\em In the IEEE Congress on Evolutionary Computation}, Vol.~2, pp.
   1382--1389, 2004.
-
-\bibitem{CEC2013}
-A.~Engelbrecht X.~Li and M.~G. Epitropakis.
-\newblock Benchmark functions for cec’2013 special session and competition on
-  niching methods for multimodal function optimization.
-\newblock {\em Evol. Comput.}, 2013.
 
 \bibitem{BA}
 X.~S. Yang.
@@ -142,13 +153,13 @@ J.~Zhang and A.~Sanderson.
   pp. 945--958, 2009.
 
 \bibitem{NRBA}
-上野史 佐藤寛之~\UTF{9AD9}玉先生岩瀬拓哉.
+岩瀬拓哉, 高野諒, 上野史, 佐藤寛之, \UTF{9AD9}玉先生.
 \newblock 複数解探索を考慮した分散型bat algorithm.
 \newblock {\em SICE Symposium on Systems and Information 2018}, 2018.
 
 \bibitem{ECCompetition}
-西山万里, 大嶽久志, 星野健, 橋本樹明, 渡辺毅, 立川智章,
-  大山聖.
+西山万里, 大嶽久志, 星野健, 橋本樹明, 渡辺毅,
+  立川智章and大山聖.
 \newblock
   月周回衛星「かぐや」のデータを用いた多目的最適化による月着陸最適候補地の選定.
 \newblock 宇宙科学情報解析論文誌　第五号, 2015.
