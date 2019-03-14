@@ -605,7 +605,7 @@ ${\rm rand} < A_i$を満たす，かつ3つの解候補が$t$時点での最良�
 
 \subsection{Crowding}
 \label{ss:Crowding}
-Crowding \cite{Crowding} は評価値が類似する個体が同じ場所付近に位置しているとき，その最近傍個体同士を比較し，評価値の高い方を残す．この時，比較する個体は親集合と子集合を含めた全個体における最近傍個体同士が比較対象となる．この動作を毎世代繰り返すことによって同じ局所解に個体が陥らないことを目的とした機構である．
+Crowding \cite{Crowding} は評価値が類似する最近傍個体同士を比較し，評価値の高い方を残す．この時，比較する個体は親集合と子集合を含めた全個体における最近傍個体同士が比較対象となる．この動作を毎世代繰り返すことによって同じ局所解に個体が陥らないことを目的とした機構である．
 
 \subsection{Niche Radius}
 \label{ss:nr}
@@ -1673,9 +1673,17 @@ $F_5$ & 0.2417 $\pm$ 0.1367 & {\bf 1} $\pm$ 0 & 0.8583 $\pm$ 0.1239 \\
 \newpage
 \section{Dynamic Niche Radius-based Bat Algorithm (DNRBA)}
 \label{sec:DNRBA}
-本章では，NRBAで局所解に収束しなかった個体を最適解や局所解へ移動させることで，収束性能を高めることを目的としたDynamic Niche RadiusをBAに適用させたDNRBAを提案する．
+本章では，NRBAで局所解に収束しなかった個体を最適解や局所解へ移動させることで，収束性能を高めることを目的としたDynamic Niche RadiusをBAに適用させたDNRBAを提案する．BA空の変更点を図\ref{fig:dnr_tab}に示す．
 \subsection{メカニズム}
 \label{ss:DNRBA-abst}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\linewidth]{eps/dnrba_table.eps}
+\label{fig:dnr_tab}
+\caption{BAからの変更点}
+\end{figure}
+
 \ref{ss:dns}節で説明したDynamic Niche Sharing \cite{DNS} より，探索領域に属する個体が同じ局所解に収束することを避けるため，本研究では以下の変更を加えた．
 \begin{equation}
 \label{eq:mi}
@@ -1777,7 +1785,7 @@ ${\rm rand} < A_i$を満たす，かつ3つの解候補が$t$時点での最良�
 \WHILE{($t <$ Max number of iterations)}
 \STATE Calculate Dynamic Niche Radius (Algorithm 2)
 \FOR{i=1 to N}
-\IF{$d_{ij} < NR$}
+\IF{$d_{ij} < \sigma$}
 \STATE Generate a new solution $x_i$ and velocity $v_i$ [Eqs.(\ref{eq:dnrba-vi}) and (\ref{eq:dnrba-xi})]
 \ENDIF
 \IF{($rand>r_i$)}
@@ -1968,7 +1976,7 @@ $F_6 $ & {\bf 0.0556} $\pm$ 0.0619 & {\bf 1.8160} $\pm$ 0.4990 & 0.0426 $\pm$ 0.
 \newpage
 \section{他の最先端手法との性能比較実験}
 \label{sec:experiment}
-
+本章では他の最先端手法と探索性能を比較するため，複数解探索手法のコンペティション(CEC Competition 2013)で使用された手法に着目する．実験環境をCEC Competition 2013で用いられた評価関数，評価指標に合わせて実験を行った．
 
 % \subsection{複数解探索における多峰性最適化問題}
 % \label{ss:cec2013}
