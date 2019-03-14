@@ -914,17 +914,16 @@ $x_1 \ {\rm and} \ x_2 \ {\rm are \ non dominated}  {\rm otherwise}$
 
 
 
-
 \newpage
 \section{多峰性最適化問題}
 \label{sec:MOP}
-最適化問題において，実問題の複雑さを多峰性と見立てた評価関数を用いることが一般的である．その代表的な多峰性関数を次節で説明する．
+最適化問題において，実問題の複雑さを多峰性と見立てた評価関数を実験で用いられている．その代表的な多峰性関数を次節で説明する．
 
 
 \subsection{最小化問題における評価関数}
 \label{ss:MinFunc}
 最適解及び局所解の位置が既知である評価関数を扱う(ただし，実験時には関数はブラックボックス化されており，評価する時のみ解の位置情報を利用する)．
-実験で用いられる評価関数の最適解の評価値，最適解数，探索範囲を表\ref{tab:minMOP}に示す．
+実験で用いられる評価関数の最適解の評価値，最適解数，探索範囲を表\ref{tab:minMOP}に示す．また関数の概形を図\ref{fig:minF1}-\ref{fig:minF4}に示し，その評価値を色濃度で表す．関数の概形図は，2変数$x_1, x_2$を用いて評価値を表した3次元空間で構成されている．
 
 \begin{description}
 \item[$F_1$: Griewank (2D)]\mbox{}\\
@@ -1048,7 +1047,7 @@ $D$は次元数を表し，最適解の評価値は${F(x_*)=-187.731}$である.
 \hline
 
 Function & $F(x*)$ & Num of & Num of & $D$ & Search Range \\
-& & goptima & loptima & & \\
+& & global optima & local optima & & \\
 \hline
 $F_1$ & 0 & 1 & 16 &  2 & $x_i \in [-10,10]$  \\
 \hline
@@ -1070,120 +1069,7 @@ $F_6$ & -187.731 & 18 & many & 2 & $x_i \in [-10,10]$, \\
 
 
 \FloatBarrier
-\subsection{最大化問題における評価関数}
-\label{ss:maxFunc}
-本実験では，複数最適解を探索する手法の性能を比較するため，CEC 2013 Competitionで扱われたベンチマーク関数を説明する．本コンペティションでは評価値が同じである複数最適解のみ探索することを目的としている．ベンチマーク関数の最適解の評価値$F(x_*)$と最適解数，探索領域を表\ref{tab:maxMOP}に示す．
-\begin{description}
-\item[$G_1$: Five-Uneven-Peak Trap (1D)]\mbox{}\\
-\begin{equation}
-\label{eq:maxF1}
-G_1(x)=\begin{cases}
-80(2.5-x) & {\rm for} \ 0 \leq x < 2.5, \\
-64(x-2.5) & {\rm for} \ 2.5 \leq x < 5.0, \\
-64(7.5-x) & {\rm for} \ 5.0 \leq x < 7.5, \\
-28(x-7.5) & {\rm for} \ 7.5 \leq x < 12.5, \\
-28(17.5-x) & {\rm for} \ 12.5 \leq x < 17.5, \\
-32(x-17.5) & {\rm for} \ 17.5 \leq x < 22.5, \\
-32(27.5-x) & {\rm for} \ 22.5 \leq x < 27.5, \\
-80(x-27.5) & {\rm for} \ 27.5 \leq x < 30.
-\end{cases}
-\end{equation}
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\linewidth]{eps/F1.eps}
-\caption{Five-Uneven-Peak Trap}
-\label{fig:maxF1}
-\end{figure}
 
-\item[$G_2$: Equal Maxima (1D)]\mbox{}\\
-\begin{equation}
-\label{eq:maxF2}
-G_2(x)=\sin^6{(5\pi x)}.
-\end{equation}
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\linewidth]{eps/F2.eps}
-\caption{Equal Maxima}
-\label{fig:maxF2}
-\end{figure}
-
-\item[$G_3$: Uneven Decreasing Maxima (1D)]\mbox{}\\
-\begin{equation}
-\label{eq:maxF3}
-G_3(x)=exp(-2log(2)(\frac{x-0.08}{0.854})^2)\sin^6{(5\pi(x^{\frac{3}{4}}-0.05))}.
-\end{equation}
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\linewidth]{eps/F3.eps}
-\caption{Uneven Decreasing Maxima}
-\label{fig:maxF3}
-\end{figure}
-
-\item[$G_4$: Himmelblau (2D)]\mbox{}\\
-\begin{equation}
-\label{eq:maxF4}
-G_4(x,y) = 200 - (x^2+y-11)^2 - (x+y^2-7)^2.
-\end{equation}
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\linewidth]{eps/F4.eps}
-\caption{2D Himmelblau}
-\label{fig:maxF4}
-\end{figure}
-
-\item[$G_5$: Six-Hump Camel Back (2D)]\mbox{}\\
-\begin{equation}
-\label{eq:maxF5}
-G_5(x,y)=-4[(4-2.1x^2+\frac{x^4}{3})x^2+xy+(4y^2-4)y^2].
-\end{equation}
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\linewidth]{eps/F5.eps}
-\caption{2D Six-Hump Camel Back}
-\label{fig:maxF5}
-\end{figure}
-
-\item[$G_6$: Shubert (2D)]\mbox{}\\
-\begin{equation}
-\label{eq:maxF6}
-G_6(x)=-\prod_{i=1}^D \sum_{j=1}^5 j\cos[(j+1)x_i+j].
-\end{equation}
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\linewidth]{eps/F6.eps}
-\caption{2D Shubert}
-\label{fig:maxF6}
-\end{figure}
-
-\end{description}
-
-\begin{table}[h]
-\caption{Benchmark Test Functions}
-\begin{center}
-\begin{tabular}{c|c|c|c|c|c}
-\hline
-
-Function & $G(x_*)$ & Num of & $\rho$ & $D$ & Search Range \\
-& & goptima & & & \\
-\hline
-$G_1$ & 200.0 & 2 & 0.01 & 1 & $x \in [0,30]$  \\
-\hline
-$G_2$ & 1.0 & 5 & 0.01 & 1 & $x \in [0,1]$  \\
-\hline
-$G_3$ & 1.0 & 1 & 0.01 & 1 & $x \in [0,1]$  \\
-\hline
-$G_4$ & 200.0 & 4 & 0.01 & 2 & $x,y \in [-6,6]$  \\
-\hline
-$G_5$ & 1.03163 & 2 & 0.5 & 2 & $x \in [-1.9,1.9]$, \\
-& & & & & $y \in [-1.1,1.1]$ \\
-\hline
-$G_6$ & 186.731 & 18 & 0.5 & 2 & $x_i \in [-10,10]$  \\
-\hline
-% \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
-\end{tabular}
-\label{tab:maxMOP}
-\end{center}
-\end{table}
 
 % \subsection{月面着陸地点選定問題}
 % \label{ss:LSM}
@@ -1984,9 +1870,124 @@ $F_6 $ & {\bf 0.0556} $\pm$ 0.0619 & {\bf 1.8160} $\pm$ 0.4990 & 0.0426 $\pm$ 0.
 % 本実験では，複数最適解を探索する手法の性能を比較するため，CEC ({\it IEEE Congress on Evolutionary Computation}) 2013 Competition on Niching Methods for Multimodal Function Optimization \cite{CEC2013} で扱われたベンチマーク関数を用いる．使用する関数について,次節で説明する．
 
 \subsection{評価関数}
-\label{sss:benchmark}
-使用するベンチマーク関数とその概形は\ref{ss:maxFunc}節で説明した6つの評価関数を用いる．
+% \label{sss:benchmark}
 
+% \subsection{最大化問題における評価関数}
+\label{ss:maxFunc}
+本実験では，複数最適解を探索する手法の性能を比較するため，CEC 2013 Competitionで扱われたベンチマーク関数を説明する．本コンペティションでは評価値が同じである複数最適解のみ探索することを目的としている．ベンチマーク関数の最適解の評価値$F(x_*)$と最適解数，探索領域，閾値$\rho$ (次節で説明)を表\ref{tab:maxMOP}に示す．
+\begin{description}
+\item[$G_1$: Five-Uneven-Peak Trap (1D)]\mbox{}\\
+\begin{equation}
+\label{eq:maxF1}
+G_1(x)=\begin{cases}
+80(2.5-x) & {\rm for} \ 0 \leq x < 2.5, \\
+64(x-2.5) & {\rm for} \ 2.5 \leq x < 5.0, \\
+64(7.5-x) & {\rm for} \ 5.0 \leq x < 7.5, \\
+28(x-7.5) & {\rm for} \ 7.5 \leq x < 12.5, \\
+28(17.5-x) & {\rm for} \ 12.5 \leq x < 17.5, \\
+32(x-17.5) & {\rm for} \ 17.5 \leq x < 22.5, \\
+32(27.5-x) & {\rm for} \ 22.5 \leq x < 27.5, \\
+80(x-27.5) & {\rm for} \ 27.5 \leq x < 30.
+\end{cases}
+\end{equation}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F1.eps}
+\caption{Five-Uneven-Peak Trap}
+\label{fig:maxF1}
+\end{figure}
+
+\item[$G_2$: Equal Maxima (1D)]\mbox{}\\
+\begin{equation}
+\label{eq:maxF2}
+G_2(x)=\sin^6{(5\pi x)}.
+\end{equation}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F2.eps}
+\caption{Equal Maxima}
+\label{fig:maxF2}
+\end{figure}
+
+\item[$G_3$: Uneven Decreasing Maxima (1D)]\mbox{}\\
+\begin{equation}
+\label{eq:maxF3}
+G_3(x)=exp(-2log(2)(\frac{x-0.08}{0.854})^2)\sin^6{(5\pi(x^{\frac{3}{4}}-0.05))}.
+\end{equation}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F3.eps}
+\caption{Uneven Decreasing Maxima}
+\label{fig:maxF3}
+\end{figure}
+
+\item[$G_4$: Himmelblau (2D)]\mbox{}\\
+\begin{equation}
+\label{eq:maxF4}
+G_4(x,y) = 200 - (x^2+y-11)^2 - (x+y^2-7)^2.
+\end{equation}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F4.eps}
+\caption{2D Himmelblau}
+\label{fig:maxF4}
+\end{figure}
+
+\item[$G_5$: Six-Hump Camel Back (2D)]\mbox{}\\
+\begin{equation}
+\label{eq:maxF5}
+G_5(x,y)=-4[(4-2.1x^2+\frac{x^4}{3})x^2+xy+(4y^2-4)y^2].
+\end{equation}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F5.eps}
+\caption{2D Six-Hump Camel Back}
+\label{fig:maxF5}
+\end{figure}
+
+\item[$G_6$: Shubert (2D)]\mbox{}\\
+\begin{equation}
+\label{eq:maxF6}
+G_6(x)=-\prod_{i=1}^D \sum_{j=1}^5 j\cos[(j+1)x_i+j].
+\end{equation}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{eps/F6.eps}
+\caption{2D Shubert}
+\label{fig:maxF6}
+\end{figure}
+
+\end{description}
+
+\begin{table}[h]
+\caption{Benchmark Test Functions}
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c}
+\hline
+
+Function & $G(x_*)$ & Num of & $\rho$ & $D$ & Search Range \\
+& & global optima & & & \\
+\hline
+$G_1$ & 200.0 & 2 & 0.01 & 1 & $x \in [0,30]$  \\
+\hline
+$G_2$ & 1.0 & 5 & 0.01 & 1 & $x \in [0,1]$  \\
+\hline
+$G_3$ & 1.0 & 1 & 0.01 & 1 & $x \in [0,1]$  \\
+\hline
+$G_4$ & 200.0 & 4 & 0.01 & 2 & $x,y \in [-6,6]$  \\
+\hline
+$G_5$ & 1.03163 & 2 & 0.5 & 2 & $x \in [-1.9,1.9]$, \\
+& & & & & $y \in [-1.1,1.1]$ \\
+\hline
+$G_6$ & 186.731 & 18 & 0.5 & 2 & $x_i \in [-10,10]$  \\
+\hline
+% \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
+\end{tabular}
+\label{tab:maxMOP}
+\end{center}
+\end{table}
+
+\FloatBarrier
 
 \subsection{評価基準}
 \label{ss:eval_criteria}
@@ -1995,7 +1996,38 @@ $F_6 $ & {\bf 0.0556} $\pm$ 0.0619 & {\bf 1.8160} $\pm$ 0.4990 & 0.0426 $\pm$ 0.
 \label{eq:PR}
 PR=\frac{\sum_{run=1}^{NR}NPF_{run}}{NKP*NR}
 \end{equation}
-$NPF_{run}$は，そのシードにおけるアルゴリズムが発見した最適解数を示し，NKPは評価関数が持つ全最適解数を示す．NRは実験の試行回数を示す．
+$NPF_{run}$は，そのシードにおけるアルゴリズムが発見した最適解数を示し，NKPは評価関数が持つ全最適解数を示す．NRは実験の試行回数を示す．最適解を発見する定義は以下のAlgorithm \ref{code:foptima}により決定される．
+
+\begin{algorithm}[H]
+\caption{Calculate how many global optima the algorithm found}
+\label{code:foptima}
+\begin{algorithmic}[2]
+\REQUIRE $L_{sorted}$ a list of individuals in descending order of the fitness value
+\STATE $S = \emptyset$
+\WHILE{($not \ reaching \ the \ end \ of \ L_{sorted}$)}
+\STATE Get best unprocessed $p \in L_{sorted}$;
+\STATE $found \leftarrow$ FALSE;
+\IF{$d(ph, fit(p))\leq \varepsilon$}
+\FOR{$all \ s \in S$}
+\IF{$d(s,p) \leq \rho$}
+\STATE $found \leftarrow$ TRUE;
+\STATE break;
+\ENDIF
+\ENDFOR
+\IF{not found}
+\STATE let $s \leftarrow S \cup \{p\}$
+\ENDIF
+\ENDIF
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+\begin{itemize}
+	\item {\bf 個体を評価値で降順にソート (1行目)}\\
+	\item {\bf 最適解と個体の評価値の差分に基づいて解発見を定義 (2-16行目)}\\
+	最適解と個体の持つ評価値の差分が accuracy level $\varepsilon$未満である(5行目)，かつ最近傍個体同士の距離が閾値$\rho$未満(7行目)であれば，評価値の良い最近傍個体のみ残し，それ以外の個体を削除する．残った個体数が最適解を発見した数とする(8行目)．
+\end{itemize}
+\FloatBarrier
 
 \subsection{比較手法}
 \ref{sec:MA}, \ref{sec:nm}章で紹介したDEやCMA-ES, NSGAII, CDE, dADE, NEAに加え，本コンペティションでは次の手法 \cite{PNA-NSGA} \cite{DEs} \cite{N-VMO} と比較実験を行った．
