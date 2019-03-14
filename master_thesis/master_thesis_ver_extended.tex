@@ -698,7 +698,7 @@ m_i & ({\rm otherwise})
 \newpage
 \section{Niching Methods}
 \label{sec:nm}
-本章では，前述したMetaheuristic Algorithmに対し，Niching schemeを組み合わせた複数解探索手法について説明する．
+本章では，前述したMetaheuristic Algorithmに対し，Niching schemeを組み合わせた複数解探索手法について説明する．複数最適解探索問題のコンペティションであるCEC ({\it IEEE Congress on Evolutionary Computation})  2013 on Niching Methods for Multimodal Function Optimization \cite{CEC2013} で使用された手法を次節より紹介する．
 
 \subsection{Crowding DE (CDE)}
 \label{ss:cde}
@@ -923,6 +923,7 @@ $x_1 \ {\rm and} \ x_2 \ {\rm are \ non dominated}  {\rm otherwise}$
 
 \subsection{最小化問題における評価関数}
 \label{ss:MinFunc}
+最適解及び局所解の位置が既知である評価関数を扱う(ただし，実験時には関数はブラックボックス化されており，評価する時のみ解の位置情報を利用する)．
 実験で用いられる評価関数の最適解の評価値，最適解数，探索範囲を表\ref{tab:minMOP}に示す．
 
 \begin{description}
@@ -1071,7 +1072,7 @@ $F_6$ & -187.731 & 18 & many & 2 & $x_i \in [-10,10]$, \\
 \FloatBarrier
 \subsection{最大化問題における評価関数}
 \label{ss:maxFunc}
-本実験では，複数最適解を探索する手法の性能を比較するため，CEC ({\it IEEE Congress on Evolutionary Computation}) 2013 Competition on Niching Methods for Multimodal Function Optimization \cite{CEC2013} で扱われたベンチマーク関数を説明する．ベンチマーク関数の最適解の評価値$F(x_*)$と最適解数，探索領域を表\ref{tab:maxMOP}に示す．
+本実験では，複数最適解を探索する手法の性能を比較するため，CEC 2013 Competitionで扱われたベンチマーク関数を説明する．本コンペティションでは評価値が同じである複数最適解のみ探索することを目的としている．ベンチマーク関数の最適解の評価値$F(x_*)$と最適解数，探索領域を表\ref{tab:maxMOP}に示す．
 \begin{description}
 \item[$G_1$: Five-Uneven-Peak Trap (1D)]\mbox{}\\
 \begin{equation}
@@ -1192,8 +1193,8 @@ $G_6$ & 186.731 & 18 & 0.5 & 2 & $x_i \in [-10,10]$  \\
 \newpage
 \section{Novelty Search-based Bat Algorithm (NSBA)}
 \label{sec:NSBA}
-本章では多峰性最適化に対し，大域探索と局所探索を自動で切り替えることに優れたBat Algorithm (BA) と，未探索領域に解を生成するNovelty Searchを組み合わせたNSBA \cite{NSBA} を説明する．
 
+本章では多峰性最適化に対し，大域探索と局所探索を自動で切り替えることに優れたBat Algorithm (BA) と，未探索領域に解を生成するNovelty Searchを組み合わせたNSBA \cite{NSBA} を説明する．
 
 \subsection{Novelty Search}
 \label{ss:NS}
@@ -1976,7 +1977,7 @@ $F_6 $ & {\bf 0.0556} $\pm$ 0.0619 & {\bf 1.8160} $\pm$ 0.4990 & 0.0426 $\pm$ 0.
 \newpage
 \section{他の最先端手法との性能比較実験}
 \label{sec:experiment}
-本章では他の最先端手法と探索性能を比較するため，複数解探索手法のコンペティション(CEC Competition 2013)で使用された手法に着目する．実験環境をCEC Competition 2013で用いられた評価関数，評価指標に合わせて実験を行った．
+本章では他の最先端手法と探索性能を比較するため，複数解探索手法のコンペティション(CEC 2013 Competition)で使用された手法に着目する．実験環境をCEC 2013 Competitionで用いられた評価関数，評価指標に合わせて実験を行った．
 
 % \subsection{複数解探索における多峰性最適化問題}
 % \label{ss:cec2013}
