@@ -125,6 +125,7 @@
 
 \subsection{進化的アルゴリズム (EAs)}
 \label{ss:EAs}
+生物の進化をモデルとした最適解探索手法であり，進化の過程で個体がより評価値の良い個体となることのできるアルゴリズムである．
 
 \subsubsection{遺伝的アルゴリズム (GA)}
 \label{sss:GA}
@@ -168,122 +169,11 @@ $N$個の個体$x_i$を初期集合として生成し，ランダムな評価値
 \end{algorithmic}
 \end{algorithm}
 
-% \subsubsection{進化戦略 (ES)}
-% 進化戦略 (Evolutionary Strategy:ES) は
-% \label{sss:ES}
-
-\subsubsection{Evolution Strategies with Covariance Matrix Adaptation (CMA-ES)}
-\label{sss:cma-es}
-% 数式番号に章番号を追加
-  % \makeatletter
-  % \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
-  % \@addtoreset{equation}{subsection}
-  % \makeatother
-
-Evolution Strategy with Covariance Matrix Adaptation (CMA-ES)　\cite{mu-CMA-ES}, \cite{CMA-ES} は進化戦略 (Evolution Strategy:ES) \cite{ES} のアルゴリズムを基に，変数間の依存関係を共分散行列 (Covariance matrix adaptation:CMA) \cite{CMA} により新しい変数を生成するアルゴリズムである．多変量正規分布を用いて解候補を生成し，それらの評価値を基に算出する共分散行列から探索範囲を決定する．CMA-ESの大きな特徴として，変数間の依存度を考慮している(パラメータチューニングを必要としない)という点と，単調に増減する線形的な問題に依存しないという点が挙げられる．CMA-ESには様々な手法がある中で，ここでは一般的な$(\mu|\mu_w,\lambda)$-CMA-ES \cite{CMA-ES} を紹介する．具体的なアルゴリズムについては以下のAlgorithm \ref{code:cma-es}に示し，終了条件を満たすまで以下の手順を繰り返す．
-\begin{itemize}
-\item {\bf STEP1: 個体の生成 (4行目)} 　\\
-まず，正規分布$N(0,I)$の範囲で解候補$z_i (i=1,2,...,\lambda)$を独立に生成し，それを基に設計変数$x_i (i=1,2,...,\lambda)$を生成する．生成式は以下の通りである．
-\begin{equation}
-\label{eq:cmaes-yi}
-\mbox{\boldmath $y_i^t$}=\mbox{\boldmath $\sqrt{C^t}z_i$}
-\end{equation}
-\begin{equation}
-\label{eq:cmaes-xi}
-\mbox{\boldmath $x_i^{t+1}$}=\mbox{\boldmath $m^t$}+ \sigma ^t \mbox{\boldmath $y_i$}
-\end{equation}
-
-設計変数$x_i$は共分散行列$N(0,(\sigma^t)^2 C^t)$の範囲から生成される．生成後，$x_i$を評価値で降順(評価値の高い順)にソートして順位付けし，$y_i$及び$z_i$も同様に順位付けする．$C^t$は，その共分散行列の範囲の広がり度合いを$d \times d$次元で表し，$\sigma^t$はステップサイズを，$m^t$は平均値ベクトル(探索範囲の中心)を表す．初期個体生成時，$C^0=I, \sigma^0=0$とする．また，$\lambda=4+[3In(n)]$, $\mu=[\frac{\lambda}{2}]$とする．
-
-\item {\bf STEP2: $\mu$個体の荷重和を算出し，平均ベクトル$\mbox{\boldmath $m_i^t$}$を更新 (8行目)} \\
-評価値で降順ソートした設計変数$\mbox{\boldmath $x_i$}$のうち，上位$\mu$個の荷重和を算出し，次式に従って平均値ベクトル$m$を更新する．
-\begin{equation}
-\label{eq:cmaes-mi}
-\mbox{\boldmath $m^{t+1}$}=\mbox{\boldmath $m^t$}+ \sum_{i=1}^{\mu}w_i(\mbox{\boldmath $x_i^t$}-\mbox{\boldmath $m^t$})
-\end{equation}
-この時，重み$w$は次式で表される．
-\begin{equation}
-\label{eq:cmaes-w}
-w_i=In(\frac{\lambda+1}{2})-In(i)
-\end{equation}
-重み$w$は$w_1 \geq w_2 \geq ... \geq w_\mu > 0$であり，$\sum_{i=1}^{\mu}w_i=1$を満たす．
-
-\item {\bf STEP3: ステップサイズ$\sigma$の更新 (9行目)} \\
-次式に従って進化パス$p_{\sigma}$及びステップサイズ$\sigma$を更新する．
-\begin{equation}
-\label{eq:cmaes-ps}
-p_{\sigma}^{t+1}=(1-c_{\sigma})p_{\sigma}^t+\sqrt{c_{\sigma}(2-c_{\sigma})}\sqrt{\mu_{eff}}\sum_{i=1}^{\mu}w_i \mbox{\boldmath $z_i$}
-\end{equation}
-\begin{equation}
-\label{eq:cmaes-s}
-\sigma^{t+1}=\sigma^t exp(\frac{c_{\sigma}}{d_{\sigma}}(\frac{||p_{\sigma}^{t+1}||}{\hat{\chi_n}}-1))
-\end{equation}
-この時，$c_{\sigma}$は進化パス$p_{\sigma}$の前世代との重みを表し，$\mu_{eff}$は設計変数の上位$\mu$個の加重平均の補正値，$d_{\sigma}$はステップサイズの減衰係数，$\hat{\chi_n}$は$n$変量正規分布のノルムの期待値を表す．これらのパラメータは次式で表される．
-\begin{equation}
-\label{eq:cmaes-csig}
-c_{\sigma}=\frac{4}{n+4}
-\end{equation}
-\begin{equation}
-\label{eq:cmaes-mu-eff}
-\mu_{eff}=\frac{1}{\sum_{i=1}^{\mu}w_i^2}
-\end{equation}
-\begin{equation}
-\label{eq:cmaes-d}
-d_{\sigma}=\frac{1}{c_{\sigma}}+1
-\end{equation}
-\begin{equation}
-\label{eq:cmaes-chi}
-\hat{\chi_n}=E[||N(0,1)||] \approx \sqrt{n}(1-\frac{1}{4n}+\frac{1}{21n^2})
-\end{equation}
-ここで$n$は最適化する数を表す．
-
-\item {\bf STEP4: 共分散行列$C$の更新 (9行目)} \\
-共分散行列$C$及びその進化パス$p_c$は次式で更新される．
-\begin{equation}
-\label{eq:cmaes-pc}
-p_c^{t+1}=(1-c_c)p_c^t+\sqrt{c_c(2-c_c)} \sum_{i=1}^{\mu}w_i \mbox{\boldmath $y_i^t$}
-\end{equation}
-\begin{equation}
-\label{eq:cmaes-c}
-\mbox{\boldmath $C^{t+1}$}=\mbox{\boldmath $C^t$}+c_1[p_c^{t+1}(p_c^{t+1})^T+(1-c_c(2-c_c))\mbox{\boldmath $C^t$}]+c_{\mu}\sum_{i=1}^{\mu}w_i(\mbox{\boldmath $y_i(y_i)$}^T-\mbox{\boldmath $C^t$})
-\end{equation}
+ \subsubsection{進化戦略 (ES)}
+ 進化戦略 (Evolutionary Strategy:ES) は
+ \label{sss:ES}
 
 
-$c_{\sigma}$は共分散行列$C$の進化パス$p_c$の前世代との重みであり，$c_1$及び$c_{\mu}$は共分散行列$C$の更新に用いられる学習率を表す．これらのパラメータは次式で表される．
-\begin{equation}
-\label{eq:cmaes-c1}
-c_{1}=\frac{2}{(n+\sqrt{2})^2}
-\end{equation}
-\begin{equation}
-\label{eq:cmaes-cmu}
-c_{\mu}=1-c_1
-\end{equation}
-\begin{equation}
-\label{eq:cmaes-cc}
-c_c=\frac{4}{n+4}
-\end{equation}
-
-\end{itemize}
-
-\begin{algorithm}[H]
-\caption{CMA-ES}
-\label{code:cma-es}
-\begin{algorithmic}[5]
-\REQUIRE Objective Function $F(x), x=(x_1,x_2,...,x_d)$
-\STATE Calculate parameters [Eqs. (\ref{eq:cmaes-csig}) to (\ref{eq:cmaes-chi}), (\ref{eq:cmaes-c1}) to (\ref{eq:cmaes-cc})]
-\WHILE{t $<$ Max Iteration}
-\FOR{i=1 to N}
-\STATE Generate solution $x_i (i=1,2,...,\lambda)$ within $N(0, \sigma^2 C)$ [Eqs. (\ref{eq:cmaes-yi}),(\ref{eq:cmaes-xi})]
-\ENDFOR
-\STATE Evaluate and sort solution $x_i$
-\FOR{i=1 to N}
-\STATE Update $m_i$ by $w_i$ [Eqs. (\ref{eq:cmaes-mi}),(\ref{eq:cmaes-w})]
-\STATE Update step size $\sigma$ and covariance matrix $C$ by the evolution path $p_{\sigma}$ and $p_c$ [Eqs. (\ref{eq:cmaes-ps}),(\ref{eq:cmaes-s}),(\ref{eq:cmaes-pc}),(\ref{eq:cmaes-c})]
-\ENDFOR
-\STATE t=t+1
-\ENDWHILE
-\end{algorithmic}
-\end{algorithm}
 
 \subsubsection{A Fast and Elitist Multi-objective Genetic Algorithm (NSGA-II)}
 \label{sss:nsga}
@@ -334,6 +224,7 @@ d_j = \sum_{m=1}^M \frac{f_m^{I^{m}_{j+1}}-f_m^{I^{m}_{j-1}}}{f_m^{max}-f_m^{min
 
 \subsection{多点探索アルゴリズム}
 \label{ss:swarm}
+EAsは単一の個体が進化の過程により，評価値の良い個体になることが可能であるが，局所性が強いため，最適解ではなく局所解へ収束してしまうことがある．そこで，大域探索を得意とした，複数の個体を用いた探索手法が登場した．これらの手法は複数の個体間で情報を共有することで，効率的な探索を図ることができる．その代表的な手法を次節より紹介する．
 
 \subsubsection{粒子群最適化 (PSO)}
 \label{sss:PSO}
@@ -596,7 +487,118 @@ ${\rm rand} < A_i$を満たす，かつ3つの解候補が$t$時点での最良�
 \end{algorithmic}
 \end{algorithm}
 
+\subsubsection{Evolution Strategies with Covariance Matrix Adaptation (CMA-ES)}
+\label{sss:cma-es}
+% 数式番号に章番号を追加
+  % \makeatletter
+  % \renewcommand{\theequation}{\arabic{section}-\arabic{subsection}-\arabic{equation}}
+  % \@addtoreset{equation}{subsection}
+  % \makeatother
 
+Evolution Strategy with Covariance Matrix Adaptation (CMA-ES)　\cite{mu-CMA-ES}, \cite{CMA-ES} は進化戦略 (Evolution Strategy:ES) \cite{ES} のアルゴリズムを基に，変数間の依存関係を共分散行列 (Covariance matrix adaptation:CMA) \cite{CMA} により新しい変数を生成するアルゴリズムである．多変量正規分布を用いて解候補を生成し，それらの評価値を基に算出する共分散行列から探索範囲を決定する．CMA-ESの大きな特徴として，変数間の依存度を考慮している(パラメータチューニングを必要としない)という点と，単調に増減する線形的な問題に依存しないという点が挙げられる．CMA-ESには様々な手法がある中で，ここでは一般的な$(\mu|\mu_w,\lambda)$-CMA-ES \cite{CMA-ES} を紹介する．具体的なアルゴリズムについては以下のAlgorithm \ref{code:cma-es}に示し，終了条件を満たすまで以下の手順を繰り返す．
+\begin{itemize}
+\item {\bf STEP1: 個体の生成 (4行目)} 　\\
+まず，正規分布$N(0,I)$の範囲で解候補$z_i (i=1,2,...,\lambda)$を独立に生成し，それを基に設計変数$x_i (i=1,2,...,\lambda)$を生成する．生成式は以下の通りである．
+\begin{equation}
+\label{eq:cmaes-yi}
+\mbox{\boldmath $y_i^t$}=\mbox{\boldmath $\sqrt{C^t}z_i$}
+\end{equation}
+\begin{equation}
+\label{eq:cmaes-xi}
+\mbox{\boldmath $x_i^{t+1}$}=\mbox{\boldmath $m^t$}+ \sigma ^t \mbox{\boldmath $y_i$}
+\end{equation}
+
+設計変数$x_i$は共分散行列$N(0,(\sigma^t)^2 C^t)$の範囲から生成される．生成後，$x_i$を評価値で降順(評価値の高い順)にソートして順位付けし，$y_i$及び$z_i$も同様に順位付けする．$C^t$は，その共分散行列の範囲の広がり度合いを$d \times d$次元で表し，$\sigma^t$はステップサイズを，$m^t$は平均値ベクトル(探索範囲の中心)を表す．初期個体生成時，$C^0=I, \sigma^0=0$とする．また，$\lambda=4+[3In(n)]$, $\mu=[\frac{\lambda}{2}]$とする．
+
+\item {\bf STEP2: $\mu$個体の荷重和を算出し，平均ベクトル$\mbox{\boldmath $m_i^t$}$を更新 (8行目)} \\
+評価値で降順ソートした設計変数$\mbox{\boldmath $x_i$}$のうち，上位$\mu$個の荷重和を算出し，次式に従って平均値ベクトル$m$を更新する．
+\begin{equation}
+\label{eq:cmaes-mi}
+\mbox{\boldmath $m^{t+1}$}=\mbox{\boldmath $m^t$}+ \sum_{i=1}^{\mu}w_i(\mbox{\boldmath $x_i^t$}-\mbox{\boldmath $m^t$})
+\end{equation}
+この時，重み$w$は次式で表される．
+\begin{equation}
+\label{eq:cmaes-w}
+w_i=In(\frac{\lambda+1}{2})-In(i)
+\end{equation}
+重み$w$は$w_1 \geq w_2 \geq ... \geq w_\mu > 0$であり，$\sum_{i=1}^{\mu}w_i=1$を満たす．
+
+\item {\bf STEP3: ステップサイズ$\sigma$の更新 (9行目)} \\
+次式に従って進化パス$p_{\sigma}$及びステップサイズ$\sigma$を更新する．
+\begin{equation}
+\label{eq:cmaes-ps}
+p_{\sigma}^{t+1}=(1-c_{\sigma})p_{\sigma}^t+\sqrt{c_{\sigma}(2-c_{\sigma})}\sqrt{\mu_{eff}}\sum_{i=1}^{\mu}w_i \mbox{\boldmath $z_i$}
+\end{equation}
+\begin{equation}
+\label{eq:cmaes-s}
+\sigma^{t+1}=\sigma^t exp(\frac{c_{\sigma}}{d_{\sigma}}(\frac{||p_{\sigma}^{t+1}||}{\hat{\chi_n}}-1))
+\end{equation}
+この時，$c_{\sigma}$は進化パス$p_{\sigma}$の前世代との重みを表し，$\mu_{eff}$は設計変数の上位$\mu$個の加重平均の補正値，$d_{\sigma}$はステップサイズの減衰係数，$\hat{\chi_n}$は$n$変量正規分布のノルムの期待値を表す．これらのパラメータは次式で表される．
+\begin{equation}
+\label{eq:cmaes-csig}
+c_{\sigma}=\frac{4}{n+4}
+\end{equation}
+\begin{equation}
+\label{eq:cmaes-mu-eff}
+\mu_{eff}=\frac{1}{\sum_{i=1}^{\mu}w_i^2}
+\end{equation}
+\begin{equation}
+\label{eq:cmaes-d}
+d_{\sigma}=\frac{1}{c_{\sigma}}+1
+\end{equation}
+\begin{equation}
+\label{eq:cmaes-chi}
+\hat{\chi_n}=E[||N(0,1)||] \approx \sqrt{n}(1-\frac{1}{4n}+\frac{1}{21n^2})
+\end{equation}
+ここで$n$は最適化する数を表す．
+
+\item {\bf STEP4: 共分散行列$C$の更新 (9行目)} \\
+共分散行列$C$及びその進化パス$p_c$は次式で更新される．
+\begin{equation}
+\label{eq:cmaes-pc}
+p_c^{t+1}=(1-c_c)p_c^t+\sqrt{c_c(2-c_c)} \sum_{i=1}^{\mu}w_i \mbox{\boldmath $y_i^t$}
+\end{equation}
+\begin{equation}
+\label{eq:cmaes-c}
+\mbox{\boldmath $C^{t+1}$}=\mbox{\boldmath $C^t$}+c_1[p_c^{t+1}(p_c^{t+1})^T+(1-c_c(2-c_c))\mbox{\boldmath $C^t$}]+c_{\mu}\sum_{i=1}^{\mu}w_i(\mbox{\boldmath $y_i(y_i)$}^T-\mbox{\boldmath $C^t$})
+\end{equation}
+
+
+$c_{\sigma}$は共分散行列$C$の進化パス$p_c$の前世代との重みであり，$c_1$及び$c_{\mu}$は共分散行列$C$の更新に用いられる学習率を表す．これらのパラメータは次式で表される．
+\begin{equation}
+\label{eq:cmaes-c1}
+c_{1}=\frac{2}{(n+\sqrt{2})^2}
+\end{equation}
+\begin{equation}
+\label{eq:cmaes-cmu}
+c_{\mu}=1-c_1
+\end{equation}
+\begin{equation}
+\label{eq:cmaes-cc}
+c_c=\frac{4}{n+4}
+\end{equation}
+
+\end{itemize}
+
+\begin{algorithm}[H]
+\caption{CMA-ES}
+\label{code:cma-es}
+\begin{algorithmic}[5]
+\REQUIRE Objective Function $F(x), x=(x_1,x_2,...,x_d)$
+\STATE Calculate parameters [Eqs. (\ref{eq:cmaes-csig}) to (\ref{eq:cmaes-chi}), (\ref{eq:cmaes-c1}) to (\ref{eq:cmaes-cc})]
+\WHILE{t $<$ Max Iteration}
+\FOR{i=1 to N}
+\STATE Generate solution $x_i (i=1,2,...,\lambda)$ within $N(0, \sigma^2 C)$ [Eqs. (\ref{eq:cmaes-yi}),(\ref{eq:cmaes-xi})]
+\ENDFOR
+\STATE Evaluate and sort solution $x_i$
+\FOR{i=1 to N}
+\STATE Update $m_i$ by $w_i$ [Eqs. (\ref{eq:cmaes-mi}),(\ref{eq:cmaes-w})]
+\STATE Update step size $\sigma$ and covariance matrix $C$ by the evolution path $p_{\sigma}$ and $p_c$ [Eqs. (\ref{eq:cmaes-ps}),(\ref{eq:cmaes-s}),(\ref{eq:cmaes-pc}),(\ref{eq:cmaes-c})]
+\ENDFOR
+\STATE t=t+1
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
 
 \newpage
 \section{Niching Scheme}
@@ -652,7 +654,7 @@ n_j & ({\rm if \ individual}\ i {\rm \ is \ within \ the \ dynamic \ niche }\ j)
 m_i & ({\rm otherwise})
 \end{cases}
 \end{equation}
-
+Dynamic Niche Sharingは個体の分布密度に応じてNiche countを変化させることで，各個体が異なるNiche countを持つ．これにより，個体の分布が密であればniche countは大きくなる．
 % \subsection{クラスタリング}
 % \label{ss:clustering}
 % クラスタリングは対象となる集合の全個体に対して部分集合に分割する手法である．クラスタリングは，{\bf 階層的クラスタリング}と{\bf 非階層的クラスタリング}の２つに分類される．
@@ -698,7 +700,7 @@ m_i & ({\rm otherwise})
 \newpage
 \section{Niching Methods}
 \label{sec:nm}
-本章では，前述したMetaheuristic Algorithmに対し，Niching schemeを組み合わせた複数解探索手法について説明する．複数最適解探索問題のコンペティションであるCEC ({\it IEEE Congress on Evolutionary Computation})  2013 on Niching Methods for Multimodal Function Optimization \cite{CEC2013} で使用された手法を次節より紹介する．
+本章では，前述したMetaheuristic Algorithmに対し，Niching schemeを組み合わせた複数解探索手法について説明する．複数最適解探索問題のコンペティションであるCEC ({\it IEEE Congress on Evolutionary Computation})  2013 on Niching Methods for Multimodal Function Optimization \cite{CEC2013} で使用された手法を次節より紹介し，9章にて同じ評価関数を用いて提案手法(6,7,8章で後述)との探索性能を比較する．
 
 \subsection{Crowding DE (CDE)}
 \label{ss:cde}
@@ -1080,7 +1082,7 @@ $F_6$ & -187.731 & 18 & many & 2 & $x_i \in [-10,10]$, \\
 \section{Novelty Search-based Bat Algorithm (NSBA)}
 \label{sec:NSBA}
 
-本章では多峰性最適化に対し，大域探索と局所探索を自動で切り替えることに優れたBat Algorithm (BA) と，未探索領域に解を生成するNovelty Searchを組み合わせたNSBA \cite{NSBA} を説明する．
+他の複数解探索手法の問題点として大域探索と局所探索を同時に行えない，あるいは近傍個体間の距離に基づいた解の移動しか行っていないことが例としてあげられる．そこで本章では多峰性最適化問題に対し，大域探索と局所探索を自動で切り替えることに優れたBat Algorithm (BA) と，未探索領域に解を生成するNovelty Searchを組み合わせたNSBA \cite{NSBA} を用いることで本問題の解決を図る．次節よりNSBAについて説明する．
 
 \subsection{Novelty Search}
 \label{ss:NS}

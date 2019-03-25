@@ -94,7 +94,7 @@ v_i^{t+1}=v_i^t+(x_*-x_i^t)* f_i
 x_i^{t+1}=x_i^t+v_i^{t+1}
 \label{eq:xi}
 \end{equation}
-In detail, the new solution $x_i$ is updated by adding the new the velocity ${v_i}$ which is derived from the previous velocity $v_i^t$, the distance between the global best location and the previous location $(x_*-x_i^t)$, and frequency $f_i$ which range is [${f_{min}}$, ${f_{max}}$] where ${f_{min}}=0$ and ${f_{max}}=1$. $\beta $ is uniform random value from 0 to 1. Next, in the solution search phase (ii), the new solution $x_{loc}$ is generated around the global best solution as follows:
+In detail, the new solution candidate $x_i$ is updated by adding the new the velocity ${v_i}$ which is derived from the previous velocity $v_i^t$, the distance between the global best location and the previous location $(x_*-x_i^t)$, and frequency $f_i$ which range is [${f_{min}}$, ${f_{max}}$] where ${f_{min}}=0$ and ${f_{max}}=1$. $\beta $ is uniform random value from 0 to 1. Next, in the solution search phase (ii), the new solution candidate $x_{loc}$ is generated around the global best solution as follows:
 \begin{equation}
 x_{loc}=x_{*}+ \epsilon A^t \ ,
 \label{eq:loc}
@@ -121,13 +121,13 @@ Note that the loudness $A_i^0$ is initialized as $A_i^0=1$ and the pulse rate is
 \item STEP1: Population initialization of bats (line 1 to 3)\\
 The population of bats ${x_i}(i=1, 2, ..., N)$, the loudness ${A_i^0}$, the pulse rate ${r_i^0}$ are initialized as the initial values. The frequency ${f_i}$ is initialized by Eq.(\ref{eq:freq}).
 \item STEP2: New solution updates (line 6)\\
-The new solutions ${x_i}$ is calculated by Eqs. (\ref{eq:vi})(\ref{eq:xi}).
+The new solution candidates ${x_i}$ is calculated by Eqs. (\ref{eq:vi})(\ref{eq:xi}).
 \item STEP3: New solution generation around global best solution ${x_*}$ (line 7 to 9)\\
-A new solution $x_{loc}$ is generated around $x_*$ by Eq. (\ref{eq:loc}) when the pulse emission rate $r_i$ is lower than a random value.
+A new solution candidate $x_{loc}$ is generated around $x_*$ by Eq. (\ref{eq:loc}) when the pulse emission rate $r_i$ is lower than a random value.
 \item STEP4: Random new solution generation (line 10)\\
-A new solution ${x_{rnd}}$ is generated randomly by Eq. (\ref{eq:xrnd}).  
+A new solution candidate ${x_{rnd}}$ is generated randomly by Eq. (\ref{eq:xrnd}).  
 \item STEP5: Solutions update(line 11 to 14)\\
-When ${rand < A_i}$, the best solution is selected from $x_i$, ${x_{loc}}$, and ${x_{rnd}}$ by Eqs.(\ref{eq:A}),(\ref{eq:r})
+When ${rand < A_i}$, the personal best solution is selected from $x_i$, ${x_{loc}}$, and ${x_{rnd}}$ by Eqs.(\ref{eq:A}),(\ref{eq:r})
 \item STEP6: Return to STEP2 
 \end{itemize}
 
@@ -141,17 +141,17 @@ When ${rand < A_i}$, the best solution is selected from $x_i$, ${x_{loc}}$, and 
 \STATE Initialize pulse rates $r_i$, and loudness $A_i$
 \WHILE{($t <$ Max number of iterations)}
 \FOR{i=1 to N}
-\STATE Generate a new solution $x_i$ and velocity $v_i$ [eqs.(\ref{eq:vi}) to (\ref{eq:xi})]
+\STATE Generate a new solution candidate $x_i$ and velocity $v_i$ [eqs.(\ref{eq:vi}) to (\ref{eq:xi})]
 \IF{($rand>r_i$)}
-\STATE Generate a new solution $x_{loc}$ around a global best solution $x_i$ [eq.(\ref{eq:loc})] 
+\STATE Generate a new solution candidate $x_{loc}$ around a global best solution $x_i$ [eq.(\ref{eq:loc})] 
 % \ELSE
 % \STATE Continue
 \ENDIF
-\STATE Generate a new solution $x_{rnd}$ randomly
+\STATE Generate a new solution candidate $x_{rnd}$ randomly
 \IF{($rand<A_i \& \min (F(x_i), F(x_{loc}), F(x_{rnd})<F(x_{i*})$)}
 \STATE Accept the new solution, and update pulse rate $r_i$ \\ \& loudness $A_i$ [eqs. (\ref{eq:A})(\ref{eq:r})]  
 \ENDIF
-\STATE Evaluate all bats and select a best solution $x_*$ in the current solutions
+\STATE Evaluate all bats and select a global best solution $x_*$ in the current solutions
 \ENDFOR
 \STATE t=t+1
 \ENDWHILE
@@ -169,7 +169,7 @@ Niche Radius (NR) \cite{Niche}\cite{DNCMA} is one of niching techniques to deter
 \label{eq:NR}
 NR=\frac{\lambda}{\sqrt[D]{q}},
 \end{equation}
-where the lower and upper bound values are $x_{ub}$ and $x_{lb}$ of the $D$-th dimensional search space,   and the number of local optima is $q$. Each domain of the radius as $NR$ is wrapping the local optimum to avoid converging same optima.
+where the lower and the upper bound values are $x_{ub}$ and $x_{lb}$ of the $D$-th dimensional search space,   and the number of local optima is $q$. Each domain of the radius as $NR$ is wrapping the local optimum to avoid converging same optima.
 
 \subsection{Niche Radius-based Bat Algorithm}
 As stated earlier, proposed algorithm is extended BA with the concept of Niche Radius which is able to locate many solutions without converging the found global best solutions within the domain of niche radius. This process is given by
@@ -184,7 +184,7 @@ x_i^t+v_i^{t+1} & (if \ d_i^t < NR) \\
 x_i^t & (otherwise)
 \end{cases}
 \end{equation}
-where $x_{NR*}$ is the best solution in the domain of niche radius and $d_i^t$ indicates the euclidean distance between the nearest neighbor solutions. Fig. \ref{fig:niche} provides an example to illustrate the solution movement to keep the solution $x_i$ from the best solution $x_{NR*}$ in the domain of the radius, where the red circle and the yellow star indicates solution $x_i$ and the best solution $x_{NR*}$. This figure shows the situation that the solutions $x_1, x_2 $ and $ x_3$ are located in the area of $x_{NR*}$ with the radius. In this case, these solutions are moved out from the area of the best solution $x_{NR*}$.
+where $x_{NR*}$ is the personal best solution in the domain of niche radius and $d_i^t$ indicates the euclidean distance between the nearest neighbor solutions. Fig. \ref{fig:niche} provides an example to illustrate the solution movement to keep the solution $x_i$ from the personal best solution $x_{NR*}$ in the domain of the radius, where the red circle and the yellow star indicates solution $x_i$ and the personal best solution $x_{NR*}$. This figure shows the situation that the solutions $x_1, x_2 $ and $ x_3$ are located in the area of $x_{NR*}$ with the radius. In this case, these solutions which are $x_1, x_2$and $x_3$ are moved out from the area of the personal best solution $x_{NR*}$.
 
 \begin{figure}[h]
 \begin{center}
@@ -194,7 +194,7 @@ where $x_{NR*}$ is the best solution in the domain of niche radius and $d_i^t$ i
 \label{fig:niche}
 \end{figure}
 
-In the local search phase, the new solution $x_{loc}$ is generated around the best solution $x_{NR*}$ in the domain of the radius as follows:
+In the local search phase, the new solution $x_{loc}$ is generated around the personal best solution $x_{NR*}$ in the domain of the radius as follows:
 \begin{equation}
 \label{eq:nrloc}
 x_{loc}=x_{NR*} + \epsilon A_i^t
@@ -219,18 +219,18 @@ The pseudo code of NRBA is given in Algorithm 2 and its brief summary is describ
 \WHILE{($t <$ Max number of iterations)}
 \FOR{i=1 to N}
 \IF{$d_i < NR$ \& $x_i \neq x_{NR*}$}
-\STATE Generate a new solution $x_i$ and velocity $v_i$ [eqs.(\ref{eq:nrvi}) to (\ref{eq:nrxi})]
+\STATE Generate a new solution candidate $x_i$ and velocity $v_i$ [eqs.(\ref{eq:nrvi}) to (\ref{eq:nrxi})]
 \ENDIF
 \IF{($rand>r_i$)}
-\STATE Generate a new solution $x_{loc}$ around a global best solution $x_i$ [eq.(\ref{eq:nrloc})] 
+\STATE Generate a new solution candidate $x_{loc}$ around a global best solution $x_i$ [eq.(\ref{eq:nrloc})] 
 % \ELSE
 % \STATE Continue
 \ENDIF
-\STATE Generate a new solution $x_{rnd}$ randomly [eq.(\ref{eq:nrrnd})]
+\STATE Generate a new solution candidate $x_{rnd}$ randomly [eq.(\ref{eq:nrrnd})]
 \IF{($rand<A_i \& \min (F(x_i), F(x_{loc}), F(x_{rnd})<F(x_{i*})$)}
-\STATE Accept the new solution, and update pulse rate $r_i$ \\ \& loudness $A_i$ [eqs. (\ref{eq:A})(\ref{eq:r})]  
+\STATE Accept the new solution candidate, and update pulse rate $r_i$ \\ \& loudness $A_i$ [eqs. (\ref{eq:A})(\ref{eq:r})]  
 \ENDIF
-\STATE Evaluate all bats and select a best solution $x_*$ in the current solutions
+\STATE Evaluate all bats and select a personal best solution $x_{i*}$ in the current solutions
 \ENDFOR
 \STATE t=t+1
 \ENDWHILE
