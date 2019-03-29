@@ -190,7 +190,7 @@ where $x_{NR*}$ is the personal best solution in the domain of niche radius and 
 \begin{center}
 \includegraphics[width=0.8\linewidth]{eps/niche.eps}
 \end{center}
-\caption{Example of Solution Movement based on Niche Radius}
+\caption{An example of Solution Movement based on Niche Radius}
 \label{fig:niche}
 \end{figure}
 
@@ -247,7 +247,7 @@ A new solution candidate $x_{loc}$ is generated around $x_*$ by Eq. (\ref{eq:loc
 \item STEP4: Random new solution generation (line 12)\\
 A new solution candidate ${x_{rnd}}$ is generated randomly by Eq. (\ref{eq:xrnd}).  
 \item STEP5: Solutions update(line 13 to 15)\\
-When ${rand < A_i}$, the best solution is selected from $x_i$, ${x_{loc}}$, and ${x_{rnd}}$ by Eqs.(\ref{eq:A}),(\ref{eq:r})
+When ${rand < A_i}$, the personal best solution is selected from $x_i$, ${x_{loc}}$, and ${x_{rnd}}$ by Eqs.(\ref{eq:A}),(\ref{eq:r})
 \item STEP6: Return to STEP2 
 \end{itemize}
 
@@ -405,7 +405,7 @@ To determine how many global optima the algorithm found, accuracy distance $\rho
 
 %\begin{description}
 %\item Peak Ratio\\
-This experiment employs Peak Ratio(PR) \cite{CDE} as the evaluation criterion in the CEC (IEEE Congress on Evolutionary Computation) 2013 competition \cite{cec2013}. The PR value measures the ratio of the found global and local optima in the total number of true peaks and it is calculated as follows: 
+This experiment employs Peak Ratio (PR) \cite{CDE} as the evaluation criterion in the CEC (IEEE Congress on Evolutionary Computation) 2013 competition \cite{cec2013}. The PR value measures the ratio of the found global and local optima in the total number of true peaks and it is calculated as follows: 
 \begin{equation}
 \label{eq:PR}
 PR=\frac{\sum_{run=1}^{MR}FPs}{TP*MR}
