@@ -595,7 +595,7 @@ Crowding \cite{Crowding} は評価値が類似する最近傍個体同士を比�
 
 \subsection{Niche Radius}
 \label{ss:nr}
-Niche Radiusは探索空間の大きさと局所解数(あるいは個体数)に基づいて算出される距離であり，Fig. は理想的な個体の分布及びNiche radiusを示している．次式で表される．
+Niche Radiusは探索空間の大きさと局所解数(あるいは個体数)に基づいて算出される距離であり，次式で表される．
 \begin{equation}
 \label{eq:nr-d}
 dist=\frac{1}{2}\sqrt{(x_{ub}-x_{lb})^2}
@@ -874,29 +874,29 @@ Nearest-better clustering (NBC) \cite{NBC} は，探索空間の個体間距離�
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Parameterless-Niching-Assisted NSGAII (PNA-NSGAII)}
-\label{ss:PNA-NSGA}
-多目的最適化問題によく用いられるNSGA-IIだが，ここでは単目的の最適化問題に対して，どのような問題に対しても適応できるノンパラメトリックなPNA-SNGAII \cite{PNA-NSGA}について説明する．
+% \subsection{Parameterless-Niching-Assisted NSGAII (PNA-NSGAII)}
+% \label{ss:PNA-NSGA}
+% 多目的最適化問題によく用いられるNSGA-IIだが，ここでは単目的の最適化問題に対して，どのような問題に対しても適応できるノンパラメトリックなPNA-SNGAII \cite{PNA-NSGA}について説明する．
 
-最適解数に対して同じ個体数を用いることが理想的であるため，ここでは次式で個体数を決定する．
-\begin{equation}
-T^D=N \Rightarrow T \simeq [e^{\frac{InN}{D}}]
-\end{equation}
+% 最適解数に対して同じ個体数を用いることが理想的であるため，ここでは次式で個体数を決定する．
+% \begin{equation}
+% T^D=N \Rightarrow T \simeq [e^{\frac{InN}{D}}]
+% \end{equation}
 
-niching distance $v_d$を次式で求める．
-\begin{equation}
-v_d=\frac{x_d^{(U)}-x_d^{(L)}}{T} \forall d=\{ 1,2,...,D\}
-\end{equation}
+% niching distance $v_d$を次式で求める．
+% \begin{equation}
+% v_d=\frac{x_d^{(U)}-x_d^{(L)}}{T} \forall d=\{ 1,2,...,D\}
+% \end{equation}
 
-\begin{equation}
-|(x_1-x_2)_d| \leq \forall d = \{1,2,...,D\}
-\end{equation}
+% \begin{equation}
+% |(x_1-x_2)_d| \leq \forall d = \{1,2,...,D\}
+% \end{equation}
 
 
-% \begin{cases}
-$(f_m(x_1) \leq f_m(x_2) \forall_m) \wedge (\exists_n | f_n(x_1) < f_n(x_2)), \ {\rm proximate}(x_1, x_2) = 1   {\rm if }  x_1 \succ x_2 $ \\
-$x_1 \ {\rm and} \ x_2 \ {\rm are \ non dominated}  {\rm otherwise}$
-% \end{cases}
+% % \begin{cases}
+% $(f_m(x_1) \leq f_m(x_2) \forall_m) \wedge (\exists_n | f_n(x_1) < f_n(x_2)), \ {\rm proximate}(x_1, x_2) = 1   {\rm if }  x_1 \succ x_2 $ \\
+% $x_1 \ {\rm and} \ x_2 \ {\rm are \ non dominated}  {\rm otherwise}$
+% % \end{cases}
 
 
 
@@ -2131,9 +2131,9 @@ DNRBA & 0.9070 & 0.7540 & 0.1519 \\
 
 今後の課題に対する及第点は以下が挙げられる．
 \begin{itemize}
-  \item 勾配の激しい評価関数に対する局所探索性能の向上
-  \item 発見した最適解及び局所解の保持
-  \item 個体が同じ最適解及び局所解に収束させない機構の改良 
+  \item 勾配の激しい評価関数に対する局所探索性能を向上させるため，探索が進むにつれて徐々に探索速度を落とし，局所解へ近づく必要がある．
+  \item 発見した最適解及び局所解の保持が挙げられる．一度発見した解よりも評価値の高い解を発見してしまった場合，現在保持している解を手放してしまうため，探索範囲の制限及びその周辺個体の位置情報を共有する必要がある．
+  \item 個体が同じ最適解及び局所解に収束させないために改良しなければならない．これは個体の密度等によって探索方法を切り替える必要がある．
 \end{itemize}
 % 今後の課題及び改善点は次の通りである.
 % \begin{itemize}
